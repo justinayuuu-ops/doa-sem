@@ -4,7 +4,7 @@
    훈련 기록 자체는 여기 캐시가 아니라 localStorage 에 있으므로
    캐시를 비워도 데이터는 사라지지 않는다. */
 
-var VERSION = "doasem-2026-09-07";
+var VERSION = "doasem-2026-09-08-study-settings";
 var PREFIX = "doasem-";
 var SHELL = PREFIX + "shell-" + VERSION;
 var FONTS = PREFIX + "fonts-" + VERSION;

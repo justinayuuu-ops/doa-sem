@@ -234,6 +234,26 @@ header .mark svg{width:100%;height:100%;display:block}
 }
 .today-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
 .today-date{font-size:var(--fs-xl);line-height:1.3}
+.today-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.study-manage{min-height:32px;padding:5px 9px;border:1.5px solid var(--line);border-radius:999px;
+  color:var(--ink-2);font-size:var(--fs-xs);white-space:nowrap}
+.mission-manager{margin:8px 0 10px;padding:10px;border:1.5px solid var(--line);border-radius:var(--r-sm);background:var(--bg2)}
+.mission-manager h3{margin:0;font-size:var(--fs-md);font-weight:600}
+.mission-manager>p{margin:2px 0 8px;font-size:var(--fs-2xs);line-height:1.45;color:var(--ink-3)}
+.managed-mission{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line-soft)}
+.managed-mission .managed-copy{flex:1;min-width:0}
+.managed-mission strong,.managed-mission small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.managed-mission strong{font-size:var(--fs-sm);font-weight:600}
+.managed-mission small{font-size:var(--fs-2xs);color:var(--ink-3)}
+.managed-mission .study-edit,.managed-mission .study-remove{flex:none;padding:7px 9px;border-radius:999px;font-size:var(--fs-xs)}
+.managed-mission .study-edit{border:1.5px solid var(--line);color:var(--ink-2)}
+.managed-mission .study-remove{color:var(--coral)}
+.mission-editor{padding:8px 0;border-top:1px solid var(--line-soft)}
+.mission-editor .fld+.fld{margin-top:7px}
+.mission-editor input{width:100%;min-height:38px;padding:7px 10px;font:inherit;font-size:16px;color:var(--ink);
+  background:var(--field);border:1.5px solid var(--line);border-radius:var(--r-sm);-webkit-appearance:none;appearance:none}
+.mission-editor input:focus{outline:0;border-color:var(--pulse-dim)}
+.mission-editor .cacts{margin-top:9px}
 
 /* 완료 스티커 배지 */
 .badge{
@@ -645,10 +665,10 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   var OTHER_KEY="doa-balltouch-v1";   /* 같은 도메인에 사는 다른 앱 */
   var BAK=KEY+":safe";        /* 직전 안전본 */
   var HIDE=KEY+":hide";       /* 닫아둔 안내 카드 */
-  var DATA_V=2;
+  var DATA_V=3;
   var booted=false;
   /* 체크칸에 들어가는 기호(op)는 앱 아이콘의 사칙연산과 짝을 맞췄다 */
-  var MISSIONS=[
+  var DEFAULT_MISSIONS=[
     {id:"pre",  name:"필즈 예습",     count:1, unit:"장", sub:"다음에 배울 것 먼저", op:"plus",   st:"pencil"},
     {id:"rev",  name:"필즈 복습",     count:1, unit:"장", sub:"배운 것 다시 한 번", op:"minus",  st:"star"},
     {id:"calc", name:"기적의 계산법", count:1, unit:"장", sub:"계산 속도 올리기",   op:"times",  st:"medal"},
@@ -786,6 +806,13 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       done:p.done,
       dmeta:(p.dmeta&&typeof p.dmeta==="object")?p.dmeta:{},
       todos:Array.isArray(p.todos)?p.todos:[],
+      missions:Array.isArray(p.missions)&&p.missions.length
+        ? p.missions.filter(function(m){return m&&typeof m.id==="string"&&m.id&&typeof m.name==="string";})
+        : null,
+      missionVersions:Array.isArray(p.missionVersions)
+        ? p.missionVersions.filter(function(v){return v&&typeof v.from==="string"&&Array.isArray(v.items);})
+        : null,
+      missionsUpdated:typeof p.missionsUpdated==="number"?p.missionsUpdated:0,
       seed:!!p.seed,
       savedAt:p.savedAt||null,
       backupAt:p.backupAt||null
@@ -801,8 +828,16 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       if(b){try{got=normalize(JSON.parse(b));}catch(e){got=null;}}
       if(got&&raw) restored=true;
     }
-    var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],seed:false,savedAt:null,backupAt:null};
+    var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],missions:null,missionsUpdated:0,seed:false,savedAt:null,backupAt:null};
     if(!base.dmeta) base.dmeta={};
+    if(!Array.isArray(base.missions)){
+      base.missions=DEFAULT_MISSIONS.map(function(m){
+        return {id:m.id,name:m.name,count:m.count,unit:m.unit,sub:m.sub,op:m.op,st:m.st};
+      });
+    }
+    if(!Array.isArray(base.missionVersions)||!base.missionVersions.length){
+      base.missionVersions=[{from:START,items:base.missions}];
+    }
     base.seed=true;   /* 시연용 초기 데이터 없이 빈 상태로 시작한다 */
     return base;
   }
@@ -817,6 +852,26 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   }
 
   var state=load();
+
+  /* 공부 목록은 바꾼 날부터 새 버전을 쓴다. 그래서 지난 날짜를 열어도
+     그날 실제로 하던 공부 이름·설명·단위와 체크 기록이 함께 남는다. */
+  function missionsFor(d){
+    var found=state.missionVersions[0]||{items:[]};
+    state.missionVersions.forEach(function(v){if(v.from<=d&&v.from>=found.from) found=v;});
+    return Array.isArray(found.items)?found.items:[];
+  }
+  function setMissionsFrom(d,items){
+    var copy=items.map(function(m){
+      return {id:m.id,name:m.name,count:m.count||1,unit:m.unit,sub:m.sub,op:m.op,st:m.st};
+    });
+    var found=false;
+    state.missionVersions.forEach(function(v){if(v.from===d){v.items=copy;found=true;}});
+    if(!found) state.missionVersions.push({from:d,items:copy});
+    state.missionVersions.sort(function(a,b){return a.from.localeCompare(b.from);});
+    state.missions=copy; /* 이전 버전 앱과의 백업 호환용 현재 목록 */
+    state.missionsUpdated=Date.now();
+    save();
+  }
 
   /* ---------- 이관 — 못 한 할 일은 다음날로 ---------- */
   function rollover(){
@@ -835,15 +890,15 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   function doneOf(d){return state.done[d]||{};}
   function countDone(d){
     var v=doneOf(d),n=0;
-    MISSIONS.forEach(function(m){if(v[m.id])n++;});
+    missionsFor(d).forEach(function(m){if(v[m.id])n++;});
     return n;
   }
-  function isComplete(d){return countDone(d)===MISSIONS.length;}
+  function isComplete(d){var list=missionsFor(d);return list.length>0&&countDone(d)===list.length;}
 
   function toggleMission(d,id){
     var v=state.done[d]||(state.done[d]={});
     if(v[id]) delete v[id]; else v[id]=true;
-    if(!MISSIONS.some(function(m){return v[m.id];})) delete state.done[d];
+    if(!missionsFor(d).some(function(m){return v[m.id];})) delete state.done[d];
     stamp(d);            /* 이 날짜를 언제 고쳤는지 남긴다 — 합칠 때의 기준 */
     save();
   }
@@ -863,7 +918,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
   function pushTodo(d,text,count,unit,series){
     var t={id:newId(),date:d,text:text,done:false,u:Date.now()};
-    if(count){t.count=count;t.unit=unit||"회";}
+    if(count){t.count=count;t.unit=unit||"페이지";}
     if(series) t.series=series;
     state.todos.push(t);
   }
@@ -874,9 +929,9 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   function createTodos(c){
     var text=(c.text||"").trim();
     if(!text) return {n:0,err:"할 일 이름을 적어 주세요."};
-    var cnt=parseInt(c.count,10);
-    if(!(cnt>0)) cnt=null;
-    var unit=c.unit||"회";
+    var cnt=(c.count||"").trim();
+    if(cnt.length>30) cnt=cnt.slice(0,30);
+    var unit=c.unit||"페이지";
 
     if(c.mode!=="range"){
       pushTodo(c.date,text,cnt,unit,null);
@@ -929,7 +984,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     while(d<=CUR){
       var c=countDone(d);
       touches+=c;                 /* 공부 하나가 한 장 */
-      if(c===MISSIONS.length) doneDays++;
+      if(isComplete(d)) doneDays++;
       past++; d=shift(d,1);
     }
     Object.keys(state.done).forEach(function(k){
@@ -940,7 +995,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   function missedDays(){
     var out=[],d=START;
     while(d<CUR){
-      if(countDone(d)<MISSIONS.length) out.push(d);
+      if(countDone(d)<missionsFor(d).length) out.push(d);
       d=shift(d,1);
     }
     return out;
@@ -977,6 +1032,62 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       '<span class="m-count">'+m.count+'<u>'+(m.unit||"개")+'</u></span></button>';
   }
 
+  /* 기본 공부는 오늘을 경계로 새 목록을 만든다. 이미 지난 날짜의 목록은
+     건드리지 않으므로, 달력에서 예전 날을 열면 당시 공부가 그대로 보인다. */
+  var studyManage=false, missionEditor=null;
+  function openMissionEditor(id){
+    var m=missionsFor(CUR).filter(function(x){return x.id===id;})[0];
+    if(!m) return;
+    missionEditor={id:id,name:m.name,sub:m.sub||"",unit:m.unit||"장",err:""};
+  }
+  function saveMissionEditor(){
+    if(!missionEditor) return false;
+    var name=(missionEditor.name||"").trim();
+    var unit=(missionEditor.unit||"").trim();
+    if(!name||!unit){missionEditor.err="제목과 단위를 모두 적어 주세요.";return false;}
+    var list=missionsFor(CUR).map(function(m){
+      if(m.id!==missionEditor.id) return m;
+      return {id:m.id,name:name.slice(0,60),count:m.count||1,unit:unit.slice(0,12),
+        sub:(missionEditor.sub||"").trim().slice(0,80),op:m.op,st:m.st};
+    });
+    setMissionsFrom(CUR,list);
+    missionEditor=null;
+    return true;
+  }
+  function removeMission(id){
+    var m=missionsFor(CUR).filter(function(x){return x.id===id;})[0];
+    if(!m) return;
+    if(!window.confirm('"'+m.name+'"을(를) 오늘부터 기본 공부에서 뺄까요? 지난 기록은 그대로 남아요.')) return;
+    setMissionsFrom(CUR,missionsFor(CUR).filter(function(x){return x.id!==id;}));
+    missionEditor=null;
+  }
+  function restoreDefaultMissions(){
+    setMissionsFrom(CUR,DEFAULT_MISSIONS);
+  }
+  function renderMissionManager(){
+    if(!studyManage) return "";
+    var list=missionsFor(CUR);
+    var rows=list.map(function(m){
+      if(missionEditor&&missionEditor.id===m.id){
+        return '<div class="mission-editor">'+
+          '<div class="fld"><span class="lb">제목</span><input data-medit="name" value="'+esc(missionEditor.name)+'" maxlength="60" '+INPUT_ATTRS+'></div>'+
+          '<div class="fld"><span class="lb">설명</span><input data-medit="sub" value="'+esc(missionEditor.sub)+'" maxlength="80" '+INPUT_ATTRS+'></div>'+
+          '<div class="fld"><span class="lb">단위</span><input data-medit="unit" value="'+esc(missionEditor.unit)+'" maxlength="12" '+INPUT_ATTRS+'></div>'+
+          (missionEditor.err?'<div class="cerr">'+esc(missionEditor.err)+'</div>':'')+
+          '<div class="cacts"><button class="btn" data-study-cancel>취소</button><button class="btn primary" data-study-save>저장</button></div></div>';
+      }
+      return '<div class="managed-mission"><div class="managed-copy"><strong>'+esc(m.name)+'</strong>'+
+        '<small>'+esc(m.sub||"설명 없음")+' · 1'+esc(m.unit||"장")+'</small></div>'+
+        '<button class="study-edit" data-study-edit="'+esc(m.id)+'">수정</button>'+
+        '<button class="study-remove" data-study-remove="'+esc(m.id)+'">제거</button></div>';
+    }).join("");
+    if(!list.length) rows='<div class="empty">기본 공부가 없어요.</div>'+
+      '<div class="cacts" style="margin-top:8px"><button class="btn" data-study-restore>처음 항목 되돌리기</button></div>';
+    return '<div class="mission-manager"><h3>기본 공부 관리</h3>'+
+      '<p>오늘('+label(CUR)+')부터 바뀌고, 이전 날짜의 공부와 기록은 그대로 남아요.</p>'+
+      rows+'<div class="cacts" style="margin-top:8px"><button class="btn" data-study-close>닫기</button></div></div>';
+  }
+
   function todoList(d){
     var list=todosFor(d);
     if(!list.length) return '<div class="empty">추가한 할 일이 없어요.</div>';
@@ -986,7 +1097,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       var badge=late>0?'<span class="carry'+(late>=7?" long":"")+'">'+late+'일 이관</span>':"";
       var key="t:"+t.id;
       var cnt=t.count
-        ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"회")+'</u></span>'
+        ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"페이지")+'</u></span>'
         : '';
       return '<div class="todo'+(t.done?" on":"")+'">'+
         '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+icon("plusOp")+'</button>'+
@@ -1001,11 +1112,11 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
   /* ---------- 할 일 만들기 폼 ---------- */
   var composer=null;   /* {date, where, text, count, unit, mode, from, to, dows, err} */
-  var UNITS=["회","개","분"];
+  var UNITS=["페이지","시간"];
 
   function openComposer(d,where){
     composer={
-      date:d, where:where, text:"", count:"", unit:"회",
+      date:d, where:where, text:"", count:"", unit:"페이지",
       mode:"one", from:d, to:clampDate(shift(d,27)),
       dows:[0,1,2,3,4,5,6], err:""
     };
@@ -1045,11 +1156,11 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     return '<div class="composer">'+
       '<div class="fld"><span class="lb">할 일</span>'+
         '<input type="text" data-c="text" value="'+esc(c.text)+'" maxlength="60" '+
-        'placeholder="예: 리프팅" '+INPUT_ATTRS+'></div>'+
+        'placeholder="예: 할 일" '+INPUT_ATTRS+'></div>'+
       '<div class="row2">'+
-        '<div class="fld num"><span class="lb">횟수</span>'+
-          '<input type="number" data-c="count" value="'+esc(String(c.count))+'" '+
-          'inputmode="numeric" min="1" max="999" placeholder="20"></div>'+
+        '<div class="fld num"><span class="lb">범위</span>'+
+          '<input type="text" data-c="count" value="'+esc(String(c.count))+'" '+
+          'inputmode="text" maxlength="30" placeholder="예: 10~20" '+INPUT_ATTRS+'></div>'+
         '<div class="fld unit"><span class="lb">단위</span><div class="chips">'+units+'</div></div>'+
       '</div>'+
       '<div class="fld"><span class="lb">언제</span><div class="chips">'+modes+'</div></div>'+
@@ -1083,8 +1194,10 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       : '';
     var html='<div class="today-head"><div>'+
       '<div class="eyebrow">오늘의 공부</div>'+
-      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+badge+'</div>';
-    MISSIONS.forEach(function(m){html+=missionRow(d,m,!!doneOf(d)[m.id]);});
+      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+
+      '<div class="today-actions">'+badge+'<button class="study-manage" data-study-manage>공부 관리</button></div></div>';
+    missionsFor(d).forEach(function(m){html+=missionRow(d,m,!!doneOf(d)[m.id]);});
+    html+=renderMissionManager();
     html+='<div class="todos"><div class="eyebrow" style="margin-bottom:5px">오늘 할 일</div>'+
       todoList(d)+addArea(d,"today")+'</div>';
     if(complete){
@@ -1100,7 +1213,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     var rows=show.map(function(d){
       var c=countDone(d);
       return '<div class="bl"><span class="d">'+label(d)+'</span>'+
-        '<span class="w">'+dowOf(d)+'요일 · '+(MISSIONS.length-c)+'개 남음</span>'+
+        '<span class="w">'+dowOf(d)+'요일 · '+(missionsFor(d).length-c)+'개 남음</span>'+
         '<button class="go" data-open="'+d+'">채우기</button></div>';
     }).join("");
     wrap.innerHTML='<div class="backlog"><h2>밀린 공부 '+missed.length+'일</h2>'+
@@ -1124,7 +1237,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
         cells+='<div class="'+cls+' out"><span class="n">'+day+'</span></div>';
         continue;
       }
-      var c=countDone(key),full=c===MISSIONS.length;
+      var list=missionsFor(key),c=countDone(key),full=list.length>0&&c===list.length;
       if(full) cls+=" full";
       else if(c>0) cls+=" part";
       else if(key<CUR) cls+=" missed";
@@ -1133,7 +1246,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       /* 다 해낸 날엔 막대 대신 스티커가 붙는다 */
       var mark=full
         ? '<span class="dst">'+sticker(daySticker(key),pop==="day:"+key)+'</span>'
-        : '<span class="bars">'+MISSIONS.map(function(m){
+        : '<span class="bars">'+list.map(function(m){
             return '<i class="'+(v[m.id]?"on":"")+'"></i>';
           }).join("")+'</span>';
       var pending=todosFor(key).some(function(t){return !t.done;});
@@ -1173,7 +1286,7 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     var html='<div class="handle"></div><div class="sheet-head"><div>'+
       '<div class="sheet-date">'+parse(d).getFullYear()+'년 '+label(d)+'</div>'+
       '<div class="sheet-sub">'+dowOf(d)+'요일'+when+'</div></div>'+badge+'</div>';
-    MISSIONS.forEach(function(m){html+=missionRow(d,m,!!doneOf(d)[m.id]);});
+    missionsFor(d).forEach(function(m){html+=missionRow(d,m,!!doneOf(d)[m.id]);});
     html+='<div class="todos"><div class="eyebrow" style="margin-bottom:5px">이날 할 일</div>'+
       todoList(d)+addArea(d,"sheet")+'</div>';
     if(complete){
@@ -1288,7 +1401,9 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
      어느 앱에서 내보내도, 어느 앱에서 불러와도 둘 다 복구된다. */
   function exportData(){
     var apps={};
-    apps[KEY]={done:state.done,todos:state.todos,seed:true};
+    apps[KEY]={done:state.done,dmeta:state.dmeta,todos:state.todos,
+      missions:state.missions,missionVersions:state.missionVersions,
+      missionsUpdated:state.missionsUpdated,seed:true};
     try{
       var raw=localStorage.getItem(OTHER_KEY);
       if(raw){
@@ -1368,12 +1483,17 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     var inc=normalize(apps[KEY]);
     var addedDays=0,addedTodos=0;
     if(inc){
+      if((inc.missionsUpdated||0)>(state.missionsUpdated||0)&&inc.missionVersions&&inc.missionVersions.length){
+        state.missionVersions=inc.missionVersions;
+        state.missions=inc.missions||missionsFor(CUR);
+        state.missionsUpdated=inc.missionsUpdated;
+      }
       Object.keys(inc.done).forEach(function(d){
         var src=inc.done[d];
         if(!src||typeof src!=="object") return;
         var box=state.done[d]||(state.done[d]={});
         var before=Object.keys(box).length;
-        MISSIONS.forEach(function(m){if(src[m.id]) box[m.id]=true;});
+        missionsFor(d).forEach(function(m){if(src[m.id]) box[m.id]=true;});
         if(Object.keys(box).length>before) addedDays++;
       });
       var have={};
@@ -1646,6 +1766,14 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       }
     });
 
+    if((rem.missionsUpdated||0)>(state.missionsUpdated||0)&&
+      Array.isArray(rem.missionVersions)&&rem.missionVersions.length){
+      state.missionVersions=rem.missionVersions;
+      state.missions=rem.missions||missionsFor(CUR);
+      state.missionsUpdated=rem.missionsUpdated;
+      changed=true;
+    }
+
     var byId={};
     state.todos.forEach(function(t){byId[t.id]=t;});
     (rem.todos||[]).forEach(function(t){
@@ -1661,7 +1789,9 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   }
 
   function payload(){
-    return {done:state.done,dmeta:state.dmeta,todos:state.todos,at:Date.now()};
+    return {done:state.done,dmeta:state.dmeta,todos:state.todos,
+      missions:state.missions,missionVersions:state.missionVersions,
+      missionsUpdated:state.missionsUpdated,at:Date.now()};
   }
 
   function pull(then){
@@ -1751,6 +1881,18 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   document.addEventListener("click",function(e){
     var el;
     askPersist();   /* 첫 조작 때 저장 공간 보호를 요청한다 */
+
+    /* 기본 공부 관리 */
+    if(up(e.target,"[data-study-manage]")){studyManage=true;missionEditor=null;renderAll();return;}
+    if(up(e.target,"[data-study-close]")){studyManage=false;missionEditor=null;renderAll();return;}
+    if((el=up(e.target,"[data-study-edit]"))){openMissionEditor(el.getAttribute("data-study-edit"));renderAll();return;}
+    if(up(e.target,"[data-study-cancel]")){missionEditor=null;renderAll();return;}
+    if(up(e.target,"[data-study-save]")){
+      if(!saveMissionEditor()){renderAll();return;}
+      renderAll();toast("오늘부터 기본 공부를 바꿨어요.");return;
+    }
+    if((el=up(e.target,"[data-study-remove]"))){removeMission(el.getAttribute("data-study-remove"));renderAll();return;}
+    if(up(e.target,"[data-study-restore]")){restoreDefaultMissions();renderAll();toast("오늘부터 처음 기본 공부를 다시 넣었어요.");return;}
 
     /* 할 일 만들기 폼 */
     if((el=up(e.target,"[data-open-compose]"))){
@@ -1858,8 +2000,17 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     }
     return true;
   }
+  function bindMissionField(e){
+    var el=up(e.target,"[data-medit]");
+    if(!el||!missionEditor) return false;
+    missionEditor[el.getAttribute("data-medit")]=el.value;
+    missionEditor.err="";
+    return true;
+  }
   document.addEventListener("input",bindField);
   document.addEventListener("change",bindField);
+  document.addEventListener("input",bindMissionField);
+  document.addEventListener("change",bindMissionField);
 
   /* 키보드가 올라올 때 입력창이 가려지지 않게 */
   document.addEventListener("focusin",function(e){
