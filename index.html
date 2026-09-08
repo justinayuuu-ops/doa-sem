@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="도아 셈">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="도아 셈">
+<title>오늘도 도아 셈</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" href="./apple-touch-icon-precomposed.png">
+<style>
+/* 카카오 작은글씨 (Kakao Small Sans) v2.003 — Copyright Kakao Corp.
+   SIL Open Font License 1.1. 라이선스 전문은 FONT-LICENSE.txt 참고. */
+/* 앱 안의 파일을 먼저 쓰고(오프라인 동작), 그게 없으면 CDN으로 넘어간다.
+   index.html 만 따로 열어 보는 미리보기에서도 같은 글씨로 보인다. */
+@font-face{
+  font-family:"Kakao Small Sans";
+  src:url("./KakaoSmallSans-Regular.woff2") format("woff2"),
+      url("https://cdn.jsdelivr.net/gh/fonts-archive/KakaoSmallSans/KakaoSmallSans-Regular.woff2") format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:"Kakao Small Sans";
+  src:url("./KakaoSmallSans-Bold.woff2") format("woff2"),
+      url("https://cdn.jsdelivr.net/gh/fonts-archive/KakaoSmallSans/KakaoSmallSans-Bold.woff2") format("woff2");
+  font-weight:600 700;font-style:normal;font-display:swap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   도아의 수학 공부 기록 — 사내 디자인 시스템(리듬 관제실) 색·간격 토큰 준용
+   타이포는 7살 사용자에 맞춰 라운드 서체로 교체(주아 + 개구),
+   달성 표시는 스티커로. 색 원칙은 그대로 —
+   순흑·순백 금지(녹색 틴트 뉴트럴) / 강조색은 "살아있음"의 신호에만.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  /* 흰 배경 한 가지로 고정. 기기의 다크 모드를 켜도 같은 화면이 나온다.
+     색은 배경이 아니라 글자가 낸다 — 검정·녹색·보라. */
+  --bg0:#ffffff; --bg1:#f2f2f2; --bg2:#f7f7f7; --bg3:#ffffff;
+  --line:#dcdcdc; --line-soft:#ededed;
+  --surface-1:#ffffff;
+  --surface-2:#ffffff; --field:#ffffff;
+
+  --ink:#111111; --ink-2:#4a4a4a; --ink-3:#7a7a7a;
+  --on-bg:var(--ink); --on-bg-dim:var(--ink-3);
+
+  /* 녹색 — 해냈다는 신호 */
+  --pulse:#3d8a45; --pulse-strong:#2f6e35;
+  --pulse-dim:#a8d4ad; --pulse-wash:#e8f3e9;
+  --pulse-ink:#ffffff;
+
+  /* 보라 — 영역 제목. 색을 하나 더 얹어 화면이 심심하지 않게 한다 */
+  --violet:#6231cf; --violet-strong:#4a1fa8;
+
+  --amber:#8a5f13; --amber-wash:#fdf3dd;
+  --coral:#b3402e; --coral-wash:#fceae6;
+
+  --wash-1:#efefef;
+  --backdrop:rgba(0,0,0,.32);
+  --shadow-1:0 1px 2px rgba(0,0,0,.05);
+  --shadow-2:0 8px 28px rgba(0,0,0,.12);
+  --st-shadow:drop-shadow(0 1.5px 1.5px rgba(0,0,0,.2));
+
+  /* 타이포 — 본문을 달력 숫자와 같은 14px 로 통일한 조밀한 스케일.
+     읽는 글자는 전부 14px, 보조 라벨만 12px, 제목류만 한두 단 위.
+     입력창은 이 스케일을 쓰지 않고 16px 로 고정한다 —
+     그보다 작으면 iOS 가 입력할 때 화면을 확대해버린다. */
+  --fs-2xs:12px;
+  --fs-xs:12px;
+  --fs-sm:14px;
+  --fs-md:14px;
+  --fs-lg:14px;
+  --fs-xl:16px;
+  --fs-2xl:18px;
+  --fs-score:clamp(18px,5.4vw,24px);
+
+  /* 노치·홈 인디케이터 여백 */
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+  --kb:0px;   /* 화면 키보드 높이 — JS가 갱신 */
+
+  /* 최소 터치 영역 — 7살 손가락 기준 */
+  --tap:44px;
+  /* 단위 칩과 횟수 입력칸이 같은 높이를 쓰도록 한 값으로 묶는다 */
+  --pill:34px;
+
+  /* 반경 — 아이용으로 한 눈금 부드럽게 */
+  --r-sm:10px; --r-md:14px; --r-lg:20px;
+  --ease:cubic-bezier(.22,1,.36,1);
+
+  /* 카카오 작은글씨 — 본문용으로 만들어진 카카오 공식 서체.
+     앱 안에 직접 넣어 두었으므로 외부 CDN 없이, 인터넷이 끊겨도 뜬다.
+     내려받기 전에는 아이폰 기본 서체로 먼저 보여 준다(font-display:swap). */
+  --f-round:"Kakao Small Sans",-apple-system,BlinkMacSystemFont,
+            "Apple SD Gothic Neo","Segoe UI",Roboto,"Malgun Gothic",sans-serif;
+  --f-hand:var(--f-round);
+}
+
+/* ── 기반 ───────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0}
+html{
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+  background:var(--bg0);
+}
+body{
+  font-family:var(--f-round);
+  font-size:var(--fs-lg);line-height:1.6;
+  color:var(--ink);
+  /* 배경은 단색 한 가지 — 그러데이션의 투명 구간이 섞이면 탁해 보인다 */
+  background:var(--bg0);
+  min-height:100vh;
+  min-height:100dvh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+}
+button,input{font:inherit}
+button{
+  color:inherit;background:none;border:0;padding:0;cursor:pointer;
+  touch-action:manipulation;          /* 더블탭 확대·300ms 지연 제거 */
+  -webkit-user-select:none;user-select:none;
+}
+/* 아이콘·스티커가 탭 대상이 되어 이벤트가 새는 것을 막는다 */
+svg{pointer-events:none}
+::selection{background:var(--pulse-dim);color:var(--ink)}
+:focus-visible{outline:2px solid var(--pulse-dim);outline-offset:2px;border-radius:4px}
+
+/* 내용이 없는 안내 자리는 layout 에서 빼야 영역 간격이 고르게 된다 */
+.wrap>section:empty{display:none}
+
+.wrap{
+  max-width:520px;margin:0 auto;
+  padding:calc(14px + var(--safe-t)) calc(16px + var(--safe-r))
+          calc(56px + var(--safe-b)) calc(16px + var(--safe-l));
+  display:flex;flex-direction:column;gap:13px;
+}
+@media (min-width:720px){
+  .wrap{max-width:600px;padding-top:32px;padding-left:24px;padding-right:24px}
+}
+
+/* 손가락 조작 기기에서는 hover 잔상이 남는다 — 정밀 포인터에서만 적용 */
+@media (hover:hover) and (pointer:fine){
+  .del:hover{background:var(--wash-1);color:var(--coral)}
+  .nav button:hover:not([disabled]){color:var(--pulse);border-color:var(--pulse-dim)}
+  .close:hover{background:var(--wash-1);color:var(--ink)}
+}
+/* 탭 순간의 눌림 반응 — 모바일에는 hover 대신 이것이 필요하다 */
+.mission:active,.todo .box:active,.bl .go:active,
+.add button:active,.nav button:active:not([disabled]){transform:scale(.97)}
+.mission,.todo .box,.bl .go,.add button,.nav button{transition:transform .12s var(--ease)}
+/* 달력 칸은 확대/축소 대신 배경으로 반응한다 — 30여 칸을 동시에 변형시키면
+   iOS 가 칸마다 합성 레이어를 만들어 테두리 잔상이 남는다. */
+.day:active{background:var(--line-soft)}
+
+.eyebrow{font-size:var(--fs-xs);letter-spacing:.06em;color:var(--violet);font-weight:600}
+
+/* ── 스티커 ─────────────────────────────────────────────── */
+.st{display:block;filter:var(--st-shadow)}
+@keyframes stickon{
+  0%{transform:scale(0) rotate(-28deg);opacity:0}
+  58%{transform:scale(1.3) rotate(9deg);opacity:1}
+  100%{transform:scale(1) rotate(0);opacity:1}
+}
+.st.pop{animation:stickon .44s var(--ease) both}
+
+/* ── 헤더 ───────────────────────────────────────────────── */
+header .title{font-size:var(--fs-2xl);line-height:1.25;font-weight:400;margin:0;
+  text-wrap:balance;color:var(--on-bg)}
+header .title em{font-style:normal;color:var(--pulse)}
+/* 제목 앞의 계산기 — 앱 아이콘과 같은 그림 */
+header .mark{
+  display:inline-block;vertical-align:-.38em;
+  width:1.62em;height:1.62em;margin-right:6px;
+  color:var(--pulse);          /* '킥'과 같은 색 */
+}
+header .mark svg{width:100%;height:100%;display:block}
+/* '셈' 옆의 등호 — 공부를 하나 끝낼 때마다 도장처럼 톡 찍힌다 */
+.kick{
+  display:inline-block;vertical-align:-.13em;
+  width:.92em;height:.92em;margin-left:1px;
+  color:inherit;transform-origin:50% 80%;
+}
+.kick svg{width:100%;height:100%;display:block}
+.kick.go{animation:stamp .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes stamp{
+  0%{transform:scale(1) rotate(0)}
+  25%{transform:scale(1.55) rotate(-9deg)}
+  55%{transform:scale(.86) rotate(4deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+
+/* ── 스코어보드 ─────────────────────────────────────────── */
+.board{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  /* 작은 이름표까지 읽히도록 --pulse 보다 한 단 진한 녹색을 쓴다 */
+  background:#357c3c;border:2px solid #357c3c;border-radius:var(--r-md);
+  box-shadow:var(--shadow-1);overflow:hidden;color:#ffffff;
+}
+.board .cell{padding:9px 8px 10px;border-left:1px solid #63996a;min-width:0}
+.board .cell:first-child{border-left:0}
+.board .v{
+  display:block;font-size:var(--fs-score);line-height:1.05;
+  font-variant-numeric:tabular-nums;letter-spacing:-.015em;
+  white-space:nowrap;overflow:hidden;text-overflow:clip;
+}
+/* 푼 장수는 자릿수가 가장 많다 — 한 눈금 더 작게 잡아 칸을 지킨다 */
+.board .cell:last-child .v{font-size:clamp(16px,4.6vw,21px)}
+.board .v u{text-decoration:none;font-size:var(--fs-sm);color:#d9f2e6;margin-left:1px}
+.board .k{display:block;font-size:var(--fs-2xs);color:#d9f2e6;margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board .v.beat{animation:beat .5s var(--ease)}
+@keyframes beat{0%{transform:scale(1)}34%{transform:scale(1.18);color:var(--pulse)}100%{transform:scale(1)}}
+
+/* ── 오늘 패널 ──────────────────────────────────────────── */
+/* 세 영역은 테두리 색으로 서로를 구분한다 —
+   훈련은 녹색, 달력은 보라, 기록 보관은 검정. 두께는 2px 정수로 둔다
+   (2.5px 는 3배 화면에서 변마다 반올림이 달라져 한쪽만 굵어 보인다). */
+.today{
+  background:var(--surface-1);border:2px solid var(--pulse);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-1);
+  padding:11px 13px 10px;
+}
+.today-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.today-date{font-size:var(--fs-xl);line-height:1.3}
+
+/* 완료 스티커 배지 */
+.badge{
+  display:flex;align-items:center;gap:5px;flex:none;
+  background:var(--pulse);color:var(--pulse-ink);
+  padding:4px 11px 4px 8px;border-radius:999px;
+  transform:rotate(-5deg);box-shadow:var(--shadow-1);
+  font-family:var(--f-hand);font-weight:700;font-size:var(--fs-lg);line-height:1;
+}
+.badge .st{width:22px;height:22px;filter:none}
+.badge.pop{animation:stickon .5s var(--ease) both}
+
+/* 미션 행 */
+.mission{
+  display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+  padding:8px 2px;min-height:0;border-top:1px solid var(--line-soft);
+  /* 할 일 행에는 오른쪽 끝에 삭제 버튼이 있다. 그만큼 비워 두면
+     두 목록의 횟수가 같은 세로선에 놓인다. */
+  padding-right:30px;
+}
+.mission:first-of-type{border-top:0}
+/* 체크박스는 계산기 버튼이다 — 기호는 늘 보이고, 해내면 초록으로 물든다 */
+.tick{
+  flex:none;width:30px;height:30px;border:2px solid var(--line);border-radius:9px;
+  background:var(--bg3);display:grid;place-items:center;color:var(--ink-3);
+  transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);
+}
+.tick svg{width:100%;height:100%}
+.mission.on .tick{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
+
+.m-body{flex:1;min-width:0}
+.m-name{display:block;font-size:var(--fs-md);line-height:1.35;word-break:keep-all;overflow-wrap:anywhere}
+.mission.on .m-name{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--line)}
+.m-sub{display:block;font-size:var(--fs-2xs);color:var(--ink-3);line-height:1.35}
+.m-st{flex:none;width:30px;height:30px}
+.m-st .st{width:30px;height:30px}
+.m-count{flex:none;font-size:var(--fs-md);color:var(--ink-3);font-variant-numeric:tabular-nums}
+.m-count u{text-decoration:none;font-size:var(--fs-xs)}
+.mission.on .m-count{color:var(--pulse)}
+
+/* 할 일 */
+.todos{margin-top:4px;border-top:1px solid var(--line);padding-top:7px}
+/* 오늘의 공부 행과 같은 치수를 쓴다 — 체크박스 30px, 스티커 30px,
+   횟수는 오른쪽 끝. 두 목록이 같은 세로선 위에 놓인다. */
+.todo{display:flex;align-items:center;gap:11px;padding:4px 0}
+.todo .box{
+  flex:none;width:30px;height:30px;border:2px solid var(--line);
+  border-radius:9px;background:var(--bg3);display:grid;place-items:center;
+  position:relative;color:var(--ink-3);
+  transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);
+}
+/* 보이는 크기는 그대로 두고 손가락이 닿는 범위만 넓힌다 */
+.todo .box::after{content:"";position:absolute;top:50%;left:50%;
+  width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
+.todo .box svg{width:100%;height:100%}
+.todo.on .box{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
+
+.todo .txt{flex:1;min-width:0;font-size:var(--fs-md);word-break:break-word;line-height:1.4}
+.todo.on .txt{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--line)}
+.todo .tst{flex:none;width:30px;height:30px}
+.todo .tst .st{width:30px;height:30px}
+.t-count{flex:none;font-size:var(--fs-md);color:var(--ink-3);font-variant-numeric:tabular-nums}
+.t-count u{text-decoration:none;font-size:var(--fs-xs)}
+.todo.on .t-count{color:var(--pulse)}
+.carry{
+  display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;
+  font-size:var(--fs-2xs);white-space:nowrap;
+  color:var(--amber);background:var(--amber-wash);
+}
+.carry.long{color:var(--coral);background:var(--coral-wash)}
+.del{flex:none;color:var(--ink-3);width:38px;height:38px;margin:-6px -8px -6px 0;
+  border-radius:9px;display:grid;place-items:center}
+.del svg{width:16px;height:16px}
+/* ── 할 일 만들기 ───────────────────────────────────────── */
+.addbtn{
+  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  min-height:40px;margin-top:7px;border-radius:var(--r-sm);
+  border:1.5px dashed var(--line);color:var(--ink-2);font-size:var(--fs-md);
+}
+.addbtn svg{width:17px;height:17px}
+.composer{
+  margin-top:8px;padding:11px 11px 12px;border-radius:var(--r-md);
+  background:var(--bg2);border:1.5px solid var(--line);
+  display:flex;flex-direction:column;gap:9px;
+}
+.fld{display:block;min-width:0}
+.fld .lb{display:block;font-size:var(--fs-2xs);color:var(--ink-3);margin-bottom:4px}
+.composer input{
+  width:100%;font-family:inherit;
+  font-size:16px;                     /* 16px 미만이면 iOS가 입력할 때 화면을 확대해버린다 */
+  min-height:var(--tap);padding:8px 12px;color:var(--ink);
+  background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);
+  -webkit-appearance:none;appearance:none;
+}
+.composer input::placeholder{color:var(--ink-3)}
+.composer input:focus{border-color:var(--pulse-dim);outline:0}
+.composer input[type=date]{min-height:var(--tap);line-height:1.2}
+.composer input[type=number]{
+  height:var(--pill);min-height:0;padding:0 10px;line-height:1;
+}
+.row2{display:flex;gap:9px}
+.row2 .fld.num{flex:0 0 104px}
+.row2 .fld.unit{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:var(--pill);padding:0 12px;border-radius:999px;font-size:var(--fs-sm);
+  border:1.5px solid var(--line);color:var(--ink-2);background:var(--bg3);
+}
+.chip.on{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
+.chips.dows{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.chips.dows .chip{padding:0}
+.chips.dows .chip.sun{color:var(--coral)}
+.chips.dows .chip.sun.on{color:var(--pulse-ink)}
+.dates{display:flex;align-items:center;gap:8px}
+.dates input{flex:1;min-width:0}
+.dates .tilde{flex:none;color:var(--ink-3)}
+.cerr{font-size:var(--fs-xs);color:var(--coral);line-height:1.5}
+.chint{font-size:var(--fs-2xs);color:var(--ink-3);line-height:1.5}
+.cacts{display:flex;gap:8px}
+.cacts .btn{flex:1}
+.empty{font-size:var(--fs-sm);color:var(--ink-3);padding:2px 0}
+
+/* ── 밀린 공부 ──────────────────────────────────────────── */
+.backlog{background:var(--amber-wash);border:2px solid var(--amber);border-radius:var(--r-md);padding:10px 12px 9px}
+.backlog h2{font-size:var(--fs-lg);font-weight:400;color:var(--amber);margin:0 0 1px}
+.backlog p{font-size:var(--fs-sm);color:var(--ink-2);margin:0 0 6px}
+.bl{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--line-soft);
+  min-height:40px;flex-wrap:wrap}
+.bl .d{flex:none;min-width:72px;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
+.bl .w{flex:1 1 90px;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
+.bl .go{flex:none;font-size:var(--fs-xs);padding:9px 14px;border-radius:999px;
+  color:var(--amber);border:1.5px solid var(--amber);white-space:nowrap}
+.bl-more{font-size:var(--fs-2xs);color:var(--ink-3);margin-top:7px}
+
+/* ── 달력 ───────────────────────────────────────────────── */
+/* 달력도 다른 영역과 같은 판 위에 올린다 */
+.cal{
+  background:var(--surface-1);border:2px solid var(--violet);border-radius:var(--r-md);
+  box-shadow:var(--shadow-1);padding:11px 13px 12px;
+}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.cal-title{font-size:var(--fs-xl);font-variant-numeric:tabular-nums;color:var(--violet)}
+.nav{display:flex;gap:8px}
+.nav button{
+  width:var(--tap);height:var(--tap);border-radius:var(--r-sm);display:grid;place-items:center;
+  background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink-2);
+  box-shadow:var(--shadow-1);
+}
+.nav button[disabled]{opacity:.32;cursor:default;box-shadow:none}
+.nav svg{width:18px;height:18px}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;
+  font-size:var(--fs-2xs);color:var(--ink-3);padding-bottom:5px}
+.dow span:first-child{color:var(--coral)}
+.grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;
+}
+.day{
+  background:var(--surface-2);aspect-ratio:1/1;min-height:44px;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:2px;overflow:hidden;-webkit-appearance:none;appearance:none;
+}
+/* aspect-ratio 미지원 구형 웹뷰 대비 — 정사각형에 가깝게 유지 */
+@supports not (aspect-ratio:1/1){
+  .day{height:0;padding-bottom:100%;min-height:0}
+  .day>*{position:absolute}
+  .day .n{top:26%}
+  .day .bars,.day .dst{bottom:22%}
+}
+.day.pad,.day.out{background:var(--bg1)}
+.day.out{opacity:.5}
+.day .n{font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums}
+.day.sun .n{color:var(--coral)}
+.bars{display:flex;flex-direction:column;gap:2.5px;width:52%;min-width:15px;margin-top:2px}
+.bars i{display:block;height:3px;border-radius:3px;background:var(--line)}
+.day.part .bars i.on{background:var(--amber)}
+.day.missed .n{color:var(--ink-3)}
+.day.full{background:var(--pulse-wash)}
+.day .dst{width:21px;height:21px}
+.day .dst .st{width:21px;height:21px}
+/* 오늘 표시 — 테두리(선)를 쓰면 칸 격자선, 소수 열 너비, 별도 상자 배치가
+   겹치면서 한쪽 변만 어긋나는 문제가 계속 생긴다.
+   선을 버리고 날짜 숫자 뒤에 꽉 찬 동그라미를 깐다. 배경은 변이 없으니
+   두께가 어긋날 여지 자체가 없다. 아이폰 기본 캘린더의 오늘 표시와 같은 방식. */
+.day.today .n{
+  flex:none;
+  width:25px;height:25px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:var(--pulse);
+  color:var(--pulse-ink);
+}
+.day.today.sun .n{color:var(--pulse-ink)}
+.day .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 13px;margin-top:9px;font-size:var(--fs-2xs);color:var(--ink-3);align-items:center}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:14px;height:3px;border-radius:3px;display:block}
+.legend .st{width:15px;height:15px}
+
+/* ── 시트 ───────────────────────────────────────────────── */
+.backdrop{position:fixed;inset:0;background:var(--backdrop);z-index:20;
+  opacity:0;pointer-events:none;transition:opacity .2s var(--ease)}
+.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:var(--kb);z-index:21;max-width:520px;margin:0 auto;
+  background:var(--surface-1);border:1px solid var(--line);border-bottom:0;
+  border-radius:var(--r-lg) var(--r-lg) 0 0;
+  box-shadow:var(--shadow-2);
+  max-height:86vh;max-height:86dvh;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;         /* 시트를 넘겨도 뒤 화면이 따라 스크롤되지 않게 */
+  padding:6px calc(16px + var(--safe-r)) calc(26px + var(--safe-b)) calc(16px + var(--safe-l));
+  transform:translateY(110%);transition:transform .28s var(--ease);
+  will-change:transform;
+}
+.sheet.open{transform:translateY(0)}
+.sheet.dragging{transition:none}
+/* 손잡이 — 아래로 밀어 닫을 수 있고, 잡기 쉬운 크기의 여백을 둔다 */
+.handle{
+  width:100%;height:26px;display:grid;place-items:center;margin-bottom:4px;
+  touch-action:none;cursor:grab;
+}
+.handle::before{content:"";width:44px;height:5px;border-radius:3px;background:var(--line)}
+.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.sheet-date{font-size:var(--fs-xl);font-variant-numeric:tabular-nums;line-height:1.3}
+.sheet-sub{font-size:var(--fs-2xs);color:var(--ink-3)}
+.close{flex:none;width:var(--tap);height:var(--tap);margin:-7px -8px -7px 0;
+  border-radius:var(--r-sm);display:grid;place-items:center;color:var(--ink-3)}
+.close svg{width:18px;height:18px}
+.note{font-size:var(--fs-sm);color:var(--ink-2);background:var(--bg1);
+  border-radius:var(--r-sm);padding:8px 10px;margin-top:9px;line-height:1.5}
+.cheer{
+  display:flex;align-items:center;gap:8px;margin-top:9px;padding:8px 10px;
+  background:var(--pulse-wash);border-radius:var(--r-sm);
+  font-family:var(--f-hand);font-weight:700;font-size:var(--fs-lg);color:var(--pulse-strong);
+}
+.cheer .st{width:26px;height:26px;flex:none}
+
+footer{font-size:var(--fs-2xs);color:var(--on-bg-dim);text-align:center;line-height:1.8}
+
+/* 시스템 서체는 Jua 보다 획이 가늘다 — 제목과 큰 숫자에만 굵기를 얹어
+   원래의 또렷한 느낌을 되찾는다. 본문은 그대로 둔다. */
+header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
+.carryover h2,.sec-title,.day .n{font-weight:600}
+.badge{letter-spacing:-.01em}
+
+/* ── 기록 보관 ──────────────────────────────────────────── */
+/* 회색 점선 — CSS dashed 는 간격을 지정할 수 없어 SVG 로 직접 그린다.
+   stroke-width 4 중 절반이 모서리 밖으로 잘려 2px 로 보인다. */
+.keep{
+  background-color:var(--surface-1);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' rx='14' ry='14' fill='none' stroke='%23b4b4b4' stroke-width='4' stroke-dasharray='7 4'/%3E%3C/svg%3E");
+  border:0;border-radius:var(--r-md);
+  padding:13px 15px 14px;
+}
+.keep h2{font-size:var(--fs-lg);font-weight:600;margin:0 0 2px;color:var(--violet)}
+.keep .status{font-size:var(--fs-sm);color:var(--ink-2);line-height:1.55}
+.keep .status b{font-weight:400;color:var(--pulse-strong)}
+.keep .status .warn,.keep .meta .warn{color:var(--coral)}
+.keep .meta b{font-weight:600;color:var(--ink-2)}
+.keep .meta{font-size:var(--fs-2xs);color:var(--ink-3);margin-top:2px;line-height:1.5}
+.keep .acts{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.btn{
+  flex:1 1 140px;min-height:var(--tap);padding:0 14px;border-radius:var(--r-sm);
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-size:var(--fs-sm);border:1.5px solid var(--line);background:var(--surface-2);
+  color:var(--ink-2);box-shadow:var(--shadow-1);
+}
+.btn svg{width:17px;height:17px;flex:none}
+.btn.primary{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink);
+  box-shadow:var(--shadow-1)}
+.btn:active{transform:scale(.97)}
+.btn{transition:transform .12s var(--ease)}
+
+/* 설치 안내 */
+.install{
+  background:var(--pulse-wash);border:2px solid var(--pulse-dim);border-radius:var(--r-md);
+  padding:10px 12px 11px;
+}
+.install h2{font-size:var(--fs-lg);font-weight:400;color:var(--pulse-strong);margin:0 0 2px}
+.install p{font-size:var(--fs-sm);color:var(--ink-2);margin:0;line-height:1.55}
+.install .steps{font-size:var(--fs-sm);color:var(--ink-2);margin-top:7px;line-height:1.7}
+.install .key{
+  display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:999px;
+  background:var(--surface-2);border:1px solid var(--line);font-size:var(--fs-xs);
+}
+.install .acts{margin-top:9px}
+.install .dismiss{flex:0 0 auto;min-width:var(--tap);color:var(--ink-3);border-color:transparent;
+  background:none;box-shadow:none}
+
+/* 옮겨오기 안내 — 설치 직후 기록이 비어 있을 때만 */
+.carryover{background:var(--amber-wash);border:2px solid var(--amber);border-radius:var(--r-md);padding:10px 12px 11px}
+.carryover h2{font-size:var(--fs-lg);font-weight:400;color:var(--amber);margin:0 0 2px}
+.carryover p{font-size:var(--fs-sm);color:var(--ink-2);margin:0;line-height:1.55}
+
+/* 함께 보기 칸 */
+.syncbox{
+  margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);
+}
+.syncbox h3{font-size:var(--fs-md);font-weight:600;margin:0 0 3px;color:var(--violet)}
+.syncbox.on h3{color:var(--pulse)}
+.syncbox p{font-size:var(--fs-2xs);color:var(--ink-3);line-height:1.6;margin:0}
+.syncbox p b{font-weight:600;color:var(--ink-2)}
+.syncbox .sst{font-size:var(--fs-sm);color:var(--ink-2);margin-bottom:3px}
+.syncbox .sst .warn{color:var(--coral)}
+.syncbox .acts{display:flex;gap:7px;margin-top:9px}
+.syncbox .acts .btn{flex:1}
+.syncbox input{
+  width:100%;font-family:inherit;font-size:16px;min-height:var(--tap);
+  padding:8px 12px;margin-top:7px;color:var(--ink);background:var(--field);
+  border:2px solid var(--line);border-radius:var(--r-sm);
+  -webkit-appearance:none;appearance:none;
+}
+.syncbox input:focus{border-color:var(--pulse-dim);outline:0}
+
+/* 알림 한 줄 */
+.toast{
+  position:fixed;left:50%;bottom:calc(20px + var(--safe-b));transform:translate(-50%,14px);
+  z-index:30;max-width:min(440px,calc(100vw - 32px));
+  background:var(--ink);color:var(--surface-1);border-radius:999px;
+  padding:11px 18px;font-size:var(--fs-sm);line-height:1.4;text-align:center;
+  box-shadow:var(--shadow-2);opacity:0;pointer-events:none;
+  transition:opacity .2s var(--ease),transform .24s var(--ease);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ── 모바일 보정 ────────────────────────────────────────── */
+
+/* 홈 화면에서 실행하면 브라우저 주소창이 없다 — 위쪽 숨을 조금 더 준다 */
+@media (display-mode:standalone),(display-mode:minimal-ui){
+  .wrap{padding-top:calc(16px + var(--safe-t))}
+}
+
+/* 시트가 열린 동안 뒤 화면이 스크롤되지 않도록 잠근다(iOS 포함) */
+body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+
+/* 아주 좁은 폰(아이폰 SE 등) */
+@media (max-width:359px){
+  .wrap{padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));gap:16px}
+  .board .cell{padding:10px 6px 11px}
+  .day .dst,.day .dst .st{width:18px;height:18px}
+  .bars{width:60%}
+  .m-count{font-size:var(--fs-sm)}
+  .badge{font-size:var(--fs-md);padding:4px 9px 4px 7px}
+}
+
+/* 가로 모드 — 시트가 화면을 다 덮지 않게 */
+@media (orientation:landscape) and (max-height:520px){
+  .sheet{max-height:92dvh;padding-top:4px}
+  .day{min-height:38px}
+}
+
+/* 스티커·배지는 길게 눌러도 이미지 저장 메뉴가 뜨지 않게 */
+.st,.badge,.board .v,.day .n{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1 class="title"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="currentColor"/><g fill="#fff"><rect x="2.6" y="2.6" width="8.7" height="8.7" rx="1.9"/><rect x="12.7" y="2.6" width="8.7" height="8.7" rx="1.9"/><rect x="2.6" y="12.7" width="8.7" height="8.7" rx="1.9"/><rect x="12.7" y="12.7" width="8.7" height="8.7" rx="1.9"/></g><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"><path d="M4.35 6.95H9.55M6.95 4.35V9.55"/><path d="M14.45 6.95H19.65"/><path d="M4.95 15.05L8.95 19.05M8.95 15.05L4.95 19.05"/><path d="M14.45 17.05H19.65"/></g><g fill="currentColor"><circle cx="17.05" cy="14.9" r="0.95"/><circle cx="17.05" cy="19.2" r="0.95"/></g></svg></span>오늘도 도아 <em>셈<button class="kick" id="kick" aria-label="셈 도장"><svg viewBox="0 0 24 24"><path d="M4.5 9.2h15M4.5 14.8h15" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></button></em></h1>
+  </header>
+
+  <section class="board" id="board"></section>
+
+  <section class="today" id="todayPanel"></section>
+
+  <section id="backlogWrap"></section>
+
+  <section class="cal">
+    <div class="cal-head">
+      <div class="cal-title" id="calTitle">2026년 9월</div>
+      <div class="nav">
+        <button id="prev" aria-label="이전 달"></button>
+        <button id="next" aria-label="다음 달"></button>
+      </div>
+    </div>
+    <div class="dow"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section id="installWrap"></section>
+
+  <section id="carryWrap"></section>
+
+  <section class="keep" id="keepPanel"></section>
+
+  <footer>
+    날짜를 누르면 그날 공부를 고칠 수 있어요.<br>
+    기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.
+  </footer>
+</div>
+
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="하루 공부"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var START="2026-09-07", END="2027-09-06";   /* 시작일 포함 정확히 365일 */
+  var KEY="doa-math-v1";
+  var OTHER_KEY="doa-balltouch-v1";   /* 같은 도메인에 사는 다른 앱 */
+  var BAK=KEY+":safe";        /* 직전 안전본 */
+  var HIDE=KEY+":hide";       /* 닫아둔 안내 카드 */
+  var DATA_V=2;
+  var booted=false;
+  /* 체크칸에 들어가는 기호(op)는 앱 아이콘의 사칙연산과 짝을 맞췄다 */
+  var MISSIONS=[
+    {id:"pre",  name:"필즈 예습",     count:1, unit:"장", sub:"다음에 배울 것 먼저", op:"plus",   st:"pencil"},
+    {id:"rev",  name:"필즈 복습",     count:1, unit:"장", sub:"배운 것 다시 한 번", op:"minus",  st:"star"},
+    {id:"calc", name:"기적의 계산법", count:1, unit:"장", sub:"계산 속도 올리기",   op:"times",  st:"medal"},
+    {id:"busy", name:"바빠",          count:1, unit:"장", sub:"오늘 분량 끝내기",   op:"divide", st:"trophy"}
+  ];
+  var DOW=["일","월","화","수","목","금","토"];
+
+  /* 모바일 키보드 힌트 — 자동 대문자·자동 수정·자동 완성을 끄고
+     엔터키를 '완료'로 표시한다 */
+  var INPUT_ATTRS='enterkeyhint="done" autocomplete="off" autocapitalize="off" '+
+    'autocorrect="off" spellcheck="false" inputmode="text"';
+
+  /* 하루를 다 해내면 붙는 스티커들 — 날짜마다 다른 게 붙는다 */
+  var DAY_STICKERS=["pencil","star","medal","trophy","fire","heart","crown","smile"];
+  var CHEERS=[
+    "오늘도 해냈어!","최고야 도아!","수학 박사 다 됐네!","계산이 점점 빨라져!",
+    "멋지다!","오늘 몫까지 끝!","이 기세로 쭉!"
+  ];
+
+  /* 선형 아이콘 — 1.6px 스트로크, currentColor 상속 */
+  function icon(name){
+    var p={
+      check:'<path d="M4 12.5l5.5 5.5L20 6.5"/>',
+      left:'<path d="M15 5l-7 7 7 7"/>',
+      right:'<path d="M9 5l7 7-7 7"/>',
+      close:'<path d="M6 6l12 12M18 6L6 18"/>',
+      down:'<path d="M12 3.5v12M7 11l5 5 5-5M4.5 20h15"/>',
+      up:'<path d="M12 20.5v-12M7 13l5-5 5 5M4.5 4h15"/>',
+      plus:'<path d="M12 5v14M5 12h14"/>',
+      link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l2.6-2.6a4 4 0 0 0-5.7-5.7l-1.3 1.3"/>'+
+           '<path d="M13.8 10.2a4 4 0 0 0-5.7 0l-2.6 2.6a4 4 0 0 0 5.7 5.7l1.3-1.3"/>',
+      /* 체크칸에 들어가는 사칙연산 기호 — 두껍게 그려 30px 에서도 읽힌다 */
+      plusOp:'<path d="M12 7.4v9.2M7.4 12h9.2" stroke-width="2.6"/>',
+      minus:'<path d="M7.2 12h9.6" stroke-width="2.6"/>',
+      times:'<path d="M8.2 8.2l7.6 7.6M15.8 8.2l-7.6 7.6" stroke-width="2.6"/>',
+      divide:'<path d="M7.2 12h9.6" stroke-width="2.6"/>'+
+             '<circle cx="12" cy="7.9" r="1.5" fill="currentColor" stroke="none"/>'+
+             '<circle cx="12" cy="16.1" r="1.5" fill="currentColor" stroke="none"/>'
+    }[name];
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"'+
+      ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
+  }
+
+  /* 스티커 — 실제 스티커처럼 두 테마에서 같은 색을 유지한다 */
+  function sticker(name,pop){
+    var s={
+      pencil:'<path d="M4.1 19.9l1-3.6L15.3 6.1l2.6 2.6L7.7 18.9z" fill="#f5c451"'+
+        ' stroke="#c08c1c" stroke-width="1.35" stroke-linejoin="round"/>'+
+        '<path d="M15.3 6.1l1.6-1.6a1.5 1.5 0 0 1 2.1 0l.5.5a1.5 1.5 0 0 1 0 2.1l-1.6 1.6z"'+
+        ' fill="#e0706b" stroke="#b04b46" stroke-width="1.3" stroke-linejoin="round"/>'+
+        '<path d="M4.1 19.9l3.6-1" stroke="#7a5a20" stroke-width="1.35" stroke-linecap="round" fill="none"/>',
+      ball:'<circle cx="12" cy="12" r="9" fill="#fff" stroke="#2c2c2c" stroke-width="1.5"/>'+
+        '<path d="M12 7.1l3.15 2.3-1.2 3.7h-3.9l-1.2-3.7z" fill="#2c2c2c"/>'+
+        '<path d="M12 3.1v2.2M4.3 9.5l2.1.7M19.7 9.5l-2.1.7M7.5 19.4l1.3-1.8M16.5 19.4l-1.3-1.8"'+
+        ' stroke="#2c2c2c" stroke-width="1.4" stroke-linecap="round"/>',
+      star:'<path d="M12 3.3l2.65 5.35 5.9.86-4.27 4.16 1.01 5.88L12 16.73l-5.29 2.78 1.01-5.88'+
+        'L3.45 9.51l5.9-.86z" fill="#f5b73d" stroke="#c9871c" stroke-width="1.35" stroke-linejoin="round"/>',
+      medal:'<path d="M7.6 2.9l3.1 5.3M16.4 2.9l-3.1 5.3" stroke="#5aa9e6" stroke-width="2.5" stroke-linecap="round"/>'+
+        '<circle cx="12" cy="14.7" r="6.4" fill="#f5b73d" stroke="#c9871c" stroke-width="1.35"/>'+
+        '<path d="M12 11.1l1.2 2.45 2.7.4-1.95 1.9.46 2.7L12 17.3l-2.41 1.25.46-2.7-1.95-1.9 2.7-.4z" fill="#fff"/>',
+      trophy:'<path d="M7.9 3.6h8.2v4.9a4.1 4.1 0 0 1-8.2 0z" fill="#f5b73d" stroke="#c9871c"'+
+        ' stroke-width="1.35" stroke-linejoin="round"/>'+
+        '<path d="M7.9 5h-2.4c0 2.7 1.2 4 2.7 4.2M16.1 5h2.4c0 2.7-1.2 4-2.7 4.2"'+
+        ' fill="none" stroke="#c9871c" stroke-width="1.35" stroke-linecap="round"/>'+
+        '<path d="M12 12.7v3.2" stroke="#c9871c" stroke-width="1.9" stroke-linecap="round"/>'+
+        '<rect x="8.6" y="15.6" width="6.8" height="2.9" rx="1.3" fill="#f5b73d" stroke="#c9871c" stroke-width="1.3"/>'+
+        '<path d="M7.6 20.4h8.8" stroke="#c9871c" stroke-width="1.9" stroke-linecap="round"/>',
+      fire:'<path d="M12 2.7c3.5 3.4 5.7 5.7 5.7 9.4A5.7 5.7 0 0 1 12 21.3 5.7 5.7 0 0 1 6.3 12.1'+
+        'c0-3.7 2.2-6 5.7-9.4z" fill="#f5843d" stroke="#cf5f1e" stroke-width="1.35"/>'+
+        '<path d="M12 10.5c1.75 1.75 2.65 2.75 2.65 4.4a2.65 2.65 0 0 1-5.3 0c0-1.65.9-2.65 2.65-4.4z" fill="#ffd86b"/>',
+      heart:'<path d="M12 20.4S3.7 15.1 3.7 9.5A4.65 4.65 0 0 1 12 6.7a4.65 4.65 0 0 1 8.3 2.8'+
+        'c0 5.6-8.3 10.9-8.3 10.9z" fill="#ef7f9f" stroke="#c55278" stroke-width="1.35" stroke-linejoin="round"/>',
+      crown:'<path d="M3.5 17.7L5 7.2l4.1 3.7L12 4.8l2.9 6.1L19 7.2l1.5 10.5z" fill="#f5b73d"'+
+        ' stroke="#c9871c" stroke-width="1.35" stroke-linejoin="round"/>'+
+        '<path d="M4.3 20h15.4" stroke="#c9871c" stroke-width="1.9" stroke-linecap="round"/>',
+      smile:'<circle cx="12" cy="12" r="9" fill="#ffd86b" stroke="#d6a01f" stroke-width="1.4"/>'+
+        '<circle cx="9.1" cy="10.4" r="1.15" fill="#5a4416"/><circle cx="14.9" cy="10.4" r="1.15" fill="#5a4416"/>'+
+        '<path d="M8.2 14.1a4.5 4.5 0 0 0 7.6 0" fill="none" stroke="#5a4416" stroke-width="1.6" stroke-linecap="round"/>'
+    }[name]||"";
+    return '<svg class="st'+(pop?" pop":"")+'" viewBox="0 0 24 24" aria-hidden="true">'+s+'</svg>';
+  }
+
+  /* 날짜에서 스티커·응원문구를 고른다 — 같은 날은 항상 같은 것 */
+  function hash(s){
+    var h=0;
+    for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0;
+    return h;
+  }
+  function daySticker(d){return DAY_STICKERS[hash(d)%DAY_STICKERS.length];}
+  function dayCheer(d){return CHEERS[hash(d+"c")%CHEERS.length];}
+
+  /* ---------- 날짜 (로컬 기준, 타임존 밀림 없음) ---------- */
+  function fmt(d){
+    var m=d.getMonth()+1, day=d.getDate();
+    return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(day<10?"0":"")+day;
+  }
+  function parse(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+  function shift(s,n){var d=parse(s);d.setDate(d.getDate()+n);return fmt(d);}
+  function inRange(s){return s>=START&&s<=END;}
+  function label(s){var d=parse(s);return (d.getMonth()+1)+"월 "+d.getDate()+"일";}
+  function dowOf(s){return DOW[parse(s).getDay()];}
+
+  var TODAY=fmt(new Date());
+  var CUR=TODAY<START?START:(TODAY>END?END:TODAY);
+
+  /* ---------- 상태 ----------
+     저장소 준비가 끝난 뒤에 불러온다 — 순서가 뒤바뀌면
+     canStore 가 아직 정해지지 않아 저장해 둔 기록을 못 읽는다. */
+
+  /* 저장소 — iOS 시크릿 모드나 인앱 브라우저에서는 localStorage 가
+     아예 막히거나 쓰기에서 예외를 던진다. 그럴 땐 메모리에 담아
+     최소한 그 세션 동안은 앱이 정상 동작하게 한다. */
+  var mem=null, canStore=(function(){
+    try{localStorage.setItem("__t","1");localStorage.removeItem("__t");return true;}
+    catch(e){return false;}
+  })();
+  var restored=false;   /* 안전본으로 되살렸는지 */
+
+  function readKey(k){
+    try{return canStore?localStorage.getItem(k):(k===KEY?mem:null);}catch(e){return null;}
+  }
+  function writeKey(k,v){
+    if(k===KEY) mem=v;
+    if(!canStore) return false;
+    try{localStorage.setItem(k,v);return true;}catch(e){canStore=false;return false;}
+  }
+
+  /* 어떤 모양으로 들어와도(저장본이든 내보낸 백업 파일이든) 같은 형태로 정리 */
+  function normalize(p){
+    if(!p||typeof p!=="object") return null;
+    if(p.data&&typeof p.data==="object") p=p.data;
+    if(!p.done||typeof p.done!=="object") return null;
+    return {
+      v:DATA_V,
+      done:p.done,
+      dmeta:(p.dmeta&&typeof p.dmeta==="object")?p.dmeta:{},
+      todos:Array.isArray(p.todos)?p.todos:[],
+      seed:!!p.seed,
+      savedAt:p.savedAt||null,
+      backupAt:p.backupAt||null
+    };
+  }
+
+  function load(){
+    var got=null,raw=readKey(KEY);
+    if(raw){try{got=normalize(JSON.parse(raw));}catch(e){got=null;}}
+    if(!got){
+      /* 본 기록이 비었거나 깨졌으면 직전 안전본으로 되살린다 */
+      var b=readKey(BAK);
+      if(b){try{got=normalize(JSON.parse(b));}catch(e){got=null;}}
+      if(got&&raw) restored=true;
+    }
+    var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],seed:false,savedAt:null,backupAt:null};
+    if(!base.dmeta) base.dmeta={};
+    base.seed=true;   /* 시연용 초기 데이터 없이 빈 상태로 시작한다 */
+    return base;
+  }
+  function save(){
+    var prev=readKey(KEY);
+    state.savedAt=new Date().toISOString();
+    var s=JSON.stringify(state);
+    /* 직전 상태를 한 단계 남겨 둔다 — 쓰기가 중간에 깨져도 되돌릴 수 있게 */
+    if(prev&&prev!==s) writeKey(BAK,prev);
+    writeKey(KEY,s);
+    if(booted){ renderKeep(); schedulePush(); }
+  }
+
+  var state=load();
+
+  /* ---------- 이관 — 못 한 할 일은 다음날로 ---------- */
+  function rollover(){
+    var moved=false;
+    state.todos.forEach(function(t){
+      /* 반복으로 만든 할 일은 이관하지 않는다 — 매주 돌아오는 일이라
+         하루 걸렀다고 오늘로 몰아오면 목록이 금세 쌓인다. */
+      if(!t.done&&!t.del&&t.date<CUR&&!t.series){
+        if(!t.origDate) t.origDate=t.date;
+        t.date=CUR; moved=true;
+      }
+    });
+    if(moved) save();
+  }
+
+  function doneOf(d){return state.done[d]||{};}
+  function countDone(d){
+    var v=doneOf(d),n=0;
+    MISSIONS.forEach(function(m){if(v[m.id])n++;});
+    return n;
+  }
+  function isComplete(d){return countDone(d)===MISSIONS.length;}
+
+  function toggleMission(d,id){
+    var v=state.done[d]||(state.done[d]={});
+    if(v[id]) delete v[id]; else v[id]=true;
+    if(!MISSIONS.some(function(m){return v[m.id];})) delete state.done[d];
+    stamp(d);            /* 이 날짜를 언제 고쳤는지 남긴다 — 합칠 때의 기준 */
+    save();
+  }
+
+  /* 하루 단위 변경 시각. 두 사람이 같은 날을 고치면 나중 것이 이긴다. */
+  function stamp(d){
+    if(!state.dmeta) state.dmeta={};
+    state.dmeta[d]=Date.now();
+  }
+
+  /* 지운 할 일은 곧바로 없애지 않고 표시만 남긴다 —
+     그래야 다른 기기에도 '지웠다'는 사실이 전달된다. */
+  function liveTodos(){return state.todos.filter(function(t){return !t.del;});}
+  function todosFor(d){return state.todos.filter(function(t){return t.date===d&&!t.del;});}
+
+  function newId(){return "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+  function pushTodo(d,text,count,unit,series){
+    var t={id:newId(),date:d,text:text,done:false,u:Date.now()};
+    if(count){t.count=count;t.unit=unit||"회";}
+    if(series) t.series=series;
+    state.todos.push(t);
+  }
+
+  /* 한 번에 하루만 만들 수도 있고, 기간 안의 특정 요일마다 만들 수도 있다.
+     기간 반복은 해당 날짜마다 할 일을 하나씩 실제로 만들어 둔다 —
+     그래야 달력·밀린 미션·백업까지 기존 기능이 그대로 맞물린다. */
+  function createTodos(c){
+    var text=(c.text||"").trim();
+    if(!text) return {n:0,err:"할 일 이름을 적어 주세요."};
+    var cnt=parseInt(c.count,10);
+    if(!(cnt>0)) cnt=null;
+    var unit=c.unit||"회";
+
+    if(c.mode!=="range"){
+      pushTodo(c.date,text,cnt,unit,null);
+      save();
+      return {n:1};
+    }
+
+    var from=c.from||c.date, to=c.to||c.date;
+    if(from>to){var sw=from;from=to;to=sw;}
+    if(from<START) from=START;
+    if(to>END) to=END;
+    if(from>to) return {n:0,err:"기간을 다시 골라 주세요."};
+    if(!c.dows||!c.dows.length) return {n:0,err:"요일을 하나 이상 골라 주세요."};
+
+    var sid="s"+Date.now().toString(36), made=0, d=from, guard=0;
+    while(d<=to&&guard++<400){
+      if(c.dows.indexOf(parse(d).getDay())>=0){pushTodo(d,text,cnt,unit,sid);made++;}
+      d=shift(d,1);
+    }
+    if(!made) return {n:0,err:"그 기간에는 고른 요일이 없어요."};
+    save();
+    return {n:made};
+  }
+  function toggleTodo(id){
+    state.todos.forEach(function(t){
+      if(t.id===id){t.done=!t.done; if(t.done) t.doneDate=CUR; t.u=Date.now();}
+    });
+    save();
+  }
+  function delTodo(id){
+    state.todos.forEach(function(t){
+      if(t.id===id){t.del=true; t.u=Date.now();}
+    });
+    save();
+  }
+
+  /* ---------- 집계 ---------- */
+  function streak(){
+    var d=CUR,n=0;
+    if(!isComplete(d)) d=shift(d,-1);
+    while(d>=START&&isComplete(d)){n++;d=shift(d,-1);}
+    return n;
+  }
+  /* 계획 전체 일수(365). 목표가 "하루도 빠짐없이"이므로
+     해낸 날의 분모는 지나간 날이 아니라 계획 전체가 되어야 한다. */
+  var TOTAL=(function(){var n=0,d=START;while(d<=END){n++;d=shift(d,1);}return n;})();
+
+  function tally(){
+    var doneDays=0,touches=0,past=0,d=START;
+    while(d<=CUR){
+      var c=countDone(d);
+      touches+=c;                 /* 공부 하나가 한 장 */
+      if(c===MISSIONS.length) doneDays++;
+      past++; d=shift(d,1);
+    }
+    Object.keys(state.done).forEach(function(k){
+      if(k>CUR&&inRange(k)) touches+=countDone(k);
+    });
+    return {doneDays:doneDays,touches:touches,past:past,total:TOTAL};
+  }
+  function missedDays(){
+    var out=[],d=START;
+    while(d<CUR){
+      if(countDone(d)<MISSIONS.length) out.push(d);
+      d=shift(d,1);
+    }
+    return out;
+  }
+
+  /* ---------- 렌더 ---------- */
+  var $=function(id){return document.getElementById(id);};
+  var lastStreak=null;
+  var pop=null;        /* 방금 붙은 스티커 키 — 한 번만 튀어오르게 */
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g,function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+
+  function renderBoard(){
+    var t=tally(),st=streak();
+    var beat=lastStreak!==null&&st>lastStreak?" beat":"";
+    lastStreak=st;
+    $("board").innerHTML=
+      '<div class="cell"><span class="v'+beat+'">'+st+'<u>일</u></span><span class="k">연속 달성</span></div>'+
+      '<div class="cell"><span class="v">'+t.doneDays+'<u>/'+t.total+'</u></span><span class="k">해낸 날</span></div>'+
+      '<div class="cell"><span class="v">'+t.touches.toLocaleString("ko-KR")+'</span><span class="k">푼 장수</span></div>';
+  }
+
+  function missionRow(d,m,on){
+    var key="m:"+d+":"+m.id;
+    return '<button class="mission'+(on?" on":"")+'" data-mission="'+m.id+'" data-date="'+d+'">'+
+      '<span class="tick">'+icon(m.op==="plus"?"plusOp":m.op)+'</span>'+
+      '<span class="m-body"><span class="m-name">'+m.name+'</span>'+
+      '<span class="m-sub">'+m.sub+'</span></span>'+
+      '<span class="m-st">'+(on?sticker(m.st,pop===key):"")+'</span>'+
+      '<span class="m-count">'+m.count+'<u>'+(m.unit||"개")+'</u></span></button>';
+  }
+
+  function todoList(d){
+    var list=todosFor(d);
+    if(!list.length) return '<div class="empty">추가한 할 일이 없어요.</div>';
+    return list.map(function(t){
+      var late=0;
+      if(t.origDate&&!t.done) late=Math.round((parse(t.date)-parse(t.origDate))/86400000);
+      var badge=late>0?'<span class="carry'+(late>=7?" long":"")+'">'+late+'일 이관</span>':"";
+      var key="t:"+t.id;
+      var cnt=t.count
+        ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"회")+'</u></span>'
+        : '';
+      return '<div class="todo'+(t.done?" on":"")+'">'+
+        '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+icon("plusOp")+'</button>'+
+        '<span class="txt">'+esc(t.text)+badge+'</span>'+
+        '<span class="tst">'+(t.done?sticker("smile",pop===key):"")+'</span>'+
+        cnt+
+        '<button class="del" data-del="'+t.id+'" aria-label="삭제">'+icon("close")+'</button>'+
+        '</div>';
+    }).join("");
+  }
+
+
+  /* ---------- 할 일 만들기 폼 ---------- */
+  var composer=null;   /* {date, where, text, count, unit, mode, from, to, dows, err} */
+  var UNITS=["회","개","분"];
+
+  function openComposer(d,where){
+    composer={
+      date:d, where:where, text:"", count:"", unit:"회",
+      mode:"one", from:d, to:clampDate(shift(d,27)),
+      dows:[0,1,2,3,4,5,6], err:""
+    };
+  }
+  function clampDate(d){return d<START?START:(d>END?END:d);}
+
+  function addArea(d,where){
+    var open=composer&&composer.date===d&&composer.where===where;
+    if(!open){
+      return '<button class="addbtn" data-open-compose="'+d+'" data-where="'+where+'">'+
+        icon("plus")+'할 일 추가</button>';
+    }
+    var c=composer;
+    var units=UNITS.map(function(u){
+      return '<button class="chip'+(c.unit===u?" on":"")+'" data-unit="'+u+'">'+u+'</button>';
+    }).join("");
+    var modes='<button class="chip'+(c.mode==="one"?" on":"")+'" data-mode="one">하루만</button>'+
+              '<button class="chip'+(c.mode==="range"?" on":"")+'" data-mode="range">기간 반복</button>';
+
+    var period="";
+    if(c.mode==="range"){
+      var dows=DOW.map(function(name,i){
+        return '<button class="chip'+(i===0?" sun":"")+(c.dows.indexOf(i)>=0?" on":"")+
+          '" data-dow="'+i+'">'+name+'</button>';
+      }).join("");
+      period=
+        '<div class="fld"><span class="lb">기간</span><div class="dates">'+
+          '<input type="date" data-c="from" value="'+c.from+'" min="'+START+'" max="'+END+'" aria-label="시작일">'+
+          '<span class="tilde">~</span>'+
+          '<input type="date" data-c="to" value="'+c.to+'" min="'+START+'" max="'+END+'" aria-label="종료일">'+
+        '</div></div>'+
+        '<div class="fld"><span class="lb">이 요일마다</span>'+
+          '<div class="chips dows">'+dows+'</div></div>'+
+        '<div class="chint">'+previewCount(c)+'</div>';
+    }
+
+    return '<div class="composer">'+
+      '<div class="fld"><span class="lb">할 일</span>'+
+        '<input type="text" data-c="text" value="'+esc(c.text)+'" maxlength="60" '+
+        'placeholder="예: 리프팅" '+INPUT_ATTRS+'></div>'+
+      '<div class="row2">'+
+        '<div class="fld num"><span class="lb">횟수</span>'+
+          '<input type="number" data-c="count" value="'+esc(String(c.count))+'" '+
+          'inputmode="numeric" min="1" max="999" placeholder="20"></div>'+
+        '<div class="fld unit"><span class="lb">단위</span><div class="chips">'+units+'</div></div>'+
+      '</div>'+
+      '<div class="fld"><span class="lb">언제</span><div class="chips">'+modes+'</div></div>'+
+      period+
+      (c.err?'<div class="cerr">'+esc(c.err)+'</div>':'')+
+      '<div class="cacts">'+
+        '<button class="btn" data-compose-cancel>취소</button>'+
+        '<button class="btn primary" data-compose-save>만들기</button>'+
+      '</div></div>';
+  }
+
+  /* 기간·요일을 고르면 몇 개가 만들어지는지 미리 알려준다 */
+  function previewCount(c){
+    var from=c.from,to=c.to;
+    if(!from||!to) return "";
+    if(from>to){var sw=from;from=to;to=sw;}
+    from=clampDate(from); to=clampDate(to);
+    if(!c.dows.length) return "요일을 하나 이상 골라 주세요.";
+    var n=0,d=from,guard=0;
+    while(d<=to&&guard++<400){
+      if(c.dows.indexOf(parse(d).getDay())>=0) n++;
+      d=shift(d,1);
+    }
+    return n?("할 일 "+n+"개가 만들어져요."):"그 기간에는 고른 요일이 없어요.";
+  }
+
+  function renderToday(){
+    var d=CUR,complete=isComplete(d);
+    var badge=complete
+      ? '<div class="badge'+(pop==="day:"+d?" pop":"")+'">'+sticker(daySticker(d))+'완료!</div>'
+      : '';
+    var html='<div class="today-head"><div>'+
+      '<div class="eyebrow">오늘의 공부</div>'+
+      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+badge+'</div>';
+    MISSIONS.forEach(function(m){html+=missionRow(d,m,!!doneOf(d)[m.id]);});
+    html+='<div class="todos"><div class="eyebrow" style="margin-bottom:5px">오늘 할 일</div>'+
+      todoList(d)+addArea(d,"today")+'</div>';
+    if(complete){
+      html+='<div class="cheer">'+sticker("crown")+'<span>'+dayCheer(d)+'</span></div>';
+    }
+    $("todayPanel").innerHTML=html;
+  }
+
+  function renderBacklog(){
+    var missed=missedDays(),wrap=$("backlogWrap");
+    if(!missed.length){wrap.innerHTML="";return;}
+    var show=missed.slice(-5).reverse();
+    var rows=show.map(function(d){
+      var c=countDone(d);
+      return '<div class="bl"><span class="d">'+label(d)+'</span>'+
+        '<span class="w">'+dowOf(d)+'요일 · '+(MISSIONS.length-c)+'개 남음</span>'+
+        '<button class="go" data-open="'+d+'">채우기</button></div>';
+    }).join("");
+    wrap.innerHTML='<div class="backlog"><h2>밀린 공부 '+missed.length+'일</h2>'+
+      '<p>못 한 공부는 사라지지 않아요. 오늘 채우면 그날 스티커를 받을 수 있어요.</p>'+rows+
+      (missed.length>show.length?'<div class="bl-more">그 밖에 '+(missed.length-show.length)+'일 더 — 달력에서 확인</div>':"")+
+      '</div>';
+  }
+
+  var view={y:parse(CUR).getFullYear(),m:parse(CUR).getMonth()};
+
+  function renderCal(){
+    $("calTitle").textContent=view.y+"년 "+(view.m+1)+"월";
+    var first=new Date(view.y,view.m,1);
+    var dim=new Date(view.y,view.m+1,0).getDate();
+    var cells="";
+    for(var i=0;i<first.getDay();i++) cells+='<div class="day pad"></div>';
+    for(var day=1;day<=dim;day++){
+      var key=fmt(new Date(view.y,view.m,day));
+      var cls="day"+(new Date(view.y,view.m,day).getDay()===0?" sun":"");
+      if(!inRange(key)){
+        cells+='<div class="'+cls+' out"><span class="n">'+day+'</span></div>';
+        continue;
+      }
+      var c=countDone(key),full=c===MISSIONS.length;
+      if(full) cls+=" full";
+      else if(c>0) cls+=" part";
+      else if(key<CUR) cls+=" missed";
+      if(key===CUR) cls+=" today";
+      var v=doneOf(key);
+      /* 다 해낸 날엔 막대 대신 스티커가 붙는다 */
+      var mark=full
+        ? '<span class="dst">'+sticker(daySticker(key),pop==="day:"+key)+'</span>'
+        : '<span class="bars">'+MISSIONS.map(function(m){
+            return '<i class="'+(v[m.id]?"on":"")+'"></i>';
+          }).join("")+'</span>';
+      var pending=todosFor(key).some(function(t){return !t.done;});
+      cells+='<button class="'+cls+'" data-open="'+key+'">'+
+        (pending?'<span class="dot"></span>':"")+
+        '<span class="n">'+day+'</span>'+mark+'</button>';
+    }
+    $("grid").innerHTML=cells;
+    $("prev").disabled=fmt(new Date(view.y,view.m,1))<=START;
+    $("next").disabled=fmt(new Date(view.y,view.m,dim))>=END;
+  }
+
+  function renderLegend(){
+    $("legend").innerHTML=
+      '<span>'+sticker("star")+'다 함</span>'+
+      '<span><i style="background:var(--amber)"></i>1개만</span>'+
+      '<span><i style="background:var(--line)"></i>안 함</span>'+
+      '<span>위 = 양발 · 아래 = 발바닥</span>';
+  }
+
+  function renderAll(){
+    renderBoard(); renderToday(); renderBacklog(); renderCal();
+    if(booted){renderKeep(); renderInstall(); renderCarry();}
+    if(sheetDate) renderSheet(sheetDate);
+    pop=null;   /* 스티커 등장 애니메이션은 한 번만 */
+  }
+
+  /* ---------- 시트 ---------- */
+  var sheetDate=null;
+
+  function renderSheet(d){
+    var complete=isComplete(d);
+    var when=d===CUR?" · 오늘":(d<CUR?" · 지난 날":" · 앞으로");
+    var badge=complete
+      ? '<div class="badge'+(pop==="day:"+d?" pop":"")+'">'+sticker(daySticker(d))+'완료!</div>'
+      : '<button class="close" id="sheetClose" aria-label="닫기">'+icon("close")+'</button>';
+    var html='<div class="handle"></div><div class="sheet-head"><div>'+
+      '<div class="sheet-date">'+parse(d).getFullYear()+'년 '+label(d)+'</div>'+
+      '<div class="sheet-sub">'+dowOf(d)+'요일'+when+'</div></div>'+badge+'</div>';
+    MISSIONS.forEach(function(m){html+=missionRow(d,m,!!doneOf(d)[m.id]);});
+    html+='<div class="todos"><div class="eyebrow" style="margin-bottom:5px">이날 할 일</div>'+
+      todoList(d)+addArea(d,"sheet")+'</div>';
+    if(complete){
+      html+='<div class="cheer">'+sticker("crown")+'<span>'+dayCheer(d)+'</span></div>';
+    }else if(d<CUR){
+      html+='<div class="note">지난 날의 못 한 할 일은 다음에 열 때 오늘로 이관돼요. '+
+        '오늘의 공부는 여기서 바로 채우면 스티커가 붙어요.</div>';
+    }
+    $("sheet").innerHTML=html;
+  }
+
+  /* 배경 스크롤 잠금 — iOS 는 overflow:hidden 만으로는 막히지 않아
+     스크롤 위치를 기억했다가 position:fixed 로 고정하고 되돌린다. */
+  var lockY=0, locked=false;
+  function lockScroll(){
+    if(locked) return;
+    lockY=window.pageYOffset||document.documentElement.scrollTop||0;
+    document.body.style.top=(-lockY)+"px";
+    document.body.classList.add("locked");
+    locked=true;
+  }
+  function unlockScroll(){
+    if(!locked) return;
+    document.body.classList.remove("locked");
+    document.body.style.top="";
+    locked=false;
+    window.scrollTo(0,lockY);
+  }
+
+  function openSheet(d){
+    sheetDate=d; renderSheet(d); pop=null;
+    var s=$("sheet");
+    s.style.transform="";
+    s.classList.remove("dragging");
+    s.scrollTop=0;
+    lockScroll();
+    s.classList.add("open");
+    $("backdrop").classList.add("open");
+  }
+  function closeSheet(){
+    if(!sheetDate) return;
+    sheetDate=null;
+    var s=$("sheet");
+    s.classList.remove("dragging");
+    s.style.transform="";
+    s.classList.remove("open");
+    $("backdrop").classList.remove("open");
+    unlockScroll();
+  }
+
+  /* ---------- 기록 보관 · 앱 설치 ---------- */
+
+  function isStandalone(){
+    return (window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||
+      window.navigator.standalone===true;
+  }
+  function isIOS(){
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)||
+      (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  }
+  function hidden(name){
+    try{return (readKey(HIDE)||"").indexOf(name)>=0;}catch(e){return false;}
+  }
+  function hide(name){
+    var v=readKey(HIDE)||"";
+    if(v.indexOf(name)<0) writeKey(HIDE,v+" "+name);
+  }
+
+  /* 알림 한 줄 */
+  var toastTimer=null;
+  function toast(msg){
+    var el=$("toast");
+    el.textContent=msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){el.classList.remove("show");},3400);
+  }
+
+  /* 브라우저가 저장 공간을 함부로 비우지 못하게 요청 */
+  var persisted=null;
+  function checkPersist(){
+    if(!navigator.storage||!navigator.storage.persisted) return;
+    navigator.storage.persisted().then(function(p){
+      persisted=p;
+      if(booted) renderKeep();
+    }).catch(function(){});
+  }
+  var askedPersist=false;
+  function askPersist(){
+    if(askedPersist||!navigator.storage||!navigator.storage.persist) return;
+    askedPersist=true;
+    navigator.storage.persist().then(function(p){
+      persisted=p;
+      if(booted) renderKeep();
+    }).catch(function(){});
+  }
+
+  function whenLabel(iso){
+    if(!iso) return null;
+    var d=new Date(iso);
+    if(isNaN(d)) return null;
+    var days=Math.floor((parse(fmt(new Date()))-parse(fmt(d)))/86400000);
+    var t=(d.getMonth()+1)+"월 "+d.getDate()+"일";
+    if(days===0) return "오늘 "+d.getHours()+":"+(d.getMinutes()<10?"0":"")+d.getMinutes();
+    if(days===1) return "어제";
+    return t+" ("+days+"일 전)";
+  }
+
+  /* --- 백업 파일 내보내기 ---
+     두 앱은 같은 주소(아이디.github.io)를 쓰므로 저장 공간을 공유한다.
+     그래서 백업 한 파일에 '도아 셈'과 '도아 킥' 기록을 함께 담는다.
+     어느 앱에서 내보내도, 어느 앱에서 불러와도 둘 다 복구된다. */
+  function exportData(){
+    var apps={};
+    apps[KEY]={done:state.done,todos:state.todos,seed:true};
+    try{
+      var raw=localStorage.getItem(OTHER_KEY);
+      if(raw){
+        var o=JSON.parse(raw);
+        if(o&&o.done) apps[OTHER_KEY]={done:o.done,todos:o.todos||[],seed:true};
+      }
+    }catch(e){}
+
+    var payload={
+      app:"doa-apps", v:3,
+      exportedAt:new Date().toISOString(),
+      from:"도아 셈",
+      apps:apps
+    };
+    var text=JSON.stringify(payload,null,2);
+    var name="도아기록-백업-"+fmt(new Date())+".json";
+    state.backupAt=new Date().toISOString();
+    save();
+
+    /* iOS 는 다운로드보다 공유 시트가 확실하다 — 파일 공유를 먼저 시도 */
+    try{
+      if(window.File&&navigator.canShare){
+        var file=new File([text],name,{type:"application/json"});
+        if(navigator.canShare({files:[file]})){
+          navigator.share({files:[file],title:name})
+            .then(function(){toast("두 앱 기록을 한 파일로 저장했어요.");})
+            .catch(function(){});
+          return;
+        }
+      }
+    }catch(e){}
+
+    var blob=new Blob([text],{type:"application/json"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url; a.download=name; a.rel="noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},2000);
+    toast("두 앱 기록을 한 파일로 저장했어요.");
+  }
+
+  /* --- 백업 파일 불러오기 (합치기 — 기존 기록을 지우지 않는다) --- */
+  function importData(text){
+    var raw;
+    try{raw=JSON.parse(text);}catch(e){raw=null;}
+    if(!raw){toast("백업 파일을 읽지 못했어요. 다른 파일인지 확인해 주세요.");return;}
+
+    /* 옛 형식(한 앱짜리)도 그대로 받아 준다 */
+    var apps=(raw.apps&&typeof raw.apps==="object")?raw.apps:null;
+    if(!apps){ apps={}; apps[KEY]=raw; }
+
+    /* 1) 다른 앱 기록은 저장소에 그대로 합쳐 둔다 — 그 앱을 열면 보인다 */
+    var otherAdded=0;
+    if(apps[OTHER_KEY]){
+      try{
+        var cur={done:{},todos:[]};
+        var prev=localStorage.getItem(OTHER_KEY);
+        if(prev){var pj=JSON.parse(prev); if(pj&&pj.done) cur=pj;}
+        var inc2=apps[OTHER_KEY];
+        Object.keys(inc2.done||{}).forEach(function(d){
+          var box=cur.done[d]||(cur.done[d]={});
+          Object.keys(inc2.done[d]).forEach(function(k){
+            if(inc2.done[d][k]&&!box[k]){box[k]=true;otherAdded++;}
+          });
+        });
+        var seen={};
+        (cur.todos||[]).forEach(function(t){seen[t.id]=1;});
+        (inc2.todos||[]).forEach(function(t){
+          if(t&&t.id&&!seen[t.id]){cur.todos.push(t);otherAdded++;}
+        });
+        cur.seed=true; cur.v=DATA_V;
+        localStorage.setItem(OTHER_KEY, JSON.stringify(cur));
+      }catch(e){}
+    }
+
+    /* 2) 이 앱 기록 합치기 */
+    var inc=normalize(apps[KEY]);
+    var addedDays=0,addedTodos=0;
+    if(inc){
+      Object.keys(inc.done).forEach(function(d){
+        var src=inc.done[d];
+        if(!src||typeof src!=="object") return;
+        var box=state.done[d]||(state.done[d]={});
+        var before=Object.keys(box).length;
+        MISSIONS.forEach(function(m){if(src[m.id]) box[m.id]=true;});
+        if(Object.keys(box).length>before) addedDays++;
+      });
+      var have={};
+      state.todos.forEach(function(t){have[t.id]=t;});
+      inc.todos.forEach(function(t){
+        if(!t||!t.id||!t.date) return;
+        if(have[t.id]){ if(t.done&&!have[t.id].done) have[t.id].done=true; }
+        else{ state.todos.push(t); addedTodos++; }
+      });
+    }
+
+    state.seed=true;
+    save();
+    rollover();
+    lastStreak=null;
+    renderAll();
+    lastStreak=streak();
+
+    var msg=(addedDays||addedTodos)
+      ? "기록을 합쳤어요 — "+addedDays+"일, 할 일 "+addedTodos+"개 추가"
+      : "이 앱에는 새로 들어올 기록이 없었어요.";
+    if(otherAdded) msg+=" · 도아 킥 기록도 함께 복구했어요.";
+    toast(msg);
+  }
+
+  function pickFile(){
+    var input=$("importFile");
+    input.value="";
+    input.click();
+  }
+  $("importFile").addEventListener("change",function(){
+    var f=this.files&&this.files[0];
+    if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){importData(String(r.result));};
+    r.onerror=function(){toast("파일을 여는 데 실패했어요.");};
+    r.readAsText(f);
+  });
+
+  function renderKeep(){
+    var days=Object.keys(state.done).filter(function(k){return countDone(k)>0;}).length;
+    var openTodos=state.todos.filter(function(t){return !t.done&&!t.del;}).length;
+
+    var status;
+    if(!canStore){
+      status='<div class="status"><span class="warn">이 브라우저에서는 저장이 막혀 있어요.</span> '+
+        '지금 기록은 앱을 닫으면 사라져요. 아래에서 백업 파일로 내보내 두세요.</div>';
+    }else{
+      status='<div class="status">이 기기에 <b>자동 저장</b> 중'+
+        (persisted===true?' · 브라우저가 함부로 지우지 않도록 보호돼 있어요':'')+'.</div>';
+    }
+
+    var bak=whenLabel(state.backupAt);
+    /* 저장소는 주소 단위로 나뉜다. 주소가 바뀌면 기록이 사라진 것처럼 보이므로
+       어느 주소에 저장돼 있는지 늘 보여 준다. */
+    var host="";
+    try{host=location.hostname+location.pathname.replace(/index\.html$/,"");}catch(e){}
+    var stale=!state.backupAt||
+      (parse(fmt(new Date()))-parse(fmt(new Date(state.backupAt))))/86400000>14;
+
+    var meta='<div class="meta">'+
+      '기록한 날 '+days+'일 · 남은 할 일 '+openTodos+'개'+
+      (state.savedAt?' · 마지막 저장 '+whenLabel(state.savedAt):'')+'<br>'+
+      '<span'+(stale?' class="warn"':'')+'>마지막 백업 '+
+        (bak?bak:'없음')+(stale?' — 백업해 두세요':'')+'</span>'+
+      (host?'<br>저장 위치 <b>'+esc(host)+'</b>':'')+
+      '</div>';
+
+    $("keepPanel").innerHTML=
+      '<h2>기록 보관</h2>'+status+meta+
+      '<div class="acts">'+
+        '<button class="btn primary" id="doExport">'+icon("down")+'백업 파일 저장</button>'+
+        '<button class="btn" id="doImport">'+icon("up")+'백업 불러오기</button>'+
+      '</div>'+
+      syncBox();
+  }
+
+  /* --- 함께 보기 칸 --- */
+  var syncForm=false, syncMsg="";
+
+  function prefillDb(){
+    var o=otherSync();
+    return o?o.db:"";
+  }
+
+  function syncBox(){
+    if(!sync){
+      if(!syncForm){
+        return '<div class="syncbox"><h3>함께 보기</h3>'+
+          '<p>다른 사람 폰에서도 같은 기록을 보고 체크하게 만들 수 있어요. '+
+          '한 번만 설정하면 링크를 보내는 것으로 끝나요.</p>'+
+          '<div class="acts"><button class="btn" id="syncStart">'+icon("link")+'함께 보기 설정</button></div></div>';
+      }
+      return '<div class="syncbox"><h3>함께 보기 설정</h3>'+
+        (prefillDb()
+          ? '<p>다른 앱에서 쓰던 주소를 채워 뒀어요. <b>연결</b>만 누르면 두 앱이 같은 곳을 보게 돼요.</p>'
+          : '<p>Firebase 실시간 데이터베이스 주소를 붙여넣어 주세요. '+
+            '<b>https://</b> 로 시작하고 <b>firebasedatabase.app</b> 으로 끝나는 주소예요.</p>')+
+        '<div class="fld"><input type="text" id="syncUrlIn" value="'+esc(prefillDb())+'" '+
+        'placeholder="https://....firebasedatabase.app" '+
+        'inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'+
+        (syncMsg?'<div class="cerr">'+esc(syncMsg)+'</div>':'')+
+        '<div class="acts">'+
+          '<button class="btn" id="syncCancel">취소</button>'+
+          '<button class="btn primary" id="syncSave">연결</button>'+
+        '</div></div>';
+    }
+
+    var st = syncErr ? '<span class="warn">연결이 안 돼요 — 인터넷을 확인해 주세요</span>'
+           : syncing ? '주고받는 중…'
+           : (syncAt ? '마지막 동기화 '+whenLabel(new Date(syncAt).toISOString()) : '연결됨');
+    return '<div class="syncbox on"><h3>함께 보기 켜짐</h3>'+
+      '<p class="sst">'+st+'</p>'+
+      '<p>아래 버튼으로 링크를 보내면, 받은 사람도 같은 기록을 보고 체크할 수 있어요.</p>'+
+      '<div class="acts">'+
+        '<button class="btn primary" id="syncShare">'+icon("link")+'링크 보내기</button>'+
+        '<button class="btn" id="syncOff">연결 끊기</button>'+
+      '</div></div>';
+  }
+
+  /* --- 홈 화면에 추가 --- */
+  var installPrompt=null;
+  window.addEventListener("beforeinstallprompt",function(e){
+    e.preventDefault();
+    installPrompt=e;
+    renderInstall();
+  });
+  window.addEventListener("appinstalled",function(){
+    installPrompt=null;
+    renderInstall();
+    toast("홈 화면에 추가했어요. 이제 아이콘으로 바로 열 수 있어요.");
+  });
+
+  function renderInstall(){
+    var wrap=$("installWrap");
+    if(isStandalone()||hidden("install")){wrap.innerHTML="";return;}
+
+    if(installPrompt){
+      wrap.innerHTML='<div class="install"><h2>홈 화면에 추가하기</h2>'+
+        '<p>바탕화면 아이콘으로 바로 열 수 있어요. 주소창 없이 앱처럼 뜨고, 인터넷이 없어도 열려요.</p>'+
+        '<div class="acts"><button class="btn primary" id="doInstall">'+icon("plus")+'홈 화면에 추가</button>'+
+        '<button class="btn dismiss" id="noInstall">나중에</button></div></div>';
+      return;
+    }
+    if(isIOS()){
+      wrap.innerHTML='<div class="install"><h2>홈 화면에 추가하기</h2>'+
+        '<p>사파리에서 두 번만 누르면 바탕화면 아이콘이 생겨요.</p>'+
+        '<div class="steps">아래 <span class="key">공유</span> 버튼 → '+
+        '<span class="key">홈 화면에 추가</span> → <span class="key">추가</span></div>'+
+        '<div class="acts"><button class="btn dismiss" id="noInstall">알겠어요</button></div></div>';
+      return;
+    }
+    wrap.innerHTML="";
+  }
+
+  function renderCarry(){
+    var wrap=$("carryWrap");
+    /* 홈 화면 앱은 브라우저와 저장 공간이 따로다 —
+       설치 직후 기록이 비어 있으면 옮겨오는 길을 알려준다 */
+    var fresh=!state.savedAt&&!state.todos.length;
+    if(!isStandalone()||!fresh||hidden("carry")){wrap.innerHTML="";return;}
+    wrap.innerHTML='<div class="carryover"><h2>브라우저에서 쓰던 기록 옮기기</h2>'+
+      '<p>홈 화면 앱은 브라우저와 저장 공간이 따로예요. '+
+      '브라우저에서 <b>백업 파일 저장</b>을 누른 뒤, 여기서 불러오면 그대로 이어집니다.</p>'+
+      '<div class="acts"><button class="btn primary" id="doImport2">'+icon("up")+'백업 불러오기</button>'+
+      '<button class="btn dismiss" id="noCarry">기록 없어요</button></div></div>';
+  }
+
+  /* --- 서비스 워커 — 인터넷 없이도 앱이 열리게 --- */
+  if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){
+    window.addEventListener("load",function(){
+      navigator.serviceWorker.register("./sw.js").then(function(reg){
+        reg.addEventListener("updatefound",function(){
+          var nw=reg.installing;
+          if(!nw) return;
+          nw.addEventListener("statechange",function(){
+            if(nw.state==="installed"&&navigator.serviceWorker.controller)
+              toast("새 버전이 준비됐어요. 앱을 껐다 켜면 적용돼요.");
+          });
+        });
+      }).catch(function(){});
+    });
+  }
+
+  /* 제목 옆 공을 한 번 찬다 — 애니메이션을 다시 걸려면 클래스를 떼었다 붙인다 */
+  function kickBall(){
+    var b=$("kick");
+    if(!b) return;
+    b.classList.remove("go");
+    void b.offsetWidth;
+    b.classList.add("go");
+  }
+
+
+  /* ---------- 함께 보기 (Firebase 실시간 데이터베이스) ----------
+     서버를 사지 않고 여러 사람이 같은 기록을 보게 하는 부분.
+     SDK 없이 REST 만 쓴다. 연결이 없으면 조용히 실패하고 앱은 그대로 돈다. */
+
+  var SYNC_KEY=KEY+":sync";
+  var sync=null;          /* {db:"https://...firebaseio.com", room:"..."} */
+  var syncAt=null, syncing=false, syncErr=false, pushTimer=null, pollTimer=null;
+
+  function loadSync(){
+    try{
+      var raw=readKey(SYNC_KEY);
+      if(raw){var o=JSON.parse(raw); if(o&&o.db&&o.room) sync=o;}
+    }catch(e){}
+  }
+  function saveSync(){
+    if(sync) writeKey(SYNC_KEY,JSON.stringify(sync));
+    else{ try{localStorage.removeItem(SYNC_KEY);}catch(e){} }
+  }
+  /* 같은 폰의 다른 앱이 이미 연결돼 있으면 그 설정을 물려받는다 —
+     주소를 두 번 붙여넣지 않아도 되고, 두 앱이 같은 방을 쓰게 된다. */
+  function otherSync(){
+    try{
+      var raw=localStorage.getItem(OTHER_KEY+":sync");
+      if(raw){var o=JSON.parse(raw); if(o&&o.db&&o.room) return o;}
+    }catch(e){}
+    return null;
+  }
+  function roomId(){
+    return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+  }
+  function syncUrl(){
+    var db=sync.db.replace(/\/+$/,"");
+    return db+"/"+encodeURIComponent(sync.room)+"/"+encodeURIComponent(KEY)+".json";
+  }
+
+  /* 공유 링크 — 주소 뒤에 설정을 실어 보낸다 */
+  function shareLink(){
+    var raw=sync.db+"|"+sync.room;
+    var tag=btoa(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    return location.origin+location.pathname.replace(/index\.html$/,"")+"#s="+tag;
+  }
+  function readLinkConfig(){
+    var m=(location.hash||"").match(/[#&]s=([^&]+)/);
+    if(!m) return false;
+    try{
+      var t=m[1].replace(/-/g,"+").replace(/_/g,"/");
+      while(t.length%4) t+="=";
+      var parts=atob(t).split("|");
+      if(parts.length===2&&/^https:\/\//.test(parts[0])){
+        sync={db:parts[0],room:parts[1]};
+        saveSync();
+        try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+  /* --- 합치기 --- */
+  function mergeRemote(rem){
+    if(!rem||typeof rem!=="object") return false;
+    var changed=false;
+    var rd=rem.done||{}, rm=rem.dmeta||{};
+
+    Object.keys(rd).forEach(function(d){
+      var mine=state.dmeta[d]||0, theirs=rm[d]||0;
+      if(theirs>mine){
+        state.done[d]=rd[d]; state.dmeta[d]=theirs; changed=true;
+      }
+    });
+    /* 상대가 하루를 통째로 지운 경우 */
+    Object.keys(rm).forEach(function(d){
+      if(rd[d]) return;
+      if((rm[d]||0)>(state.dmeta[d]||0)&&state.done[d]){
+        delete state.done[d]; state.dmeta[d]=rm[d]; changed=true;
+      }
+    });
+
+    var byId={};
+    state.todos.forEach(function(t){byId[t.id]=t;});
+    (rem.todos||[]).forEach(function(t){
+      if(!t||!t.id) return;
+      var mine=byId[t.id];
+      if(!mine){ state.todos.push(t); changed=true; }
+      else if((t.u||0)>(mine.u||0)){
+        for(var k in t) mine[k]=t[k];
+        changed=true;
+      }
+    });
+    return changed;
+  }
+
+  function payload(){
+    return {done:state.done,dmeta:state.dmeta,todos:state.todos,at:Date.now()};
+  }
+
+  function pull(then){
+    if(!sync) return;
+    syncing=true; if(booted) renderKeep();
+    fetch(syncUrl(),{cache:"no-store"}).then(function(r){
+      if(!r.ok) throw new Error("bad");
+      return r.json();
+    }).then(function(rem){
+      syncErr=false; syncing=false; syncAt=Date.now();
+      var changed=rem?mergeRemote(rem):false;
+      if(changed){
+        save();
+        rollover();
+        lastStreak=null; renderAll(); lastStreak=streak();
+      }else if(booted) renderKeep();
+      if(then) then(!rem);
+    }).catch(function(){
+      syncErr=true; syncing=false;
+      if(booted) renderKeep();
+    });
+  }
+
+  function pushNow(){
+    if(!sync) return;
+    fetch(syncUrl(),{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload())
+    }).then(function(r){
+      syncErr=!r.ok; if(r.ok) syncAt=Date.now();
+      if(booted) renderKeep();
+    }).catch(function(){
+      syncErr=true; if(booted) renderKeep();
+    });
+  }
+
+  /* 연달아 체크할 때 매번 보내지 않도록 잠깐 모아서 보낸다 */
+  function schedulePush(){
+    if(!sync) return;
+    clearTimeout(pushTimer);
+    pushTimer=setTimeout(pushNow,1200);
+  }
+
+  function startPolling(){
+    clearInterval(pollTimer);
+    if(!sync) return;
+    /* 화면을 보고 있을 때만 주기적으로 상대 변경을 받아온다 */
+    pollTimer=setInterval(function(){
+      if(!document.hidden) pull();
+    },20000);
+  }
+
+  function connectSync(dbUrl,room){
+    dbUrl=(dbUrl||"").trim().replace(/\/+$/,"");
+    if(!/^https:\/\/[\w.-]+\.(firebaseio\.com|firebasedatabase\.app)$/.test(dbUrl)){
+      return "주소가 올바르지 않아요. https:// 로 시작하는 데이터베이스 주소를 붙여넣어 주세요.";
+    }
+    var mate=otherSync();
+    sync={db:dbUrl,room:room||(mate&&mate.db===dbUrl?mate.room:roomId())};
+    saveSync();
+    /* 처음 연결이면 지금 기록을 올리고, 이미 있으면 받아서 합친다 */
+    pull(function(empty){ if(empty) pushNow(); else schedulePush(); });
+    startPolling();
+    return null;
+  }
+  function disconnectSync(){
+    sync=null; saveSync(); syncAt=null; syncErr=false;
+    clearInterval(pollTimer); clearTimeout(pushTimer);
+    renderKeep();
+  }
+
+  /* ---------- 이벤트 ---------- */
+
+  /* closest() 는 일부 구형 안드로이드 웹뷰에서 SVG 요소에 없다.
+     텍스트 노드가 타깃이 되는 경우도 있어 직접 거슬러 올라간다. */
+  function up(node,sel){
+    var el=node;
+    if(el&&el.nodeType!==1) el=el.parentElement;
+    while(el){
+      if(el.matches?el.matches(sel):(el.msMatchesSelector&&el.msMatchesSelector(sel))) return el;
+      el=el.parentElement;
+    }
+    return null;
+  }
+
+  document.addEventListener("click",function(e){
+    var el;
+    askPersist();   /* 첫 조작 때 저장 공간 보호를 요청한다 */
+
+    /* 할 일 만들기 폼 */
+    if((el=up(e.target,"[data-open-compose]"))){
+      openComposer(el.getAttribute("data-open-compose"),el.getAttribute("data-where"));
+      renderAll();return;
+    }
+    if(composer){
+      if((el=up(e.target,"[data-unit]"))){composer.unit=el.getAttribute("data-unit");renderAll();return;}
+      if((el=up(e.target,"[data-mode]"))){composer.mode=el.getAttribute("data-mode");composer.err="";renderAll();return;}
+      if((el=up(e.target,"[data-dow]"))){
+        var w=parseInt(el.getAttribute("data-dow"),10);
+        var i=composer.dows.indexOf(w);
+        if(i>=0) composer.dows.splice(i,1); else composer.dows.push(w);
+        composer.err="";renderAll();return;
+      }
+      if(up(e.target,"[data-compose-cancel]")){composer=null;renderAll();return;}
+      if(up(e.target,"[data-compose-save]")){
+        var r=createTodos(composer);
+        if(r.err){composer.err=r.err;renderAll();return;}
+        composer=null;
+        rollover();
+        renderAll();
+        toast(r.n>1?("할 일 "+r.n+"개를 만들었어요."):"할 일을 추가했어요.");
+        return;
+      }
+    }
+
+    /* 함께 보기 */
+    if(up(e.target,"#syncStart")){syncForm=true;syncMsg="";renderKeep();return;}
+    if(up(e.target,"#syncCancel")){syncForm=false;syncMsg="";renderKeep();return;}
+    if(up(e.target,"#syncSave")){
+      var box=$("syncUrlIn");
+      var err=connectSync(box?box.value:"");
+      if(err){syncMsg=err;renderKeep();return;}
+      syncForm=false;syncMsg="";renderKeep();
+      toast("함께 보기를 켰어요. 링크를 보내면 같이 볼 수 있어요.");
+      return;
+    }
+    if(up(e.target,"#syncShare")){
+      var link=shareLink();
+      if(navigator.share){navigator.share({title:document.title,url:link}).catch(function(){});}
+      else if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){toast("링크를 복사했어요.");});}
+      else toast(link);
+      return;
+    }
+    if(up(e.target,"#syncOff")){disconnectSync();toast("함께 보기를 껐어요. 기록은 이 폰에 그대로 있어요.");return;}
+
+    if(up(e.target,"#doExport")){exportData();return;}
+    if(up(e.target,"#doImport")||up(e.target,"#doImport2")){pickFile();return;}
+    if(up(e.target,"#doInstall")){
+      if(!installPrompt) return;
+      var p=installPrompt; installPrompt=null;
+      p.prompt();
+      p.userChoice.then(function(){renderInstall();}).catch(function(){});
+      return;
+    }
+    if(up(e.target,"#noInstall")){hide("install");renderInstall();return;}
+    if(up(e.target,"#noCarry")){hide("carry");renderCarry();return;}
+
+    if(up(e.target,"#sheetClose")||e.target.id==="backdrop"){closeSheet();return;}
+    if(up(e.target,"#kick")){kickBall();return;}
+    if((el=up(e.target,"[data-mission]"))){
+      var d=el.getAttribute("data-date"), id=el.getAttribute("data-mission");
+      var wasComplete=isComplete(d);
+      toggleMission(d,id);
+      /* 방금 켜진 것만 튀어오른다 — 하루를 다 채웠으면 그날 스티커가 주인공 */
+      if(doneOf(d)[id]){
+        pop=isComplete(d)&&!wasComplete?("day:"+d):("m:"+d+":"+id);
+        kickBall();          /* 하나 해낼 때마다 제목의 공이 날아간다 */
+      }
+      renderAll();
+      return;
+    }
+    if((el=up(e.target,"[data-todo]"))){
+      var tid=el.getAttribute("data-todo");
+      toggleTodo(tid);
+      if((state.todos.filter(function(t){return t.id===tid&&t.done;})).length) kickBall();
+      var t=state.todos.filter(function(x){return x.id===tid;})[0];
+      if(t&&t.done) pop="t:"+tid;
+      renderAll(); return;
+    }
+    if((el=up(e.target,"[data-del]"))){delTodo(el.getAttribute("data-del"));renderAll();return;}
+    if((el=up(e.target,"[data-open]"))){openSheet(el.getAttribute("data-open"));return;}
+    if((el=up(e.target,"#prev"))&&!el.disabled){
+      if(view.m===0){view.y--;view.m=11;}else view.m--;
+      renderCal(); return;
+    }
+    if((el=up(e.target,"#next"))&&!el.disabled){
+      if(view.m===11){view.y++;view.m=0;}else view.m++;
+      renderCal(); return;
+    }
+  });
+
+  /* 작성 폼의 글자·숫자·날짜는 입력할 때마다 상태에만 담는다.
+     화면을 다시 그리지 않으므로 키보드가 닫히거나 커서가 튀지 않는다. */
+  function bindField(e){
+    var el=up(e.target,"[data-c]");
+    if(!el||!composer) return false;
+    var k=el.getAttribute("data-c");
+    composer[k]=el.value;
+    composer.err="";
+    if(k==="from"||k==="to"){
+      var hint=up(el,".composer").querySelector(".chint");
+      if(hint) hint.textContent=previewCount(composer);
+    }
+    return true;
+  }
+  document.addEventListener("input",bindField);
+  document.addEventListener("change",bindField);
+
+  /* 키보드가 올라올 때 입력창이 가려지지 않게 */
+  document.addEventListener("focusin",function(e){
+    var input=up(e.target,'.composer input');
+    if(!input) return;
+    setTimeout(function(){
+      try{input.scrollIntoView({block:"center",behavior:"smooth"});}catch(err){}
+    },280);
+  });
+
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"&&sheetDate) closeSheet();
+  });
+
+  /* 시트를 아래로 밀어 닫기 — 모바일에서 손잡이는 이 동작을 약속한다 */
+  (function(){
+    var sheet=$("sheet"),startY=0,dy=0,dragging=false,fromHandle=false;
+    sheet.addEventListener("touchstart",function(e){
+      if(e.touches.length!==1||up(e.target,"input,button")) return;
+      fromHandle=!!up(e.target,".handle");
+      if(!fromHandle&&sheet.scrollTop>0) return;
+      startY=e.touches[0].clientY;dy=0;dragging=true;
+      sheet.classList.add("dragging");
+    },{passive:true});
+    sheet.addEventListener("touchmove",function(e){
+      if(!dragging) return;
+      dy=e.touches[0].clientY-startY;
+      if(dy<0){                       /* 위로 올리면 내용 스크롤에 양보 */
+        dragging=false;sheet.classList.remove("dragging");sheet.style.transform="";return;
+      }
+      if(e.cancelable) e.preventDefault();
+      sheet.style.transform="translateY("+dy+"px)";
+    },{passive:false});
+    function end(){
+      if(!dragging) return;
+      dragging=false;
+      sheet.classList.remove("dragging");
+      sheet.style.transform="";
+      if(dy>90) closeSheet();
+    }
+    sheet.addEventListener("touchend",end);
+    sheet.addEventListener("touchcancel",end);
+  })();
+
+  /* 화면 키보드가 올라오면 시트를 그만큼 위로 올린다 */
+  if(window.visualViewport){
+    var vv=window.visualViewport;
+    var applyKb=function(){
+      var kb=window.innerHeight-vv.height-vv.offsetTop;
+      document.documentElement.style.setProperty("--kb",(kb>60?Math.round(kb):0)+"px");
+    };
+    vv.addEventListener("resize",applyKb);
+    vv.addEventListener("scroll",applyKb);
+  }
+
+  /* 폰에서는 앱을 켜둔 채 며칠이 지나기도 한다 — 돌아올 때 날짜를 다시 잡는다 */
+  function refreshDay(){
+    var t=fmt(new Date());
+    if(t===TODAY) return;
+    TODAY=t;
+    CUR=TODAY<START?START:(TODAY>END?END:TODAY);
+    view.y=parse(CUR).getFullYear();view.m=parse(CUR).getMonth();
+    rollover();
+    lastStreak=null;
+    renderAll();
+    lastStreak=streak();
+  }
+  document.addEventListener("visibilitychange",function(){
+    if(document.hidden) return;
+    refreshDay();
+    if(sync) pull();   /* 돌아오면 그동안 상대가 바꾼 걸 받아온다 */
+  });
+  window.addEventListener("pageshow",refreshDay);
+
+  $("prev").innerHTML=icon("left");
+  $("next").innerHTML=icon("right");
+  renderLegend();
+  rollover();
+  booted=true;
+  checkPersist();
+  readLinkConfig();   /* 공유 링크로 열었으면 설정을 받아 둔다 */
+  loadSync();
+  if(sync){ pull(); startPolling(); }
+  renderAll();
+  lastStreak=streak();
+
+  setTimeout(kickBall,420);   /* 앱을 열면 공이 한 번 굴러 인사한다 */
+
+  if(restored) toast("기록이 손상돼 있어 직전 안전본으로 되살렸어요.");
+})();
+</script>
+</body>
+</html>

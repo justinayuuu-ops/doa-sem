@@ -1,0 +1,9 @@
+카카오 작은글씨 (Kakao Small Sans) — Version 2.003
+Copyright Kakao Corp. https://www.kakaocorp.com
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+전문: https://openfontlicense.org
+
+이 앱에는 KakaoSmallSans-Regular.woff2 와 KakaoSmallSans-Bold.woff2 가
+원본 그대로 포함되어 있습니다. OFL 1.1 에 따라 개인·상업 용도로
+자유롭게 사용·재배포할 수 있으며, 폰트 파일 자체를 판매할 수는 없습니다.
