@@ -929,8 +929,8 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   function createTodos(c){
     var text=(c.text||"").trim();
     if(!text) return {n:0,err:"할 일 이름을 적어 주세요."};
-    var cnt=(c.count||"").trim();
-    if(cnt.length>30) cnt=cnt.slice(0,30);
+    var cnt=parseInt(c.count,10);
+    if(!(cnt>0)) cnt=null;
     var unit=c.unit||"페이지";
 
     if(c.mode!=="range"){
@@ -1159,8 +1159,8 @@ body.locked{position:fixed;left:0;right:0;width:100%;overflow:hidden}
         'placeholder="예: 할 일" '+INPUT_ATTRS+'></div>'+
       '<div class="row2">'+
         '<div class="fld num"><span class="lb">범위</span>'+
-          '<input type="text" data-c="count" value="'+esc(String(c.count))+'" '+
-          'inputmode="text" maxlength="30" placeholder="예: 10~20" '+INPUT_ATTRS+'></div>'+
+          '<input type="number" data-c="count" value="'+esc(String(c.count))+'" '+
+          'inputmode="numeric" min="1" max="999" placeholder="예: 1" '+INPUT_ATTRS+'></div>'+
         '<div class="fld unit"><span class="lb">단위</span><div class="chips">'+units+'</div></div>'+
       '</div>'+
       '<div class="fld"><span class="lb">언제</span><div class="chips">'+modes+'</div></div>'+
