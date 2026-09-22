@@ -359,21 +359,22 @@ header .mark svg{width:100%;height:100%;display:block}
 .empty{font-size:var(--fs-sm);color:var(--ink-3);padding:2px 0}
 
 /* ── 밀린 학습 ──────────────────────────────────────────── */
-.backlog{background:var(--amber-wash);border:2px solid var(--amber);border-radius:var(--r-md);padding:10px 12px 9px}
-.backlog h2{font-size:var(--fs-lg);font-weight:400;color:var(--amber);margin:0 0 1px}
+.backlog{background:var(--pulse-wash);border:2px solid var(--pulse);border-radius:var(--r-md);padding:10px 12px 9px}
+.backlog h2{font-size:var(--fs-lg);font-weight:400;color:var(--pulse-strong);margin:0 0 1px}
 .backlog p{font-size:var(--fs-sm);color:var(--ink-2);margin:0 0 6px}
-.bl{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--line-soft);
+.bl{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--pulse-dim);
   min-height:40px;flex-wrap:wrap}
 .bl .d{flex:none;min-width:72px;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
 .bl .w{flex:1 1 90px;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
 .bl .acts{display:flex;gap:6px;flex:none;margin-left:auto}
+/* 셋 다 같은 무게로 둔다 — 지금 고른 것만 채워서 표시한다 */
 .bl .go{flex:none;font-size:var(--fs-xs);padding:9px 11px;border-radius:999px;
-  color:var(--amber);border:1.5px solid var(--amber);white-space:nowrap}
-/* 이동·스킵은 보조 조작이다 — 채우기보다 한 단 조용하게 */
-.bl .go.sub{color:var(--ink-2);border-color:var(--line)}
+  background:var(--surface-1);
+  color:var(--pulse-strong);border:1.5px solid var(--pulse);white-space:nowrap}
+.bl .go.on{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
 /* 옮길 날 고르기 */
 .mv{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
-  padding:8px 0 3px;border-top:1px dashed var(--line)}
+  padding:8px 0 3px;border-top:1px dashed var(--pulse-dim)}
 .mv input{
   flex:1 1 130px;min-width:0;font-family:inherit;font-size:16px;
   min-height:var(--tap);padding:6px 10px;line-height:1.2;color:var(--ink);
@@ -663,7 +664,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-22g</span>
+    <span class="ver">v2026-09-22h</span>
   </footer>
 </div>
 
@@ -1268,9 +1269,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var row='<div class="bl"><span class="d">'+label(d)+'</span>'+
         '<span class="w">'+dowOf(d)+'요일 · '+left+'개 남음</span>'+
         '<span class="acts">'+
-          '<button class="go" data-open="'+d+'">채우기</button>'+
-          '<button class="go sub" data-move="'+d+'">이동</button>'+
-          '<button class="go sub" data-skip="'+d+'">스킵</button>'+
+          '<button class="go'+(SEL===d&&!(mover&&mover.date===d)?" on":"")+
+            '" data-open="'+d+'">채우기</button>'+
+          '<button class="go'+(mover&&mover.date===d?" on":"")+
+            '" data-move="'+d+'">이동</button>'+
+          '<button class="go" data-skip="'+d+'">스킵</button>'+
         '</span></div>';
       if(mover&&mover.date===d){
         row+='<div class="mv">'+
