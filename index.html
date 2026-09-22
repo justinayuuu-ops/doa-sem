@@ -366,8 +366,30 @@ header .mark svg{width:100%;height:100%;display:block}
   min-height:40px;flex-wrap:wrap}
 .bl .d{flex:none;min-width:72px;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
 .bl .w{flex:1 1 90px;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
-.bl .go{flex:none;font-size:var(--fs-xs);padding:9px 14px;border-radius:999px;
+.bl .acts{display:flex;gap:6px;flex:none;margin-left:auto}
+.bl .go{flex:none;font-size:var(--fs-xs);padding:9px 11px;border-radius:999px;
   color:var(--amber);border:1.5px solid var(--amber);white-space:nowrap}
+/* 이동·스킵은 보조 조작이다 — 채우기보다 한 단 조용하게 */
+.bl .go.sub{color:var(--ink-2);border-color:var(--line)}
+/* 옮길 날 고르기 */
+.mv{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  padding:8px 0 3px;border-top:1px dashed var(--line)}
+.mv input{
+  flex:1 1 130px;min-width:0;font-family:inherit;font-size:16px;
+  min-height:var(--tap);padding:6px 10px;line-height:1.2;color:var(--ink);
+  background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);
+  -webkit-appearance:none;appearance:none;
+}
+.mv input:focus{border-color:var(--pulse-dim);outline:0}
+.mv .btn{flex:0 0 auto;min-height:38px;padding:0 13px}
+.mv .err{flex:1 1 100%;font-size:var(--fs-xs);color:var(--coral);line-height:1.5}
+/* 건너뛴 학습 — 해내지 못한 그대로 두되 밀린 목록에서는 빠진다 */
+.skipchip{
+  display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;
+  font-size:var(--fs-2xs);white-space:nowrap;
+  color:var(--ink-3);background:var(--bg1);
+}
+.todo.skipped .txt{color:var(--ink-3)}
 .bl-more{font-size:var(--fs-2xs);color:var(--ink-3);margin-top:7px}
 
 /* ── 달력 ───────────────────────────────────────────────── */
@@ -641,7 +663,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-22e</span>
+    <span class="ver">v2026-09-22g</span>
   </footer>
 </div>
 
@@ -1008,24 +1030,62 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(isLegacy(k)&&inRange(k)) pages+=countDone(k);
     });
     state.todos.forEach(function(t){
-      if(t.done&&!t.del&&(!t.unit||t.unit==="장")) pages+=(t.count||1);
+      if(t.done&&!t.del&&(!t.unit||t.unit==="장"||t.unit==="페이지")) pages+=(t.count||1);
     });
     return {doneDays:doneDays,pages:pages,past:past,total:TOTAL};
   }
   /* 밀린 날 — 지난 날 가운데 아직 체크하지 못한 학습이 남아 있는 날.
      학습을 하나도 넣지 않은 날은 채울 것이 없으므로 목록에 올리지 않는다
      (달력에서는 회색 '안 함'으로 보인다). */
+  /* 그날 아직 남은 학습 — 해낸 것과 건너뛴 것은 뺀다 */
+  function pendingOf(d){
+    return todosFor(d).filter(function(t){return !t.done&&!t.skip;});
+  }
   function missedDays(){
     var out=[],d=START;
     while(d<CUR){
       /* 옛 고정 미션만 있던 날은 이제 채울 방법이 없으므로 목록에서 뺀다 */
       if(!isLegacy(d)||todosFor(d).length){
         var st=dayStat(d);
-        if(st.total>0&&!st.complete) out.push(d);
+        if(st.total>0&&!st.complete&&pendingOf(d).length) out.push(d);
       }
       d=shift(d,1);
     }
     return out;
+  }
+
+  /* --- 밀린 학습 옮기기 · 건너뛰기 --- */
+  function moveDay(d,to){
+    if(!to) return "옮길 날을 골라 주세요.";
+    if(!inRange(to)) return "365일 안의 날짜로만 옮길 수 있어요.";
+    if(to<CUR) return "오늘부터 앞으로의 날짜로만 옮길 수 있어요.";
+    if(to===d) return "같은 날이에요. 다른 날을 골라 주세요.";
+    var n=0;
+    state.todos.forEach(function(t){
+      if(t.date===d&&!t.del&&!t.done&&!t.skip){
+        if(!t.origDate) t.origDate=t.date;
+        t.date=to;
+        t.back=true;      /* 손으로 옮긴 날에 그대로 머문다 */
+        t.u=Date.now(); n++;
+      }
+    });
+    if(!n) return "옮길 학습이 없어요.";
+    save();
+    return {n:n};
+  }
+  function skipDay(d){
+    var n=0;
+    state.todos.forEach(function(t){
+      if(t.date===d&&!t.del&&!t.done&&!t.skip){t.skip=true;t.u=Date.now();n++;}
+    });
+    if(n) save();
+    return n;
+  }
+  function unskip(id){
+    state.todos.forEach(function(t){
+      if(t.id===id&&t.skip){t.skip=false;t.u=Date.now();}
+    });
+    save();
   }
 
   /* ---------- 렌더 ---------- */
@@ -1056,11 +1116,12 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var late=0;
       if(t.origDate&&!t.done) late=Math.round((parse(t.date)-parse(t.origDate))/86400000);
       var badge=late>0?'<span class="carry'+(late>=7?" long":"")+'">'+late+'일 이관</span>':"";
+      if(t.skip&&!t.done) badge+='<button class="skipchip" data-unskip="'+t.id+'">건너뜀 · 되돌리기</button>';
       var key="t:"+t.id;
       var cnt=t.count
         ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"장")+'</u></span>'
         : '';
-      return '<div class="todo'+(t.done?" on":"")+'">'+
+      return '<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
         '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+opIcon(t.basic||t.text)+'</button>'+
         '<span class="txt">'+esc(t.text)+badge+'</span>'+
         '<span class="tst">'+(t.done?sticker("smile",pop===key):"")+'</span>'+
@@ -1073,7 +1134,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* ---------- 할 일 만들기 폼 ---------- */
   var composer=null;   /* {date, where, text, count, unit, mode, from, to, dows, err} */
-  var UNITS=["장","분"];
+  var UNITS=["페이지","장","분"];
 
   function openComposer(d,where){
     composer={
@@ -1164,7 +1225,13 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     if(complete){
       html+='<div class="cheer">'+sticker("crown")+'<span>'+dayCheer(d)+'</span></div>';
     }else if(d<CUR){
-      html+='<div class="note">지난 날의 못 한 학습은 다음에 열 때 오늘로 옮겨져요. '+
+      /* 손으로 그 날에 적어 둔 학습은 그대로 머문다 —
+         오늘로 옮겨지는 것이 있을 때만 그렇게 안내한다 */
+      var willMove=todosFor(d).some(function(t){
+        return !t.done&&!t.series&&!t.back;
+      });
+      html+='<div class="note">'+
+        (willMove?'지난 날의 못 한 학습은 다음에 열 때 오늘로 옮겨져요. ':'')+
         '여기서 바로 체크해도 그날 스티커가 붙어요.</div>';
     }
     $("dayPanel").innerHTML=html;
@@ -1189,18 +1256,35 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     }
   }
 
+  var mover=null;   /* {date:밀린 날, to:옮길 날, err:""} */
+
   function renderBacklog(){
     var missed=missedDays(),wrap=$("backlogWrap");
-    if(!missed.length){wrap.innerHTML="";return;}
+    if(!missed.length){wrap.innerHTML="";mover=null;return;}
+    if(mover&&missed.indexOf(mover.date)<0) mover=null;
     var show=missed.slice(-5).reverse();
     var rows=show.map(function(d){
-      var st=dayStat(d);
-      return '<div class="bl"><span class="d">'+label(d)+'</span>'+
-        '<span class="w">'+dowOf(d)+'요일 · '+(st.total-st.done)+'개 남음</span>'+
-        '<button class="go" data-open="'+d+'">채우기</button></div>';
+      var left=pendingOf(d).length;
+      var row='<div class="bl"><span class="d">'+label(d)+'</span>'+
+        '<span class="w">'+dowOf(d)+'요일 · '+left+'개 남음</span>'+
+        '<span class="acts">'+
+          '<button class="go" data-open="'+d+'">채우기</button>'+
+          '<button class="go sub" data-move="'+d+'">이동</button>'+
+          '<button class="go sub" data-skip="'+d+'">스킵</button>'+
+        '</span></div>';
+      if(mover&&mover.date===d){
+        row+='<div class="mv">'+
+          '<input type="date" data-mv="to" value="'+esc(mover.to)+'" min="'+CUR+'" max="'+END+'" aria-label="옮길 날">'+
+          '<button class="btn" data-mv-cancel>취소</button>'+
+          '<button class="btn primary" data-mv-save>옮기기</button>'+
+          (mover.err?'<span class="err">'+esc(mover.err)+'</span>':'')+
+        '</div>';
+      }
+      return row;
     }).join("");
     wrap.innerHTML='<div class="backlog"><h2>밀린 학습 '+missed.length+'일</h2>'+
-      '<p>못 한 학습은 사라지지 않아요. 오늘 보충하면 그날 스티커를 받을 수 있어요.</p>'+rows+
+      '<p>채우기는 그날로 가서 체크하고, 이동은 남은 학습을 다른 날로 옮기고, '+
+      '스킵은 못 한 채로 두고 이 목록에서만 빼요.</p>'+rows+
       (missed.length>show.length?'<div class="bl-more">그 밖에 '+(missed.length-show.length)+'일 더 — 달력에서 확인</div>':"")+
       '</div>';
   }
@@ -1894,6 +1978,34 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       renderAll(); return;
     }
     if((el=up(e.target,"[data-del]"))){delTodo(el.getAttribute("data-del"));renderAll();return;}
+    if((el=up(e.target,"[data-unskip]"))){unskip(el.getAttribute("data-unskip"));renderAll();return;}
+
+    /* 밀린 학습 — 이동 · 스킵 */
+    if((el=up(e.target,"[data-move]"))){
+      var md=el.getAttribute("data-move");
+      mover=(mover&&mover.date===md)?null:{date:md,to:CUR,err:""};
+      renderBacklog();return;
+    }
+    if((el=up(e.target,"[data-skip]"))){
+      var sd=el.getAttribute("data-skip");
+      var sn=skipDay(sd);
+      mover=null; renderAll();
+      toast(sn?(label(sd)+"의 학습 "+sn+"개를 건너뛰었어요."):"건너뛸 학습이 없어요.");
+      return;
+    }
+    if(up(e.target,"[data-mv-cancel]")){mover=null;renderBacklog();return;}
+    if(up(e.target,"[data-mv-save]")){
+      if(!mover) return;
+      var box=document.querySelector('[data-mv="to"]');
+      var to=box?box.value:mover.to;
+      var r=moveDay(mover.date,to);
+      if(typeof r==="string"){mover.err=r;mover.to=to;renderBacklog();return;}
+      var from=mover.date;
+      mover=null;
+      rollover(); renderAll();
+      toast(label(from)+"의 학습 "+r.n+"개를 "+label(to)+"로 옮겼어요.");
+      return;
+    }
     if((el=up(e.target,"[data-open]"))){
       /* 달력·밀린 미션에서 고른 날 — 아래 패널이 그날로 바뀐다.
          달력 밖(밀린 미션)에서 왔을 때만 패널로 스크롤한다. */
@@ -1927,6 +2039,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     }
     return true;
   }
+  document.addEventListener("input",function(e){
+    var el=up(e.target,'[data-mv="to"]');
+    if(el&&mover){mover.to=el.value;mover.err="";}
+  });
+  document.addEventListener("change",function(e){
+    var el=up(e.target,'[data-mv="to"]');
+    if(el&&mover){mover.to=el.value;mover.err="";}
+  });
   document.addEventListener("input",bindField);
   document.addEventListener("change",bindField);
 
