@@ -8,10 +8,10 @@
 <meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="도아 셈">
+<meta name="apple-mobile-web-app-title" content="도아 킥">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="application-name" content="도아 셈">
-<title>오늘도 도아 셈</title>
+<meta name="application-name" content="도아 훈련">
+<title>오늘도 도아 킥</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./favicon-48.png" sizes="48x48" type="image/png">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
@@ -46,15 +46,15 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   도아의 수학 공부 — 사내 디자인 시스템(리듬 관제실) 색·간격 토큰 준용
+   도아의 볼터치 훈련 — 사내 디자인 시스템(리듬 관제실) 색·간격 토큰 준용
    타이포는 7살 사용자에 맞춰 라운드 서체(주아)로,
    달성 표시는 스티커로. 색 원칙은 그대로 —
-   순흑·순백 금지(핑크 틴트 뉴트럴) / 강조색은 "살아있음"의 신호에만.
+   순흑·순백 금지(녹색 틴트 뉴트럴) / 강조색은 "살아있음"의 신호에만.
    ═══════════════════════════════════════════════════════════════ */
 
 :root{
   /* 흰 배경 한 가지로 고정. 기기의 다크 모드를 켜도 같은 화면이 나온다.
-     색은 배경이 아니라 글자가 낸다 — 검정·핑크·보라. */
+     색은 배경이 아니라 글자가 낸다 — 검정·녹색·보라. */
   --bg0:#ffffff; --bg1:#f2f2f2; --bg2:#f7f7f7; --bg3:#ffffff;
   --line:#dcdcdc; --line-soft:#ededed;
   --surface-1:#ffffff;
@@ -63,9 +63,9 @@
   --ink:#111111; --ink-2:#4a4a4a; --ink-3:#7a7a7a;
   --on-bg:var(--ink); --on-bg-dim:var(--ink-3);
 
-  /* 핑크 — 해냈다는 신호 */
-  --pulse:#e83e96; --pulse-strong:#c2277f;
-  --pulse-dim:#ffc2e0; --pulse-wash:#ffeaf5;
+  /* 녹색 — 해냈다는 신호 */
+  --pulse:#0d8a4e; --pulse-strong:#0a6f3e;
+  --pulse-dim:#9ad9b8; --pulse-wash:#e3f6ec;
   --pulse-ink:#ffffff;
 
   /* 보라 — 영역 제목. 색을 하나 더 얹어 화면이 심심하지 않게 한다 */
@@ -101,7 +101,7 @@
 
   /* 최소 터치 영역 — 7살 손가락 기준 */
   --tap:44px;
-  /* 단위 칩과 학습량 입력칸이 같은 높이를 쓰도록 한 값으로 묶는다 */
+  /* 단위 칩과 훈련량 입력칸이 같은 높이를 쓰도록 한 값으로 묶는다 */
   --pill:34px;
 
   /* 반경 — 아이용으로 한 눈금 부드럽게 */
@@ -191,55 +191,57 @@ svg{pointer-events:none}
 header .title{font-size:var(--fs-2xl);line-height:1.25;font-weight:400;margin:0;
   text-wrap:balance;color:var(--on-bg)}
 header .title em{font-style:normal;color:var(--pulse)}
-/* 제목 앞의 계산기 — 앱 아이콘과 같은 그림 */
+/* 제목 앞의 8번 유니폼 — 몸판은 본문색, 등번호는 배경색으로 파냈다 */
 header .mark{
   display:inline-block;vertical-align:-.38em;
   width:1.62em;height:1.62em;margin-right:6px;
-  color:var(--pulse);          /* '셈'과 같은 색 */
+  color:var(--pulse);          /* '킥'과 같은 색 */
 }
 header .mark svg{width:100%;height:100%;display:block}
-/* '셈' 옆의 등호 — 학습을 하나 끝낼 때마다 도장처럼 톡 찍힌다 */
+/* '킥' 옆의 공 — 훈련을 하나 끝낼 때마다 실제로 차인다 */
 .kick{
-  display:inline-block;vertical-align:-.14em;
-  width:1.02em;height:1.02em;margin-left:2px;
+  display:inline-block;vertical-align:-.19em;
+  width:1.08em;height:1.08em;margin-left:2px;
   color:inherit;transform-origin:50% 80%;
 }
 .kick svg{width:100%;height:100%;display:block}
-.kick.go{animation:stamp .5s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes stamp{
-  0%{transform:scale(1) rotate(0)}
-  25%{transform:scale(1.55) rotate(-9deg)}
-  55%{transform:scale(.86) rotate(4deg)}
-  100%{transform:scale(1) rotate(0)}
+.kick.go{animation:kickoff .62s cubic-bezier(.3,-.4,.5,1.5) both}
+@keyframes kickoff{
+  0%{transform:translate(0,0) rotate(0)}
+  18%{transform:translate(3px,-2px) rotate(40deg)}
+  46%{transform:translate(13px,-13px) rotate(200deg)}
+  72%{transform:translate(5px,-3px) rotate(310deg)}
+  86%{transform:translate(0,2px) rotate(352deg) scaleY(.88)}
+  100%{transform:translate(0,0) rotate(360deg)}
 }
 
 /* ── 스코어보드 ─────────────────────────────────────────── */
 .board{
   display:grid;grid-template-columns:repeat(3,1fr);
-  /* 작은 이름표까지 읽히도록 --pulse 보다 한 단 진한 핑크을 쓴다 */
-  background:#e83e96;border:2px solid #e83e96;border-radius:var(--r-md);
+  /* 작은 이름표까지 읽히도록 --pulse 보다 한 단 진한 녹색을 쓴다 */
+  background:#0a7443;border:2px solid #0a7443;border-radius:var(--r-md);
   box-shadow:var(--shadow-1);overflow:hidden;color:#ffffff;
 }
-.board .cell{padding:6px 8px 7px;border-left:1px solid #f7a5d1;min-width:0}
+.board .cell{padding:6px 8px 7px;border-left:1px solid #3f9a6d;min-width:0}
 .board .cell:first-child{border-left:0}
 .board .v{
   display:block;font-size:var(--fs-score);line-height:1.05;
   font-variant-numeric:tabular-nums;letter-spacing:-.015em;
   white-space:nowrap;overflow:hidden;text-overflow:clip;
 }
-/* 푼 장수는 자릿수가 가장 많다 — 한 눈금 더 작게 잡아 칸을 지킨다 */
+/* 누적 볼터치는 자릿수가 가장 많다 — 한 눈금 더 작게 잡아 칸을 지킨다 */
 .board .cell:last-child .v{font-size:clamp(15px,4.2vw,19px)}
-.board .v u{text-decoration:none;font-size:var(--fs-sm);color:#fff2f9;margin-left:1px}
-.board .k{display:block;font-size:var(--fs-2xs);line-height:1.3;color:#fff2f9;margin-top:1px;
+.board .v u{text-decoration:none;font-size:var(--fs-sm);color:#d9f2e6;margin-left:1px}
+.board .k{display:block;font-size:var(--fs-2xs);line-height:1.3;color:#d9f2e6;margin-top:1px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .board .v.beat{animation:beat .5s var(--ease)}
 @keyframes beat{0%{transform:scale(1)}34%{transform:scale(1.18);color:var(--pulse)}100%{transform:scale(1)}}
 
 /* ── 하루 패널 ──────────────────────────────────────────── */
 /* 클래스 이름은 .daypanel — 예전 이름(.today)은 달력의 오늘 칸
-   (.day.today)에도 함께 걸려서 칸에 핑크 테두리가 그려졌다. */
+   (.day.today)에도 함께 걸려서 칸에 초록 테두리가 그려졌다. */
 /* 세 영역은 테두리 색으로 서로를 구분한다 —
-   학습은 핑크, 달력은 보라, 기록 보관은 검정. 두께는 2px 정수로 둔다
+   훈련은 녹색, 달력은 보라, 기록 보관은 검정. 두께는 2px 정수로 둔다
    (2.5px 는 3배 화면에서 변마다 반올림이 달라져 한쪽만 굵어 보인다). */
 .daypanel{
   background:var(--surface-1);border:2px solid var(--pulse);
@@ -273,10 +275,10 @@ header .mark svg{width:100%;height:100%;display:block}
 .badge .st{width:22px;height:22px;filter:none}
 .badge.pop{animation:stickon .5s var(--ease) both}
 
-/* 학습 목록 */
+/* 훈련 목록 */
 .todos{margin-top:4px;border-top:1px solid var(--line);padding-top:7px}
 /* 공 27px, 스티커 30px,
-   학습량은 오른쪽 끝. 두 목록이 같은 세로선 위에 놓인다. */
+   훈련량은 오른쪽 끝. 두 목록이 같은 세로선 위에 놓인다. */
 /* 공은 글줄 한가운데에 놓인다 — 줄이 두 줄이 되어도 가운데를 지킨다 */
 .todo{display:flex;align-items:center;gap:11px;padding:4px 0}
 .todo .box{
@@ -292,7 +294,7 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo.on .box{color:var(--pulse)}
 
 .todo .txt{flex:1;min-width:0;font-size:var(--fs-md);word-break:break-word;line-height:1.4}
-/* 해낸 학습은 지우는 게 아니라 해냈다는 표시다 — 공과 같은 핑크로 물든다 */
+/* 해낸 훈련은 지우는 게 아니라 해냈다는 표시다 — 공과 같은 초록으로 물든다 */
 .todo.on .txt{color:var(--pulse)}
 .todo .tst{flex:none;width:30px;height:30px}
 .todo .tst .st{width:30px;height:30px}
@@ -358,39 +360,33 @@ header .mark svg{width:100%;height:100%;display:block}
 .cacts .btn{flex:1}
 .empty{font-size:var(--fs-sm);color:var(--ink-3);padding:2px 0}
 
-/* ── 밀린 학습 ──────────────────────────────────────────── */
+/* ── 밀린 훈련 ──────────────────────────────────────────── */
 .backlog{background:var(--pulse-wash);border:2px solid var(--pulse);border-radius:var(--r-md);padding:10px 12px 9px}
 .backlog h2{font-size:var(--fs-lg);font-weight:400;color:var(--pulse-strong);margin:0 0 1px}
 .backlog p{font-size:var(--fs-sm);color:var(--ink-2);margin:0 0 6px}
-.bl{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--pulse-dim);
+.bl{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--line-soft);
   min-height:40px;flex-wrap:wrap}
 .bl .d{flex:none;min-width:72px;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
 .bl .w{flex:1 1 90px;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
-.bl .acts{display:flex;gap:6px;flex:none;margin-left:auto}
-/* 셋 다 같은 무게로 둔다 — 지금 고른 것만 채워서 표시한다 */
-.bl .go{flex:none;font-size:var(--fs-xs);padding:9px 11px;border-radius:999px;
-  background:var(--surface-1);
-  color:var(--pulse-strong);border:1.5px solid var(--pulse);white-space:nowrap}
-.bl .go.on{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
-/* 옮길 날 고르기 */
-.mv{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
-  padding:8px 0 3px;border-top:1px dashed var(--pulse-dim)}
-.mv input{
-  flex:1 1 130px;min-width:0;font-family:inherit;font-size:16px;
-  min-height:var(--tap);padding:6px 10px;line-height:1.2;color:var(--ink);
+.blacts{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+/* 채우기는 채운 버튼, 이동은 테두리, 스킵은 옅게 — 초록 한 색으로 세기만 다르게 */
+.bl .go{flex:none;font-size:var(--fs-xs);padding:8px 12px;border-radius:999px;
+  color:var(--pulse-strong);border:1.5px solid var(--pulse);background:var(--surface-1);
+  white-space:nowrap}
+.bl .go.pri{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
+.bl .go.mute{color:var(--ink-3);border-color:var(--line);background:transparent}
+/* 옮길 날짜 고르기 — 밀린 줄 바로 아래에서 펼쳐진다 */
+.blmove{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:2px 0 9px}
+.blmove .lb{font-size:var(--fs-2xs);color:var(--ink-3);flex:none}
+.blmove input{
+  flex:1 1 140px;min-width:0;min-height:var(--tap);line-height:1.2;
+  font-family:inherit;font-size:16px;color:var(--ink);
   background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);
-  -webkit-appearance:none;appearance:none;
+  padding:8px 10px;-webkit-appearance:none;appearance:none;
 }
-.mv input:focus{border-color:var(--pulse-dim);outline:0}
-.mv .btn{flex:0 0 auto;min-height:38px;padding:0 13px}
-.mv .err{flex:1 1 100%;font-size:var(--fs-xs);color:var(--coral);line-height:1.5}
-/* 건너뛴 학습 — 해내지 못한 그대로 두되 밀린 목록에서는 빠진다 */
-.skipchip{
-  display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;
-  font-size:var(--fs-2xs);white-space:nowrap;
-  color:var(--ink-3);background:var(--bg1);
-}
-.todo.skipped .txt{color:var(--ink-3)}
+.blmove input:focus{border-color:var(--pulse-dim);outline:0}
+.blmove .btn{flex:none}
+.carry.skip{color:var(--ink-3);background:var(--bg1)}
 .bl-more{font-size:var(--fs-2xs);color:var(--ink-3);margin-top:7px}
 
 /* ── 달력 ───────────────────────────────────────────────── */
@@ -445,7 +441,7 @@ header .mark svg{width:100%;height:100%;display:block}
 .day.out{opacity:.5}
 .day .n{font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums}
 .day.sun .n{color:var(--coral)}
-/* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
+/* 하는 중인 날의 눈금 — 훈련 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
 .prog{display:block;width:52%;min-width:15px;height:4px;margin-top:3px;
   border-radius:3px;background:var(--line);overflow:hidden}
@@ -457,7 +453,7 @@ header .mark svg{width:100%;height:100%;display:block}
 /* 오늘 표시 · 고른 날 표시 — 둘 다 날짜 숫자 뒤의 같은 둥근 네모를 쓴다.
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
-   오늘은 핑크로 채우고, 고른 날은 보라 테두리를 두른다. */
+   오늘은 초록으로 채우고, 고른 날은 보라 테두리를 두른다. */
 .day.today .n,.day.sel .n{
   flex:none;
   width:25px;height:25px;
@@ -469,17 +465,17 @@ header .mark svg{width:100%;height:100%;display:block}
 .day.today.sun .n{color:var(--pulse-ink)}
 /* 고른 날 — 같은 둥근 네모에 보라 테두리를 두른다.
    오늘을 고르든 다른 날을 고르든 테두리의 모양·두께·색이 똑같고,
-   오늘이면 그 안이 핑크로 차 있을 뿐이다. */
+   오늘이면 그 안이 초록으로 차 있을 뿐이다. */
 .day.sel .n{box-shadow:0 0 0 2.5px var(--violet)}
 .day.sel{z-index:1}
-/* 달력 칸을 누르면 브라우저가 칸 바깥에 초점선(핑크)을 남긴다 —
+/* 달력 칸을 누르면 브라우저가 칸 바깥에 초점선(초록)을 남긴다 —
    누른 날은 어차피 보라 테두리로 표시되므로 초점선은 지운다.
    :focus-visible 을 모르는 구형 웹뷰에서도 한 줄은 살아남도록
    규칙을 묶지 않고 따로 쓴다(한 선택자라도 모르면 규칙 전체가 버려진다). */
 .day{outline:none!important}
 .day:focus{outline:none!important}
 .day:focus-visible{outline:none!important}
-/* 달력 안 어떤 버튼에도 핑크 초점선이 생기지 않게 못을 박는다 */
+/* 달력 안 어떤 버튼에도 초록 초점선이 생기지 않게 못을 박는다 */
 .cal button:focus{outline:none}
 .cal button:focus-visible{outline:none}
 /* 키보드로 옮겨 다닐 때만 같은 보라 테두리가 따라온다 */
@@ -633,7 +629,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
 <div class="wrap">
   <header>
-    <h1 class="title"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="currentColor"/><g fill="#fff"><rect x="2.6" y="2.6" width="8.7" height="8.7" rx="1.9"/><rect x="12.7" y="2.6" width="8.7" height="8.7" rx="1.9"/><rect x="2.6" y="12.7" width="8.7" height="8.7" rx="1.9"/><rect x="12.7" y="12.7" width="8.7" height="8.7" rx="1.9"/></g><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"><path d="M4.35 6.95H9.55M6.95 4.35V9.55"/><path d="M14.45 6.95H19.65"/><path d="M4.95 15.05L8.95 19.05M8.95 15.05L4.95 19.05"/><path d="M14.45 17.05H19.65"/></g><g fill="currentColor"><circle cx="17.05" cy="14.9" r="0.95"/><circle cx="17.05" cy="19.2" r="0.95"/></g></svg></span>오늘도 도아 <em>셈<button class="kick" id="kick" aria-label="셈 도장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.2h15M4.5 14.8h15" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></button></em></h1>
+    <h1 class="title"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9.3 2.2L4 4.6L1.6 10L5.5 11.6L5.5 21.6L18.5 21.6L18.5 11.6L22.4 10L20 4.6L14.7 2.2L12 4.9Z" fill="currentColor"/><path d="M5.5 11.6L5.5 21.6M18.5 11.6L18.5 21.6" fill="none" stroke="var(--bg0)" stroke-width="1.3"/><path d="M9.3 2.2L4 4.6L1.6 10L5.5 11.6L5.5 21.6L18.5 21.6L18.5 11.6L22.4 10L20 4.6L14.7 2.2L12 4.9Z" fill="none" stroke="var(--bg0)" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.3 2.2L14.7 2.2L12 4.9Z" fill="var(--bg0)" stroke="var(--bg0)" stroke-width="1.3" stroke-linejoin="round"/><text x="12" y="17.2" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="11.5" fill="var(--bg0)">8</text></svg></span>오늘도 도아 <em>킥<button class="kick" id="kick" aria-label="공 차기"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="kb"><circle cx="12" cy="12" r="9"/></clipPath></defs><circle cx="12" cy="12" r="9" fill="var(--bg0)" stroke="currentColor" stroke-width="1.6"/><g clip-path="url(#kb)" fill="currentColor"><path d="M12 8.1 L15.71 10.79 L14.29 15.16 L9.71 15.16 L8.29 10.79 Z"/><path d="M15.41 7.31 L14.11 3.29 L17.53 0.8 L20.95 3.29 L19.65 7.31 Z"/><path d="M17.52 13.79 L20.94 11.3 L24.36 13.79 L23.06 17.81 L18.82 17.81 Z"/><path d="M12 17.8 L15.42 20.29 L14.12 24.31 L9.88 24.31 L8.58 20.29 Z"/><path d="M6.48 13.79 L5.18 17.81 L0.94 17.81 L-0.36 13.79 L3.06 11.3 Z"/><path d="M8.59 7.31 L4.35 7.31 L3.05 3.29 L6.47 0.8 L9.89 3.29 Z"/></g></svg></button></em></h1>
   </header>
 
   <section class="board" id="board"></section>
@@ -662,9 +658,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <section class="keep" id="keepPanel"></section>
 
   <footer>
-    달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
+    달력에서 날짜를 누르면 그날 훈련을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-22h</span>
+    <span class="ver">v2026-09-22m</span>
   </footer>
 </div>
 
@@ -675,20 +671,18 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 (function(){
   "use strict";
 
-  var START="2026-09-07", END="2027-09-06";   /* 시작일 포함 정확히 365일 */
-  var KEY="doa-math-v1";
-  var OTHER_KEY="doa-balltouch-v1";   /* 같은 도메인에 사는 다른 앱 */
+  var START="2026-08-31", END="2027-08-30";   /* 시작일 포함 정확히 365일 */
+  var KEY="doa-balltouch-v1";
+  var OTHER_KEY="doa-math-v1";   /* 같은 도메인에 사는 다른 앱 */
   var BAK=KEY+":safe";        /* 직전 안전본 */
   var HIDE=KEY+":hide";       /* 닫아둔 안내 카드 */
-  var DATA_V=3;
+  var DATA_V=2;
   var booted=false;
-  /* 예전 '오늘의 공부' 네 가지 — 화면에는 더 이상 나오지 않는다.
+  /* 예전 버전의 고정 미션 — 화면에는 더 이상 나오지 않는다.
      지난 날의 기록을 그대로 읽어 스티커와 숫자를 지켜 주기 위해서만 남긴다. */
-  var BASIC=[
-    {id:"pre", name:"필즈 예습",     count:1, unit:"장"},
-    {id:"rev", name:"필즈 복습",     count:1, unit:"장"},
-    {id:"calc",name:"기적의 계산법", count:1, unit:"장"},
-    {id:"busy",name:"바빠",          count:1, unit:"장"}
+  var LEGACY=[
+    {id:"both",count:100},
+    {id:"sole",count:100}
   ];
   var DOW=["일","월","화","수","목","금","토"];
 
@@ -698,10 +692,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     'autocorrect="off" spellcheck="false" inputmode="text"';
 
   /* 하루를 다 해내면 붙는 스티커들 — 날짜마다 다른 게 붙는다 */
-  var DAY_STICKERS=["pencil","star","medal","trophy","fire","heart","crown","smile"];
+  var DAY_STICKERS=["ball","star","medal","trophy","fire","heart","crown","smile"];
   var CHEERS=[
-    "오늘도 해냈어!","최고야 도아!","수학 박사 다 됐네!","계산이 점점 빨라져!",
-    "멋지다!","오늘 몫까지 끝!","이 기세로 쭉!"
+    "오늘도 해냈어!","최고야 도아!","축구선수 다 됐네!","발이 점점 빨라져!",
+    "멋지다!","오늘도 200터치 완료!","이 기세로 쭉!"
   ];
 
   /* 선형 아이콘 — 1.6px 스트로크, currentColor 상속 */
@@ -717,35 +711,18 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       chev:'<path d="M6 9.5l6 6 6-6"/>',
       link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l2.6-2.6a4 4 0 0 0-5.7-5.7l-1.3 1.3"/>'+
            '<path d="M13.8 10.2a4 4 0 0 0-5.7 0l-2.6 2.6a4 4 0 0 0 5.7 5.7l1.3-1.3"/>',
+      /* 축구공 — 가운데 오각형과 그것을 둘러싼 다섯 조각.
+         체크 칸의 동그란 테두리가 공의 윤곽 역할을 한다. */
+      ball:'<defs><clipPath id="bb"><circle cx="12" cy="12" r="11"/></clipPath></defs><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.8"/><g clip-path="url(#bb)" fill="currentColor"><path d="M12 7.2 L16.57 10.52 L14.82 15.88 L9.18 15.88 L7.43 10.52 Z"/><path d="M16.17 6.26 L14.58 1.34 L18.76 -1.7 L22.94 1.34 L21.35 6.26 Z"/><path d="M18.76 14.19 L22.94 11.15 L27.12 14.19 L25.53 19.11 L20.35 19.11 Z"/><path d="M12 19.1 L16.18 22.14 L14.59 27.06 L9.41 27.06 L7.82 22.14 Z"/><path d="M5.24 14.19 L3.65 19.11 L-1.53 19.11 L-3.12 14.19 L1.06 11.15 Z"/><path d="M7.83 6.26 L2.65 6.26 L1.06 1.34 L5.24 -1.7 L9.42 1.34 Z"/></g>'
     }[name];
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"'+
       ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
   }
 
-  /* 체크 동그라미 안에 들어가는 사칙연산 기호 —
-     학습마다 하나씩 정해져서, 같은 학습은 늘 같은 기호를 쓴다 */
-  var OPS=[
-    '<path d="M12 7.5v9M7.5 12h9" stroke-width="2.4"/>',
-    '<path d="M7.4 12h9.2" stroke-width="2.4"/>',
-    '<path d="M8.6 8.6l6.8 6.8M15.4 8.6l-6.8 6.8" stroke-width="2.4"/>',
-    '<path d="M7.4 12h9.2" stroke-width="2.4"/>'+
-      '<circle cx="12" cy="7.8" r="1.45" fill="currentColor" stroke="none"/>'+
-      '<circle cx="12" cy="16.2" r="1.45" fill="currentColor" stroke="none"/>'
-  ];
-  function opIcon(seed){
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"'+
-      ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
-      '<circle cx="12" cy="12" r="11"/>'+OPS[hash(String(seed))%OPS.length]+'</svg>';
-  }
-
   /* 스티커 — 실제 스티커처럼 두 테마에서 같은 색을 유지한다 */
   function sticker(name,pop){
     var s={
-      pencil:'<path d="M4.1 19.9l1-3.6L15.3 6.1l2.6 2.6L7.7 18.9z" fill="#f5c451"'+
-        ' stroke="#c08c1c" stroke-width="1.35" stroke-linejoin="round"/>'+
-        '<path d="M15.3 6.1l1.6-1.6a1.5 1.5 0 0 1 2.1 0l.5.5a1.5 1.5 0 0 1 0 2.1l-1.6 1.6z"'+
-        ' fill="#e0706b" stroke="#b04b46" stroke-width="1.3" stroke-linejoin="round"/>'+
-        '<path d="M4.1 19.9l3.6-1" stroke="#7a5a20" stroke-width="1.35" stroke-linecap="round" fill="none"/>',
+      ball:'<defs><clipPath id="stb"><circle cx="12" cy="12" r="9"/></clipPath></defs><circle cx="12" cy="12" r="9" fill="#fff" stroke="#2c2c2c" stroke-width="1.6"/><g clip-path="url(#stb)" fill="#2c2c2c"><path d="M12 8.1 L15.71 10.79 L14.29 15.16 L9.71 15.16 L8.29 10.79 Z"/><path d="M15.41 7.31 L14.11 3.29 L17.53 0.8 L20.95 3.29 L19.65 7.31 Z"/><path d="M17.52 13.79 L20.94 11.3 L24.36 13.79 L23.06 17.81 L18.82 17.81 Z"/><path d="M12 17.8 L15.42 20.29 L14.12 24.31 L9.88 24.31 L8.58 20.29 Z"/><path d="M6.48 13.79 L5.18 17.81 L0.94 17.81 L-0.36 13.79 L3.06 11.3 Z"/><path d="M8.59 7.31 L4.35 7.31 L3.05 3.29 L6.47 0.8 L9.89 3.29 Z"/></g>',
       star:'<path d="M12 3.3l2.65 5.35 5.9.86-4.27 4.16 1.01 5.88L12 16.73l-5.29 2.78 1.01-5.88'+
         'L3.45 9.51l5.9-.86z" fill="#f5b73d" stroke="#c9871c" stroke-width="1.35" stroke-linejoin="round"/>',
       medal:'<path d="M7.6 2.9l3.1 5.3M16.4 2.9l-3.1 5.3" stroke="#5aa9e6" stroke-width="2.5" stroke-linecap="round"/>'+
@@ -830,10 +807,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       dmeta:(p.dmeta&&typeof p.dmeta==="object")?p.dmeta:{},
       todos:Array.isArray(p.todos)?p.todos:[],
       mcut:typeof p.mcut==="string"?p.mcut:null,
-      /* 옛 '오늘의 공부' 목록 판본 — 지난 날의 기록을 읽는 데 쓴다 */
-      missionVersions:Array.isArray(p.missionVersions)?p.missionVersions:null,
-      missions:Array.isArray(p.missions)?p.missions:null,
-      basicPurged:(typeof p.basicPurged==="number")?p.basicPurged:(p.basicPurged?1:0),
       seed:!!p.seed,
       savedAt:p.savedAt||null,
       backupAt:p.backupAt||null
@@ -849,18 +822,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(b){try{got=normalize(JSON.parse(b));}catch(e){got=null;}}
       if(got&&raw) restored=true;
     }
-    var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],mcut:null,
-      missionVersions:null,missions:null,basicPurged:0,
-      seed:false,savedAt:null,backupAt:null};
+    var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],mcut:null,seed:false,savedAt:null,backupAt:null};
     if(!base.dmeta) base.dmeta={};
-    /* 고정 공부를 걷어낸 날을 한 번만 적어 둔다 — 그 전날까지는 옛 기록을
-       그대로 읽고, 그날부터는 학습 목록으로 센다. */
+    /* 고정 미션을 걷어낸 날을 한 번만 적어 둔다 — 그 전날까지는 옛 기록을
+       그대로 읽고, 그날부터는 직접 추가한 훈련만 센다. */
     if(!base.mcut) base.mcut=fmt(new Date());
-    /* 판본 기록이 없던 옛 저장본이면 지금 목록을 처음 판본으로 삼는다 */
-    if(!Array.isArray(base.missionVersions)||!base.missionVersions.length){
-      base.missionVersions=[{from:START,items:Array.isArray(base.missions)&&base.missions.length
-        ? base.missions : BASIC.map(function(m){return {id:m.id,name:m.name,count:m.count,unit:m.unit};})}];
-    }
     base.seed=true;   /* 시연용 초기 데이터 없이 빈 상태로 시작한다 */
     return base;
   }
@@ -875,21 +841,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   }
 
   var state=load();
-
-  /* 예전 판이 자동으로 넣어 두었던 기본 학습을 한 번만 걷어낸다 —
-     체크해 둔 것까지 모두 지운다. 다른 기기에도 '지웠다'가 전해지도록
-     바로 없애지 않고 지움 표시를 남긴다. */
-  function purgeBasic(){
-    if(state.basicPurged>=2) return false;
-    var moved=false;
-    state.todos.forEach(function(t){
-      if(t.basic&&!t.del){t.del=true;t.u=Date.now();moved=true;}
-    });
-    state.basicPurged=2;
-    state.seedTo=null;
-    save();
-    return moved;
-  }
 
   /* ---------- 이관 — 못 한 할 일은 다음날로 ---------- */
   function rollover(){
@@ -906,33 +857,25 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   }
 
   function doneOf(d){return state.done[d]||{};}
-  /* 그날 쓰던 '오늘의 공부' 목록 — 목록을 바꾼 날부터 새 판본을 쓴다 */
-  function missionsFor(d){
-    var vs=state.missionVersions;
-    if(!vs||!vs.length) return [];
-    var found=vs[0];
-    vs.forEach(function(v){if(v.from<=d&&v.from>=found.from) found=v;});
-    return Array.isArray(found.items)?found.items:[];
-  }
   function countDone(d){
     var v=doneOf(d),n=0;
-    missionsFor(d).forEach(function(m){if(v[m.id])n++;});
+    LEGACY.forEach(function(m){if(v[m.id])n++;});
     return n;
   }
   /* 고정 미션을 걷어낸 날(mcut) 이전은 옛 방식 그대로 읽는다 —
      그날 받은 스티커와 연속 기록이 사라지지 않게. */
   function isLegacy(d){return !!state.mcut&&d<state.mcut;}
 
-  /* 하루의 상태 — {total:그날 학습 수, done:해낸 수, complete:다 했나} */
+  /* 하루의 상태 — {total:그날 훈련 수, done:해낸 수, complete:다 했나} */
   function dayStat(d){
     var list=todosFor(d),n=0;
     list.forEach(function(t){if(t.done)n++;});
     var now={total:list.length,done:n,complete:list.length>0&&n===list.length};
     if(isLegacy(d)){
-      var c=countDone(d),ms=missionsFor(d);
-      var old={total:ms.length,done:c,complete:ms.length>0&&c===ms.length};
+      var c=countDone(d);
+      var old={total:LEGACY.length,done:c,complete:c===LEGACY.length};
       /* 옛 기록으로 이미 다 해낸 날이면 그 스티커를 지킨다.
-         아니면 그 날에 새로 넣은 학습을 기준으로 본다. */
+         아니면 그 날에 새로 넣은 훈련을 기준으로 본다. */
       if(old.complete||!list.length) return old;
       return now;
     }
@@ -955,10 +898,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   function pushTodo(d,text,count,unit,series){
     var t={id:newId(),date:d,text:text,done:false,u:Date.now()};
-    /* 지난 날짜에 일부러 넣은 학습은 그 날에 그대로 둔다 —
+    /* 지난 날짜에 일부러 넣은 훈련은 그 날에 그대로 둔다 —
        그날 한 일을 뒤늦게 적는 경우이므로 오늘로 끌어오면 안 된다. */
     if(d<CUR) t.back=true;
-    if(count){t.count=count;t.unit=unit||"장";}
+    if(count){t.count=count;t.unit=unit||"개";}
     if(series) t.series=series;
     state.todos.push(t);
   }
@@ -968,10 +911,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
      그래야 달력·밀린 미션·백업까지 기존 기능이 그대로 맞물린다. */
   function createTodos(c){
     var text=(c.text||"").trim();
-    if(!text) return {n:0,err:"학습 이름을 적어 주세요."};
+    if(!text) return {n:0,err:"훈련 이름을 적어 주세요."};
     var cnt=parseInt(c.count,10);
     if(!(cnt>0)) cnt=null;
-    var unit=c.unit||"장";
+    var unit=c.unit||"개";
 
     if(c.mode!=="range"){
       pushTodo(c.date,text,cnt,unit,null);
@@ -995,9 +938,44 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     save();
     return {n:made};
   }
+  /* 아직 못 한(그리고 건너뛰지 않은) 훈련 — 밀린 목록의 기준 */
+  function pendingOf(d){
+    return todosFor(d).filter(function(t){return !t.done&&!t.skip;});
+  }
+
+  /* 밀린 날의 못 한 훈련을 다른 날로 옮긴다 */
+  function moveTodos(from,to){
+    var n=0;
+    state.todos.forEach(function(t){
+      if(t.date===from&&!t.done&&!t.del&&!t.skip){
+        if(!t.origDate) t.origDate=t.date;
+        t.date=to;
+        delete t.back;          /* 옮긴 뒤에는 보통 훈련과 같게 다룬다 */
+        t.u=Date.now(); n++;
+      }
+    });
+    if(n) save();
+    return n;
+  }
+
+  /* 건너뛰기 — 못 한 채로 남기되 밀린 목록에서는 내린다 */
+  function skipDay(d){
+    var n=0;
+    state.todos.forEach(function(t){
+      if(t.date===d&&!t.done&&!t.del&&!t.skip){t.skip=true;t.u=Date.now();n++;}
+    });
+    if(n) save();
+    return n;
+  }
+
   function toggleTodo(id){
     state.todos.forEach(function(t){
-      if(t.id===id){t.done=!t.done; if(t.done) t.doneDate=CUR; t.u=Date.now();}
+      if(t.id===id){
+        t.done=!t.done;
+        delete t.skip;          /* 손대는 순간 건너뛴 표시는 풀린다 */
+        if(t.done) t.doneDate=CUR;
+        t.u=Date.now();
+      }
     });
     save();
   }
@@ -1025,68 +1003,23 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(isComplete(d)) doneDays++;
       past++; d=shift(d,1);
     }
-    /* 푼 장수 — 옛 기록은 공부 하나가 한 장, 새 기록은 해낸 학습의 '장' 수 */
-    var pages=0;
-    Object.keys(state.done).forEach(function(k){
-      if(isLegacy(k)&&inRange(k)) pages+=countDone(k);
-    });
-    state.todos.forEach(function(t){
-      if(t.done&&!t.del&&(!t.unit||t.unit==="장"||t.unit==="페이지")) pages+=(t.count||1);
-    });
-    return {doneDays:doneDays,pages:pages,past:past,total:TOTAL};
+    /* 하루 훈련을 다 해내면 한 시간으로 친다 — 해낸 날이 곧 훈련 시간 */
+    return {doneDays:doneDays,hours:doneDays,past:past,total:TOTAL};
   }
-  /* 밀린 날 — 지난 날 가운데 아직 체크하지 못한 학습이 남아 있는 날.
-     학습을 하나도 넣지 않은 날은 채울 것이 없으므로 목록에 올리지 않는다
+  /* 밀린 날 — 지난 날 가운데 아직 체크하지 못한 훈련이 남아 있는 날.
+     훈련을 하나도 넣지 않은 날은 채울 것이 없으므로 목록에 올리지 않는다
      (달력에서는 회색 '안 함'으로 보인다). */
-  /* 그날 아직 남은 학습 — 해낸 것과 건너뛴 것은 뺀다 */
-  function pendingOf(d){
-    return todosFor(d).filter(function(t){return !t.done&&!t.skip;});
-  }
   function missedDays(){
     var out=[],d=START;
     while(d<CUR){
-      /* 옛 고정 미션만 있던 날은 이제 채울 방법이 없으므로 목록에서 뺀다 */
+      /* 옛 고정 미션만 있던 날은 이제 채울 방법이 없으므로 목록에서 뺀다.
+         건너뛴 훈련만 남은 날도 목록에 올리지 않는다. */
       if(!isLegacy(d)||todosFor(d).length){
-        var st=dayStat(d);
-        if(st.total>0&&!st.complete&&pendingOf(d).length) out.push(d);
+        if(pendingOf(d).length) out.push(d);
       }
       d=shift(d,1);
     }
     return out;
-  }
-
-  /* --- 밀린 학습 옮기기 · 건너뛰기 --- */
-  function moveDay(d,to){
-    if(!to) return "옮길 날을 골라 주세요.";
-    if(!inRange(to)) return "365일 안의 날짜로만 옮길 수 있어요.";
-    if(to<CUR) return "오늘부터 앞으로의 날짜로만 옮길 수 있어요.";
-    if(to===d) return "같은 날이에요. 다른 날을 골라 주세요.";
-    var n=0;
-    state.todos.forEach(function(t){
-      if(t.date===d&&!t.del&&!t.done&&!t.skip){
-        if(!t.origDate) t.origDate=t.date;
-        t.date=to;
-        t.back=true;      /* 손으로 옮긴 날에 그대로 머문다 */
-        t.u=Date.now(); n++;
-      }
-    });
-    if(!n) return "옮길 학습이 없어요.";
-    save();
-    return {n:n};
-  }
-  function skipDay(d){
-    var n=0;
-    state.todos.forEach(function(t){
-      if(t.date===d&&!t.del&&!t.done&&!t.skip){t.skip=true;t.u=Date.now();n++;}
-    });
-    if(n) save();
-    return n;
-  }
-  function unskip(id){
-    state.todos.forEach(function(t){
-      if(t.id===id&&t.skip){t.skip=false;t.u=Date.now();}
-    });
-    save();
   }
 
   /* ---------- 렌더 ---------- */
@@ -1107,23 +1040,23 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     $("board").innerHTML=
       '<div class="cell"><span class="v'+beat+'">'+st+'<u>일</u></span><span class="k">연속 달성</span></div>'+
       '<div class="cell"><span class="v">'+t.doneDays+'<u>일</u></span><span class="k">해낸 날</span></div>'+
-      '<div class="cell"><span class="v">'+t.pages.toLocaleString("ko-KR")+'<u>장</u></span><span class="k">푼 장수</span></div>';
+      '<div class="cell"><span class="v">'+t.hours.toLocaleString("ko-KR")+'<u>시간</u></span><span class="k">누적 훈련 시간</span></div>';
   }
 
   function todoList(d){
     var list=todosFor(d);
-    if(!list.length) return '<div class="empty">추가한 학습이 없어요.</div>';
+    if(!list.length) return '<div class="empty">추가한 훈련이 없어요.</div>';
     return list.map(function(t){
       var late=0;
       if(t.origDate&&!t.done) late=Math.round((parse(t.date)-parse(t.origDate))/86400000);
       var badge=late>0?'<span class="carry'+(late>=7?" long":"")+'">'+late+'일 이관</span>':"";
-      if(t.skip&&!t.done) badge+='<button class="skipchip" data-unskip="'+t.id+'">건너뜀 · 되돌리기</button>';
+      if(t.skip&&!t.done) badge+='<span class="carry skip">건너뜀</span>';
       var key="t:"+t.id;
       var cnt=t.count
-        ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"장")+'</u></span>'
+        ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"개")+'</u></span>'
         : '';
-      return '<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
-        '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+opIcon(t.basic||t.text)+'</button>'+
+      return '<div class="todo'+(t.done?" on":"")+'">'+
+        '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+icon("ball")+'</button>'+
         '<span class="txt">'+esc(t.text)+badge+'</span>'+
         '<span class="tst">'+(t.done?sticker("smile",pop===key):"")+'</span>'+
         cnt+
@@ -1135,11 +1068,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* ---------- 할 일 만들기 폼 ---------- */
   var composer=null;   /* {date, where, text, count, unit, mode, from, to, dows, err} */
-  var UNITS=["페이지","장","분"];
+  var UNITS=["개","분"];
 
   function openComposer(d,where){
     composer={
-      date:d, where:where, text:"", count:"", unit:"장",
+      date:d, where:where, text:"", count:"", unit:"개",
       mode:"one", from:d, to:clampDate(shift(d,27)),
       dows:[0,1,2,3,4,5,6], err:""
     };
@@ -1150,7 +1083,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var open=composer&&composer.date===d&&composer.where===where;
     if(!open){
       return '<button class="addbtn" data-open-compose="'+d+'" data-where="'+where+'">'+
-        icon("plus")+'학습 추가</button>';
+        icon("plus")+'훈련 추가</button>';
     }
     var c=composer;
     var units=UNITS.map(function(u){
@@ -1177,11 +1110,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     }
 
     return '<div class="composer">'+
-      '<div class="fld"><span class="lb">학습</span>'+
+      '<div class="fld"><span class="lb">훈련</span>'+
         '<input type="text" data-c="text" value="'+esc(c.text)+'" maxlength="60" '+
-        'placeholder="예: 필즈 예습" '+INPUT_ATTRS+'></div>'+
+        'placeholder="예: 리프팅" '+INPUT_ATTRS+'></div>'+
       '<div class="row2">'+
-        '<div class="fld num"><span class="lb">학습량</span>'+
+        '<div class="fld num"><span class="lb">훈련량</span>'+
           '<input type="number" data-c="count" value="'+esc(String(c.count))+'" '+
           'inputmode="numeric" min="1" max="999" placeholder="20"></div>'+
         '<div class="fld unit"><span class="lb">단위</span><div class="chips">'+units+'</div></div>'+
@@ -1207,32 +1140,26 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(c.dows.indexOf(parse(d).getDay())>=0) n++;
       d=shift(d,1);
     }
-    return n?("학습 "+n+"개가 만들어져요."):"그 기간에는 고른 요일이 없어요.";
+    return n?("훈련 "+n+"개가 만들어져요."):"그 기간에는 고른 요일이 없어요.";
   }
 
   function renderDay(){
     var d=SEL,complete=isComplete(d);
-    /* '오늘의 학습' 옆에 또 '오늘'을 붙이면 같은 말이 두 번이다 —
+    /* '오늘의 훈련' 옆에 또 '오늘'을 붙이면 같은 말이 두 번이다 —
        오늘이 아닌 날에만 지난/앞으로를 표시한다. */
     var when=d===CUR?"":(d<CUR?"지난 날":"앞으로");
     var badge=complete
       ? '<div class="badge'+(pop==="day:"+d?" pop":"")+'">'+sticker(daySticker(d))+'완료!</div>'
       : '';
     var html='<div class="today-head"><div>'+
-      '<div class="eyebrow">오늘의 학습'+
+      '<div class="eyebrow">오늘의 훈련'+
         (when?'<span class="when">'+when+'</span>':"")+'</div>'+
       '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+badge+'</div>';
     html+='<div class="todos">'+todoList(d)+addArea(d,"today")+'</div>';
     if(complete){
       html+='<div class="cheer">'+sticker("crown")+'<span>'+dayCheer(d)+'</span></div>';
     }else if(d<CUR){
-      /* 손으로 그 날에 적어 둔 학습은 그대로 머문다 —
-         오늘로 옮겨지는 것이 있을 때만 그렇게 안내한다 */
-      var willMove=todosFor(d).some(function(t){
-        return !t.done&&!t.series&&!t.back;
-      });
-      html+='<div class="note">'+
-        (willMove?'지난 날의 못 한 학습은 다음에 열 때 오늘로 옮겨져요. ':'')+
+      html+='<div class="note">지난 날의 못 한 훈련은 다음에 열 때 오늘로 옮겨져요. '+
         '여기서 바로 체크해도 그날 스티커가 붙어요.</div>';
     }
     $("dayPanel").innerHTML=html;
@@ -1257,37 +1184,34 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     }
   }
 
-  var mover=null;   /* {date:밀린 날, to:옮길 날, err:""} */
+  var moveDay=null;   /* 지금 '이동' 날짜를 고르고 있는 밀린 날 */
 
   function renderBacklog(){
     var missed=missedDays(),wrap=$("backlogWrap");
-    if(!missed.length){wrap.innerHTML="";mover=null;return;}
-    if(mover&&missed.indexOf(mover.date)<0) mover=null;
+    if(!missed.length){moveDay=null;wrap.innerHTML="";return;}
+    if(moveDay&&missed.indexOf(moveDay)<0) moveDay=null;
     var show=missed.slice(-5).reverse();
     var rows=show.map(function(d){
-      var left=pendingOf(d).length;
+      var n=pendingOf(d).length;
       var row='<div class="bl"><span class="d">'+label(d)+'</span>'+
-        '<span class="w">'+dowOf(d)+'요일 · '+left+'개 남음</span>'+
-        '<span class="acts">'+
-          '<button class="go'+(SEL===d&&!(mover&&mover.date===d)?" on":"")+
-            '" data-open="'+d+'">채우기</button>'+
-          '<button class="go'+(mover&&mover.date===d?" on":"")+
-            '" data-move="'+d+'">이동</button>'+
-          '<button class="go" data-skip="'+d+'">스킵</button>'+
+        '<span class="w">'+dowOf(d)+'요일 · '+n+'개 남음</span>'+
+        '<span class="blacts">'+
+          '<button class="go pri" data-open="'+d+'">채우기</button>'+
+          '<button class="go" data-move="'+d+'">이동</button>'+
+          '<button class="go mute" data-skip="'+d+'">스킵</button>'+
         '</span></div>';
-      if(mover&&mover.date===d){
-        row+='<div class="mv">'+
-          '<input type="date" data-mv="to" value="'+esc(mover.to)+'" min="'+CUR+'" max="'+END+'" aria-label="옮길 날">'+
-          '<button class="btn" data-mv-cancel>취소</button>'+
-          '<button class="btn primary" data-mv-save>옮기기</button>'+
-          (mover.err?'<span class="err">'+esc(mover.err)+'</span>':'')+
-        '</div>';
+      if(moveDay===d){
+        row+='<div class="blmove">'+
+          '<span class="lb">옮길 날짜</span>'+
+          '<input type="date" id="moveTo" value="'+CUR+'" min="'+CUR+'" max="'+END+'" aria-label="옮길 날짜">'+
+          '<button class="btn" data-move-cancel>취소</button>'+
+          '<button class="btn primary" data-move-go="'+d+'">옮기기</button>'+
+          '</div>';
       }
       return row;
     }).join("");
-    wrap.innerHTML='<div class="backlog"><h2>밀린 학습 '+missed.length+'일</h2>'+
-      '<p>채우기는 그날로 가서 체크하고, 이동은 남은 학습을 다른 날로 옮기고, '+
-      '스킵은 못 한 채로 두고 이 목록에서만 빼요.</p>'+rows+
+    wrap.innerHTML='<div class="backlog"><h2>밀린 훈련 '+missed.length+'일</h2>'+
+      '<p>채우기는 그날로 가서 체크하고, 이동은 오늘 이후로 미루고, 스킵은 목록에서만 내려요.</p>'+rows+
       (missed.length>show.length?'<div class="bl-more">그 밖에 '+(missed.length-show.length)+'일 더 — 달력에서 확인</div>':"")+
       '</div>';
   }
@@ -1314,7 +1238,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(key===CUR) cls+=" today";
       if(key===SEL) cls+=" sel";
       /* 다 해낸 날엔 스티커, 하는 중인 날엔 얼마나 했는지 눈금이 붙는다.
-         학습 수가 날마다 다르므로 개수 대신 비율로 그린다. */
+         훈련 수가 날마다 다르므로 개수 대신 비율로 그린다. */
       var mark="";
       if(st.complete) mark='<span class="dst">'+sticker(daySticker(key),pop==="day:"+key)+'</span>';
       else if(st.total>0) mark='<span class="prog"><i style="width:'+
@@ -1395,7 +1319,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* --- 백업 파일 내보내기 ---
      두 앱은 같은 주소(아이디.github.io)를 쓰므로 저장 공간을 공유한다.
-     그래서 백업 한 파일에 '도아 셈'과 '도아 킥' 기록을 함께 담는다.
+     그래서 백업 한 파일에 '도아 킥'과 '도아 셈' 기록을 함께 담는다.
      어느 앱에서 내보내도, 어느 앱에서 불러와도 둘 다 복구된다. */
   function exportData(){
     var apps={};
@@ -1411,7 +1335,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var payload={
       app:"doa-apps", v:3,
       exportedAt:new Date().toISOString(),
-      from:"도아 셈",
+      from:"도아 킥",
       apps:apps
     };
     var text=JSON.stringify(payload,null,2);
@@ -1484,7 +1408,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         if(!src||typeof src!=="object") return;
         var box=state.done[d]||(state.done[d]={});
         var before=Object.keys(box).length;
-        Object.keys(src).forEach(function(k){if(src[k]) box[k]=true;});
+        LEGACY.forEach(function(m){if(src[m.id]) box[m.id]=true;});
         if(Object.keys(box).length>before) addedDays++;
       });
       if(inc.mcut&&(!state.mcut||inc.mcut<state.mcut)) state.mcut=inc.mcut;
@@ -1507,7 +1431,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var msg=(addedDays||addedTodos)
       ? "기록을 합쳤어요 — "+addedDays+"일, 할 일 "+addedTodos+"개 추가"
       : "이 앱에는 새로 들어올 기록이 없었어요.";
-    if(otherAdded) msg+=" · 도아 킥 기록도 함께 복구했어요.";
+    if(otherAdded) msg+=" · 도아 셈 기록도 함께 복구했어요.";
     toast(msg);
   }
 
@@ -1700,7 +1624,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     });
   }
 
-  /* 제목 옆 등호를 한 번 찍는다 — 애니메이션을 다시 걸려면 클래스를 떼었다 붙인다 */
+  /* 제목 옆 공을 한 번 찬다 — 애니메이션을 다시 걸려면 클래스를 떼었다 붙인다 */
   function kickBall(){
     var b=$("kick");
     if(!b) return;
@@ -1921,7 +1845,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         composer=null;
         rollover();
         renderAll();
-        toast(r.n>1?("학습 "+r.n+"개를 만들었어요."):"학습을 추가했어요.");
+        toast(r.n>1?("훈련 "+r.n+"개를 만들었어요."):"훈련을 추가했어요.");
         return;
       }
     }
@@ -1981,32 +1905,24 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       renderAll(); return;
     }
     if((el=up(e.target,"[data-del]"))){delTodo(el.getAttribute("data-del"));renderAll();return;}
-    if((el=up(e.target,"[data-unskip]"))){unskip(el.getAttribute("data-unskip"));renderAll();return;}
-
-    /* 밀린 학습 — 이동 · 스킵 */
+    /* 밀린 훈련 — 이동 · 스킵 */
     if((el=up(e.target,"[data-move]"))){
-      var md=el.getAttribute("data-move");
-      mover=(mover&&mover.date===md)?null:{date:md,to:CUR,err:""};
-      renderBacklog();return;
+      moveDay=el.getAttribute("data-move"); renderBacklog(); return;
     }
-    if((el=up(e.target,"[data-skip]"))){
-      var sd=el.getAttribute("data-skip");
-      var sn=skipDay(sd);
-      mover=null; renderAll();
-      toast(sn?(label(sd)+"의 학습 "+sn+"개를 건너뛰었어요."):"건너뛸 학습이 없어요.");
+    if(up(e.target,"[data-move-cancel]")){ moveDay=null; renderBacklog(); return; }
+    if((el=up(e.target,"[data-move-go]"))){
+      var mfrom=el.getAttribute("data-move-go");
+      var mbox=$("moveTo"), mto=mbox?mbox.value:"";
+      if(!mto||mto<CUR||mto>END){ toast("오늘부터 "+label(END)+" 사이의 날짜만 고를 수 있어요."); return; }
+      var mn=moveTodos(mfrom,mto);
+      moveDay=null; renderAll();
+      toast(mn?("훈련 "+mn+"개를 "+label(mto)+"로 옮겼어요."):"옮길 훈련이 없어요.");
       return;
     }
-    if(up(e.target,"[data-mv-cancel]")){mover=null;renderBacklog();return;}
-    if(up(e.target,"[data-mv-save]")){
-      if(!mover) return;
-      var box=document.querySelector('[data-mv="to"]');
-      var to=box?box.value:mover.to;
-      var r=moveDay(mover.date,to);
-      if(typeof r==="string"){mover.err=r;mover.to=to;renderBacklog();return;}
-      var from=mover.date;
-      mover=null;
-      rollover(); renderAll();
-      toast(label(from)+"의 학습 "+r.n+"개를 "+label(to)+"로 옮겼어요.");
+    if((el=up(e.target,"[data-skip]"))){
+      var sn=skipDay(el.getAttribute("data-skip"));
+      renderAll();
+      toast(sn?("훈련 "+sn+"개를 건너뛰었어요. 기록은 그대로 남아요."):"건너뛸 훈련이 없어요.");
       return;
     }
     if((el=up(e.target,"[data-open]"))){
@@ -2042,14 +1958,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     }
     return true;
   }
-  document.addEventListener("input",function(e){
-    var el=up(e.target,'[data-mv="to"]');
-    if(el&&mover){mover.to=el.value;mover.err="";}
-  });
-  document.addEventListener("change",function(e){
-    var el=up(e.target,'[data-mv="to"]');
-    if(el&&mover){mover.to=el.value;mover.err="";}
-  });
   document.addEventListener("input",bindField);
   document.addEventListener("change",bindField);
 
@@ -2096,7 +2004,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   $("prev").innerHTML=icon("left");
   $("next").innerHTML=icon("right");
-  purgeBasic();
   rollover();
   booted=true;
   checkPersist();
@@ -2106,7 +2013,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   renderAll();
   lastStreak=streak();
 
-  setTimeout(kickBall,420);   /* 앱을 열면 등호가 한 번 찍혀 인사한다 */
+  setTimeout(kickBall,420);   /* 앱을 열면 공이 한 번 굴러 인사한다 */
 
   if(restored) toast("기록이 손상돼 있어 직전 안전본으로 되살렸어요.");
 })();
