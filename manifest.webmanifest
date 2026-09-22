@@ -1,7 +1,7 @@
 {
-  "name": "오늘도 도아 킥",
-  "short_name": "도아 킥",
-  "description": "365일 하루도 빠짐없이, 축구 기본기 훈련 기록",
+  "name": "오늘도 도아 셈",
+  "short_name": "도아 셈",
+  "description": "365일 하루도 빠짐없이, 수학 학습 기록",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",

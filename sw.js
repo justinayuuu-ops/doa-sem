@@ -1,11 +1,11 @@
-/* 도아 훈련 — 오프라인 실행용 서비스 워커
+/* 도아 셈 — 오프라인 실행용 서비스 워커
    화면(HTML)은 네트워크 우선: 새 버전을 올리면 바로 반영된다.
    아이콘·글꼴은 캐시 우선: 지하철이나 비행기 모드에서도 앱이 그대로 뜬다.
-   훈련 기록 자체는 여기 캐시가 아니라 localStorage 에 있으므로
+   학습 기록 자체는 여기 캐시가 아니라 localStorage 에 있으므로
    캐시를 비워도 데이터는 사라지지 않는다. */
 
-var VERSION = "doakick-2026-09-22m";
-var PREFIX = "doakick-";
+var VERSION = "doasem-2026-09-22i";
+var PREFIX = "doasem-";
 var SHELL = PREFIX + "shell-" + VERSION;
 var FONTS = PREFIX + "fonts-" + VERSION;
 
