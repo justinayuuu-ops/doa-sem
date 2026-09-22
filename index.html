@@ -641,7 +641,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-22d</span>
+    <span class="ver">v2026-09-22e</span>
   </footer>
 </div>
 
@@ -810,7 +810,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       /* 옛 '오늘의 공부' 목록 판본 — 지난 날의 기록을 읽는 데 쓴다 */
       missionVersions:Array.isArray(p.missionVersions)?p.missionVersions:null,
       missions:Array.isArray(p.missions)?p.missions:null,
-      basicPurged:!!p.basicPurged,
+      basicPurged:(typeof p.basicPurged==="number")?p.basicPurged:(p.basicPurged?1:0),
       seed:!!p.seed,
       savedAt:p.savedAt||null,
       backupAt:p.backupAt||null
@@ -827,7 +827,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(got&&raw) restored=true;
     }
     var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],mcut:null,
-      missionVersions:null,missions:null,basicPurged:false,
+      missionVersions:null,missions:null,basicPurged:0,
       seed:false,savedAt:null,backupAt:null};
     if(!base.dmeta) base.dmeta={};
     /* 고정 공부를 걷어낸 날을 한 번만 적어 둔다 — 그 전날까지는 옛 기록을
@@ -853,15 +853,16 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   var state=load();
 
-  /* 예전 판에서 자동으로 넣어 두었던 기본 학습을 한 번만 걷어낸다 —
-     이미 체크해 둔 것은 기록이므로 그대로 남긴다. */
+  /* 예전 판이 자동으로 넣어 두었던 기본 학습을 한 번만 걷어낸다 —
+     체크해 둔 것까지 모두 지운다. 다른 기기에도 '지웠다'가 전해지도록
+     바로 없애지 않고 지움 표시를 남긴다. */
   function purgeBasic(){
-    if(state.basicPurged) return;
+    if(state.basicPurged>=2) return false;
     var moved=false;
     state.todos.forEach(function(t){
-      if(t.basic&&!t.done&&!t.del){t.del=true;t.u=Date.now();moved=true;}
+      if(t.basic&&!t.del){t.del=true;t.u=Date.now();moved=true;}
     });
-    state.basicPurged=true;
+    state.basicPurged=2;
     state.seedTo=null;
     save();
     return moved;
