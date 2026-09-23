@@ -431,8 +431,8 @@ header .mark svg{width:100%;height:100%;display:block}
 }
 .day{
   background:var(--surface-2);aspect-ratio:1/1;min-height:44px;position:relative;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  padding:2px;overflow:hidden;-webkit-appearance:none;appearance:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:1px;overflow:hidden;-webkit-appearance:none;appearance:none;
 }
 /* aspect-ratio 미지원 구형 웹뷰 대비 — 정사각형에 가깝게 유지 */
 @supports not (aspect-ratio:1/1){
@@ -447,20 +447,20 @@ header .mark svg{width:100%;height:100%;display:block}
 .day.sun .n{color:var(--coral)}
 /* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
-.prog{display:block;width:52%;min-width:15px;height:4px;margin-top:3px;
+.prog{display:block;width:52%;min-width:15px;height:4px;margin-top:2px;
   border-radius:3px;background:var(--line);overflow:hidden}
-.prog i{display:block;height:100%;border-radius:3px;background:var(--amber)}
+.prog i{display:block;height:100%;border-radius:3px;background:var(--pulse)}
 .day.missed .n{color:var(--ink-3)}
 .day.full{background:var(--pulse-wash)}
-.day .dst{width:21px;height:21px}
-.day .dst .st{width:21px;height:21px}
+/* 칸이 좁은 폰에서도 날짜·스티커가 함께 들어가도록 칸 너비를 따라간다 */
+.day .dst,.day .dst .st{width:clamp(16px,5.2vw,21px);height:clamp(16px,5.2vw,21px)}
 /* 오늘 표시 · 고른 날 표시 — 둘 다 날짜 숫자 뒤의 같은 둥근 네모를 쓴다.
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
    오늘은 핑크로 채우고, 고른 날은 보라 테두리를 두른다. */
 .day.today .n,.day.sel .n{
   flex:none;
-  width:25px;height:25px;
+  width:clamp(20px,6.2vw,25px);height:clamp(20px,6.2vw,25px);
   display:flex;align-items:center;justify-content:center;
   border-radius:8px;
   font-weight:600;
@@ -470,7 +470,9 @@ header .mark svg{width:100%;height:100%;display:block}
 /* 고른 날 — 같은 둥근 네모에 보라 테두리를 두른다.
    오늘을 고르든 다른 날을 고르든 테두리의 모양·두께·색이 똑같고,
    오늘이면 그 안이 핑크로 차 있을 뿐이다. */
-.day.sel .n{box-shadow:0 0 0 2.5px var(--violet)}
+/* 테두리는 상자 안쪽에 그린다 — 바깥에 그리면 칸의 overflow:hidden 에
+   잘리고, 스티커까지 붙은 날에는 세로로 자리를 더 먹어 날짜가 밀려난다 */
+.day.sel .n{box-shadow:inset 0 0 0 2.5px var(--violet)}
 .day.sel{z-index:1}
 /* 달력 칸을 누르면 브라우저가 칸 바깥에 초점선(핑크)을 남긴다 —
    누른 날은 어차피 보라 테두리로 표시되므로 초점선은 지운다.
@@ -483,8 +485,8 @@ header .mark svg{width:100%;height:100%;display:block}
 .cal button:focus{outline:none}
 .cal button:focus-visible{outline:none}
 /* 키보드로 옮겨 다닐 때만 같은 보라 테두리가 따라온다 */
-.day:focus-visible .n{box-shadow:0 0 0 2.5px var(--violet)}
-.day.sel:focus .n{box-shadow:0 0 0 2.5px var(--violet)}
+.day:focus-visible .n{box-shadow:inset 0 0 0 2.5px var(--violet)}
+.day.sel:focus .n{box-shadow:inset 0 0 0 2.5px var(--violet)}
 
 .note{font-size:var(--fs-sm);color:var(--ink-2);background:var(--bg1);
   border-radius:var(--r-sm);padding:8px 10px;margin-top:9px;line-height:1.5}
@@ -613,7 +615,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 @media (max-width:359px){
   .wrap{padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));gap:16px}
   .board .cell{padding:6px 6px 7px}
-  .day .dst,.day .dst .st{width:18px;height:18px}
+  .day .dst,.day .dst .st{width:17px;height:17px}
   .prog{width:60%}
   .badge{font-size:var(--fs-md);padding:4px 9px 4px 7px}
 }
@@ -664,7 +666,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-22i</span>
+    <span class="ver">v2026-09-23e</span>
   </footer>
 </div>
 
@@ -1574,7 +1576,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   function prefillDb(){
     var o=otherSync();
-    return o?o.db:"";
+    return (o&&o.db)?o.db:DEFAULT_DB;
   }
 
   function syncBox(){
@@ -1594,10 +1596,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
           '한 번만 설정하면 링크를 보내는 것으로 끝나요.</p>'+
           '<div class="acts"><button class="btn" id="syncStart">'+icon("link")+'함께 보기 설정</button></div>';
       }else{
-        body=(prefillDb()
+        var mate=otherSync();
+        body=((mate&&mate.db)
             ? '<p>다른 앱에서 쓰던 주소를 채워 뒀어요. <b>연결</b>만 누르면 두 앱이 같은 곳을 보게 돼요.</p>'
-            : '<p>Firebase 실시간 데이터베이스 주소를 붙여넣어 주세요. '+
-              '<b>https://</b> 로 시작하고 <b>firebasedatabase.app</b> 으로 끝나는 주소예요.</p>')+
+            : '<p>기본 주소를 채워 뒀어요. 그대로 <b>연결</b>을 누르면 돼요. '+
+              '다른 데이터베이스를 쓰시려면 주소를 지우고 새 주소를 붙여넣은 뒤 연결하세요.</p>')+
           '<div class="fld"><input type="text" id="syncUrlIn" value="'+esc(prefillDb())+'" '+
           'placeholder="https://....firebasedatabase.app" '+
           'inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'+
@@ -1715,6 +1718,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
      SDK 없이 REST 만 쓴다. 연결이 없으면 조용히 실패하고 앱은 그대로 돈다. */
 
   var SYNC_KEY=KEY+":sync";
+  /* 기본 데이터베이스 주소 — 칸에 미리 채워 둔다.
+     다른 곳을 쓰려면 주소를 지우고 새로 붙여넣은 뒤 연결을 누르면 된다. */
+  var DEFAULT_DB="https://doa-sem-default-rtdb.asia-southeast1.firebasedatabase.app";
   var sync=null;          /* {db:"https://...firebaseio.com", room:"..."} */
   var syncAt=null, syncing=false, syncErr=false, pushTimer=null, pollTimer=null;
 
