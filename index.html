@@ -431,7 +431,7 @@ header .mark svg{width:100%;height:100%;display:block}
 }
 .day{
   background:var(--surface-2);aspect-ratio:1/1;min-height:44px;position:relative;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
   padding:1px;overflow:hidden;-webkit-appearance:none;appearance:none;
 }
 /* aspect-ratio 미지원 구형 웹뷰 대비 — 정사각형에 가깝게 유지 */
@@ -453,14 +453,14 @@ header .mark svg{width:100%;height:100%;display:block}
 .day.missed .n{color:var(--ink-3)}
 .day.full{background:var(--pulse-wash)}
 /* 칸이 좁은 폰에서도 날짜·스티커가 함께 들어가도록 칸 너비를 따라간다 */
-.day .dst,.day .dst .st{width:clamp(16px,5.2vw,21px);height:clamp(16px,5.2vw,21px)}
+.day .dst,.day .dst .st{width:clamp(15px,4.6vw,19px);height:clamp(15px,4.6vw,19px)}
 /* 오늘 표시 · 고른 날 표시 — 둘 다 날짜 숫자 뒤의 같은 둥근 네모를 쓴다.
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
    오늘은 핑크로 채우고, 고른 날은 보라 테두리를 두른다. */
 .day.today .n,.day.sel .n{
   flex:none;
-  width:clamp(20px,6.2vw,25px);height:clamp(20px,6.2vw,25px);
+  width:clamp(22px,7vw,28px);height:clamp(22px,7vw,28px);
   display:flex;align-items:center;justify-content:center;
   border-radius:8px;
   font-weight:600;
@@ -615,7 +615,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 @media (max-width:359px){
   .wrap{padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));gap:16px}
   .board .cell{padding:6px 6px 7px}
-  .day .dst,.day .dst .st{width:17px;height:17px}
+  .day .dst,.day .dst .st{width:15px;height:15px}
   .prog{width:60%}
   .badge{font-size:var(--fs-md);padding:4px 9px 4px 7px}
 }
@@ -666,7 +666,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-23e</span>
+    <span class="ver">v2026-09-23f</span>
   </footer>
 </div>
 
