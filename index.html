@@ -296,9 +296,14 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo.on .txt{color:var(--pulse)}
 .todo .tst{flex:none;width:30px;height:30px}
 .todo .tst .st{width:30px;height:30px}
-.t-count{flex:none;font-size:var(--fs-md);color:var(--ink-3);font-variant-numeric:tabular-nums}
+/* 학습량 — 누르면 그 줄을 고치는 칸이 열린다 */
+.t-count{flex:none;font-size:var(--fs-md);color:var(--ink-3);font-variant-numeric:tabular-nums;
+  padding:3px 7px;border-radius:9px;border:1px dashed var(--line);line-height:1.3}
+.t-count.empty{font-size:var(--fs-xs);color:var(--ink-3)}
 .t-count u{text-decoration:none;font-size:var(--fs-xs)}
-.todo.on .t-count{color:var(--pulse)}
+.todo.on .t-count{color:var(--pulse);border-color:var(--pulse-dim)}
+/* 고치는 중인 줄은 칸을 채워 어느 줄을 고치는지 보이게 한다 */
+.t-count.open{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
 .carry{
   display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;
   font-size:var(--fs-2xs);white-space:nowrap;
@@ -339,7 +344,20 @@ header .mark svg{width:100%;height:100%;display:block}
 .row2 .fld.num{flex:0 0 104px}
 .row2 .fld.unit{flex:1}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+.skrow{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:9px}
+.skrow .fld{flex:1 1 92px;min-width:0}
+.skrow input{
+  width:100%;font-family:inherit;font-size:16px;min-height:var(--tap);
+  padding:6px 10px;line-height:1.2;color:var(--ink);background:var(--field);
+  border:2px solid var(--line);border-radius:var(--r-sm);
+  -webkit-appearance:none;appearance:none;
+}
+.skrow input:focus{border-color:var(--pulse-dim);outline:0}
+.skrow .btn{flex:0 0 auto;min-height:var(--tap);padding:0 15px}
 .chips.sub{margin-top:5px}
+.chip svg{width:14px;height:14px;margin-right:4px;flex:none}
+.chip[disabled]{opacity:.35}
+.composer.edit{border-color:var(--pulse-dim);background:var(--pulse-wash)}
 .chips.sub .chip{padding:0 10px;font-size:var(--fs-xs)}
 .chip{
   display:inline-flex;align-items:center;justify-content:center;
@@ -671,7 +689,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-23h</span>
+    <span class="ver">v2026-09-23j</span>
   </footer>
 </div>
 
@@ -722,6 +740,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       up:'<path d="M12 20.5v-12M7 13l5-5 5 5M4.5 4h15"/>',
       plus:'<path d="M12 5v14M5 12h14"/>',
       chev:'<path d="M6 9.5l6 6 6-6"/>',
+      mvup:'<path d="M12 19.5V5.5M6 11.5l6-6 6 6"/>',
+      mvdown:'<path d="M12 4.5v14M6 12.5l6 6 6-6"/>',
       link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l2.6-2.6a4 4 0 0 0-5.7-5.7l-1.3 1.3"/>'+
            '<path d="M13.8 10.2a4 4 0 0 0-5.7 0l-2.6 2.6a4 4 0 0 0 5.7 5.7l1.3-1.3"/>',
     }[name];
@@ -736,13 +756,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     '<path d="M7.4 12h9.2" stroke-width="2.4"/>',
     '<path d="M8.6 8.6l6.8 6.8M15.4 8.6l-6.8 6.8" stroke-width="2.4"/>',
     '<path d="M7.4 12h9.2" stroke-width="2.4"/>'+
-      '<circle cx="12" cy="7.8" r="1.45" fill="currentColor" stroke="none"/>'+
-      '<circle cx="12" cy="16.2" r="1.45" fill="currentColor" stroke="none"/>'
+      '<circle cx="12" cy="7.1" r="1.35" fill="currentColor" stroke="none"/>'+
+      '<circle cx="12" cy="16.9" r="1.35" fill="currentColor" stroke="none"/>'
   ];
-  function opIcon(seed){
+  function opIcon(i){
+    var n=(typeof i==="number")?i:hash(String(i));
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"'+
       ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
-      '<circle cx="12" cy="12" r="11"/>'+OPS[hash(String(seed))%OPS.length]+'</svg>';
+      '<circle cx="12" cy="12" r="11"/>'+OPS[((n%OPS.length)+OPS.length)%OPS.length]+'</svg>';
   }
 
   /* 스티커 — 실제 스티커처럼 두 테마에서 같은 색을 유지한다 */
@@ -841,6 +862,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       missionVersions:Array.isArray(p.missionVersions)?p.missionVersions:null,
       missions:Array.isArray(p.missions)?p.missions:null,
       basicPurged:(typeof p.basicPurged==="number")?p.basicPurged:(p.basicPurged?1:0),
+      /* 칭찬 스티커 규칙 — 며칠마다(every) 몇 개(give) */
+      sk:(p.sk&&typeof p.sk==="object")?p.sk:null,
+      skAt:(typeof p.skAt==="number")?p.skAt:0,
       seed:!!p.seed,
       savedAt:p.savedAt||null,
       backupAt:p.backupAt||null
@@ -857,9 +881,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(got&&raw) restored=true;
     }
     var base=got||{v:DATA_V,done:{},dmeta:{},todos:[],mcut:null,
-      missionVersions:null,missions:null,basicPurged:0,
+      missionVersions:null,missions:null,basicPurged:0,sk:null,skAt:0,
       seed:false,savedAt:null,backupAt:null};
     if(!base.dmeta) base.dmeta={};
+    if(!base.sk||!(base.sk.every>0)||!(base.sk.give>0)) base.sk={every:7,give:1};
     /* 고정 공부를 걷어낸 날을 한 번만 적어 둔다 — 그 전날까지는 옛 기록을
        그대로 읽고, 그날부터는 학습 목록으로 센다. */
     if(!base.mcut) base.mcut=fmt(new Date());
@@ -956,7 +981,12 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* 지운 할 일은 곧바로 없애지 않고 표시만 남긴다 —
      그래야 다른 기기에도 '지웠다'는 사실이 전달된다. */
   function liveTodos(){return state.todos.filter(function(t){return !t.del;});}
-  function todosFor(d){return state.todos.filter(function(t){return t.date===d&&!t.del;});}
+  /* 손으로 정한 차례가 있으면 그대로 따른다. 차례가 없던 옛 기록은
+     원래 들어온 순서를 지킨다(정렬이 안정적이라 서로 자리를 바꾸지 않는다). */
+  function todosFor(d){
+    return state.todos.filter(function(t){return t.date===d&&!t.del;})
+      .sort(function(a,b){return (a.ord||0)-(b.ord||0);});
+  }
 
   function newId(){return "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 
@@ -1002,6 +1032,40 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     save();
     return {n:made};
   }
+  function findTodo(id){
+    var got=null;
+    state.todos.forEach(function(t){if(t.id===id) got=t;});
+    return got;
+  }
+  /* 한 줄 고치기 — 이름·학습량·단위 */
+  function updateTodo(id,text,count,unit){
+    var t=findTodo(id);
+    if(!t) return "그 학습을 찾지 못했어요.";
+    text=(text||"").trim();
+    if(!text) return "학습 이름을 적어 주세요.";
+    var cnt=parseInt(count,10);
+    if(!(cnt>0)) cnt=null;
+    t.text=text;
+    if(cnt){t.count=cnt;t.unit=unit||"페이지";}
+    else{delete t.count;delete t.unit;}
+    t.u=Date.now();
+    save();
+    return null;
+  }
+  /* 차례 옮기기 — 그날 목록 안에서 한 칸씩 */
+  function moveTodo(id,dir){
+    var t0=findTodo(id);
+    if(!t0) return false;
+    var list=todosFor(t0.date),i=-1;
+    list.forEach(function(t,k){if(t.id===id) i=k;});
+    var j=i+dir;
+    if(i<0||j<0||j>=list.length) return false;
+    var tmp=list[i]; list[i]=list[j]; list[j]=tmp;
+    list.forEach(function(t,k){t.ord=k;t.u=Date.now();});
+    save();
+    return true;
+  }
+
   function toggleTodo(id){
     state.todos.forEach(function(t){
       if(t.id===id){t.done=!t.done; if(t.done) t.doneDate=CUR; t.u=Date.now();}
@@ -1032,15 +1096,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(isComplete(d)) doneDays++;
       past++; d=shift(d,1);
     }
-    /* 푼 장수 — 옛 기록은 공부 하나가 한 장, 새 기록은 해낸 학습의 '장' 수 */
-    var pages=0;
-    Object.keys(state.done).forEach(function(k){
-      if(isLegacy(k)&&inRange(k)) pages+=countDone(k);
-    });
-    state.todos.forEach(function(t){
-      if(t.done&&!t.del&&(!t.unit||t.unit==="장"||t.unit==="페이지")) pages+=(t.count||1);
-    });
-    return {doneDays:doneDays,pages:pages,past:past,total:TOTAL};
+    /* 칭찬 스티커 — 완성한 날이 정해진 수만큼 쌓일 때마다 한 묶음씩 준다.
+       받고 나면 그 다음 날부터 다시 0에서 센다(나머지로 세므로 저절로 그렇게 된다). */
+    var every=(state.sk&&state.sk.every)||7;
+    var give=(state.sk&&state.sk.give)||1;
+    var stickers=Math.floor(doneDays/every)*give;
+    var toNext=every-(doneDays%every);
+    return {doneDays:doneDays,stickers:stickers,toNext:toNext,
+            every:every,give:give,past:past,total:TOTAL};
   }
   /* 밀린 날 — 지난 날 가운데 아직 체크하지 못한 학습이 남아 있는 날.
      학습을 하나도 넣지 않은 날은 채울 것이 없으므로 목록에 올리지 않는다
@@ -1107,38 +1170,85 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     });
   }
 
+  var lastSk=null;
   function renderBoard(){
     var t=tally(),st=streak();
     var beat=lastStreak!==null&&st>lastStreak?" beat":"";
-    lastStreak=st;
+    var skBeat=lastSk!==null&&t.stickers>lastSk?" beat":"";
+    lastStreak=st; lastSk=t.stickers;
     $("board").innerHTML=
       '<div class="cell"><span class="v'+beat+'">'+st+'<u>일</u></span><span class="k">연속 달성</span></div>'+
       '<div class="cell"><span class="v">'+t.doneDays+'<u>일</u></span><span class="k">해낸 날</span></div>'+
-      '<div class="cell"><span class="v">'+t.pages.toLocaleString("ko-KR")+'<u>장</u></span><span class="k">푼 장수</span></div>';
+      '<div class="cell"><span class="v'+skBeat+'">'+t.stickers.toLocaleString("ko-KR")+
+        '<u>개</u></span><span class="k">칭찬 스티커</span></div>';
   }
 
   function todoList(d){
     var list=todosFor(d);
     if(!list.length) return '<div class="empty">추가한 학습이 없어요.</div>';
-    return list.map(function(t){
+    return list.map(function(t,i){
       var late=0;
       if(t.origDate&&!t.done) late=Math.round((parse(t.date)-parse(t.origDate))/86400000);
       var badge=late>0?'<span class="carry'+(late>=7?" long":"")+'">'+late+'일 이관</span>':"";
       if(t.skip&&!t.done) badge+='<button class="skipchip" data-unskip="'+t.id+'">건너뜀 · 되돌리기</button>';
       var key="t:"+t.id;
-      var cnt=t.count
-        ? '<span class="t-count">'+t.count+'<u>'+esc(t.unit||"페이지")+'</u></span>'
-        : '';
-      return '<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
-        '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+opIcon(t.basic||t.text)+'</button>'+
+      var cnt='<button class="t-count'+(t.count?"":" empty")+
+        (editor&&editor.id===t.id?" open":"")+'" data-edit="'+t.id+'" '+
+        'aria-label="학습 고치기">'+
+        (t.count?(t.count+'<u>'+esc(t.unit||"페이지")+'</u>'):'고치기')+'</button>';
+      /* 기호는 목록 차례대로 + − × ÷ 가 돌아간다 — 앱 아이콘과 같은 순서 */
+      var row='<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
+        '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+opIcon(i)+'</button>'+
         '<span class="txt">'+esc(t.text)+badge+'</span>'+
         '<span class="tst">'+(t.done?sticker("smile",pop===key):"")+'</span>'+
         cnt+
         '<button class="del" data-del="'+t.id+'" aria-label="삭제">'+icon("close")+'</button>'+
         '</div>';
+      if(editor&&editor.id===t.id) row+=editArea(t,i,list.length);
+      return row;
     }).join("");
   }
 
+
+  /* ---------- 한 줄 고치기 폼 ---------- */
+  var editor=null;   /* {id, text, count, unit, err} */
+
+  function openEditor(t){
+    editor={id:t.id,text:t.text,count:t.count?String(t.count):"",
+            unit:t.unit||"페이지",err:""};
+  }
+  function unitChips(c,ka,ua){
+    var kind=kindOf(c.unit);
+    var kinds=UNIT_KINDS.map(function(g){
+      return '<button class="chip'+(g.id===kind.id?" on":"")+'" '+ka+'="'+g.id+'">'+g.name+'</button>';
+    }).join("");
+    var units=kind.units.map(function(u){
+      return '<button class="chip'+(c.unit===u?" on":"")+'" '+ua+'="'+u+'">'+u+'</button>';
+    }).join("");
+    return '<div class="chips">'+kinds+'</div><div class="chips sub">'+units+'</div>';
+  }
+
+  function editArea(t,i,n){
+    var c=editor;
+    return '<div class="composer edit">'+
+      '<div class="fld"><span class="lb">학습</span>'+
+        '<input type="text" data-e="text" value="'+esc(c.text)+'" maxlength="60" '+INPUT_ATTRS+'></div>'+
+      '<div class="row2">'+
+        '<div class="fld num"><span class="lb">학습량</span>'+
+          '<input type="number" data-e="count" value="'+esc(String(c.count))+'" '+
+          'inputmode="numeric" min="1" max="999" placeholder="1"></div>'+
+        '<div class="fld unit"><span class="lb">단위</span>'+unitChips(c,"data-ekind","data-eunit")+'</div>'+
+      '</div>'+
+      '<div class="fld"><span class="lb">순서</span><div class="chips">'+
+        '<button class="chip" data-ord="-1"'+(i===0?" disabled":"")+'>'+icon("mvup")+'위로</button>'+
+        '<button class="chip" data-ord="1"'+(i===n-1?" disabled":"")+'>'+icon("mvdown")+'아래로</button>'+
+      '</div></div>'+
+      (c.err?'<div class="cerr">'+esc(c.err)+'</div>':'')+
+      '<div class="cacts">'+
+        '<button class="btn" data-edit-cancel>취소</button>'+
+        '<button class="btn primary" data-edit-save>저장</button>'+
+      '</div></div>';
+  }
 
   /* ---------- 할 일 만들기 폼 ---------- */
   var composer=null;   /* {date, where, text, count, unit, mode, from, to, dows, err} */
@@ -1170,13 +1280,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         icon("plus")+'학습 추가</button>';
     }
     var c=composer;
-    var kind=kindOf(c.unit);
-    var kinds=UNIT_KINDS.map(function(g){
-      return '<button class="chip'+(g.id===kind.id?" on":"")+'" data-kind="'+g.id+'">'+g.name+'</button>';
-    }).join("");
-    var units=kind.units.map(function(u){
-      return '<button class="chip'+(c.unit===u?" on":"")+'" data-unit="'+u+'">'+u+'</button>';
-    }).join("");
     var modes='<button class="chip'+(c.mode==="one"?" on":"")+'" data-mode="one">하루만</button>'+
               '<button class="chip'+(c.mode==="range"?" on":"")+'" data-mode="range">기간 반복</button>';
 
@@ -1206,8 +1309,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
           '<input type="number" data-c="count" value="'+esc(String(c.count))+'" '+
           'inputmode="numeric" min="1" max="999" placeholder="1"></div>'+
         '<div class="fld unit"><span class="lb">단위</span>'+
-          '<div class="chips">'+kinds+'</div>'+
-          '<div class="chips sub">'+units+'</div></div>'+
+          unitChips(c,"data-kind","data-unit")+'</div>'+
       '</div>'+
       '<div class="fld"><span class="lb">언제</span><div class="chips">'+modes+'</div></div>'+
       period+
@@ -1266,6 +1368,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     if(!inRange(d)) return;
     SEL=d;
     composer=null;
+    editor=null;
     var p=parse(d);
     view.y=p.getFullYear(); view.m=p.getMonth();
     renderAll();
@@ -1589,8 +1692,30 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
           '<button class="btn" id="doImport">'+icon("up")+'백업 불러오기</button>'+
         '</div>'+
       '</div>'+
+      rewardBox()+
       syncBox();
   }
+
+  /* --- 칭찬 스티커 칸 --- */
+  function rewardBox(){
+    var t=tally();
+    var body='<p class="sst">완성한 날 '+t.doneDays+'일 · 모은 스티커 '+t.stickers+'개'+
+        (t.doneDays?' · 다음 스티커까지 '+t.toNext+'일':'')+'</p>'+
+      '<p>미션을 <b>'+t.every+'일</b> 완성할 때마다 칭찬 스티커 <b>'+t.give+'개</b>를 줘요. '+
+      '받고 나면 그 다음 날부터 다시 0에서 세요.</p>'+
+      '<div class="skrow">'+
+        '<label class="fld"><span class="lb">며칠마다</span>'+
+          '<input type="number" id="skEvery" value="'+t.every+'" min="1" max="365" inputmode="numeric"></label>'+
+        '<label class="fld"><span class="lb">스티커 수</span>'+
+          '<input type="number" id="skGive" value="'+t.give+'" min="1" max="99" inputmode="numeric"></label>'+
+        '<button class="btn primary" id="skSave">저장</button>'+
+      '</div>'+
+      (skMsg?'<div class="cerr">'+esc(skMsg)+'</div>':'');
+    return '<div class="syncbox on">'+
+      secHead("sk","칭찬 스티커",t.stickers+"개",false)+
+      '<div class="sec-body"'+(secOpen.sk?"":" hidden")+'>'+body+'</div></div>';
+  }
+  var skMsg="";
 
   /* --- 함께 보기 칸 --- */
   var syncForm=false, syncMsg="";
@@ -1650,7 +1775,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* 접었다 펴는 칸 — 평소에는 접혀 있고, 눌렀을 때만 열린다.
      앱을 다시 열면 다시 접힌 상태로 돌아온다. */
-  var secOpen={keep:false,sync:false};
+  var secOpen={keep:false,sync:false,sk:false};
 
   function secHead(id,title,summary,warn){
     return '<button class="sec-head'+(secOpen[id]?" open":"")+'" data-sec="'+id+'" '+
@@ -1807,6 +1932,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       state.mcut=rem.mcut; changed=true;
     }
 
+    /* 칭찬 스티커 규칙은 나중에 고친 쪽을 따른다 */
+    if(rem.sk&&typeof rem.sk==="object"&&(rem.skAt||0)>(state.skAt||0)){
+      state.sk=rem.sk; state.skAt=rem.skAt||0; changed=true;
+    }
+
     Object.keys(rd).forEach(function(d){
       var mine=state.dmeta[d]||0, theirs=rm[d]||0;
       if(theirs>mine){
@@ -1836,7 +1966,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   }
 
   function payload(){
-    return {done:state.done,dmeta:state.dmeta,todos:state.todos,mcut:state.mcut,at:Date.now()};
+    return {done:state.done,dmeta:state.dmeta,todos:state.todos,mcut:state.mcut,
+            sk:state.sk,skAt:state.skAt,at:Date.now()};
   }
 
   function pull(then){
@@ -1927,8 +2058,37 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var el;
     askPersist();   /* 첫 조작 때 저장 공간 보호를 요청한다 */
 
+    /* 한 줄 고치기 */
+    if((el=up(e.target,"[data-edit]"))){
+      var eid=el.getAttribute("data-edit");
+      if(editor&&editor.id===eid){editor=null;}
+      else{var t1=findTodo(eid); if(t1){composer=null;openEditor(t1);}}
+      renderAll();return;
+    }
+    if(editor){
+      if((el=up(e.target,"[data-ekind]"))){
+        var eg=el.getAttribute("data-ekind");
+        UNIT_KINDS.forEach(function(x){if(x.id===eg) editor.unit=x.units[0];});
+        renderAll();return;
+      }
+      if((el=up(e.target,"[data-eunit]"))){editor.unit=el.getAttribute("data-eunit");renderAll();return;}
+      if((el=up(e.target,"[data-ord]"))&&!el.disabled){
+        moveTodo(editor.id,parseInt(el.getAttribute("data-ord"),10));
+        renderAll();return;
+      }
+      if(up(e.target,"[data-edit-cancel]")){editor=null;renderAll();return;}
+      if(up(e.target,"[data-edit-save]")){
+        var er=updateTodo(editor.id,editor.text,editor.count,editor.unit);
+        if(er){editor.err=er;renderAll();return;}
+        editor=null;renderAll();
+        toast("학습을 고쳤어요.");
+        return;
+      }
+    }
+
     /* 할 일 만들기 폼 */
     if((el=up(e.target,"[data-open-compose]"))){
+      editor=null;
       openComposer(el.getAttribute("data-open-compose"),el.getAttribute("data-where"));
       renderAll();return;
     }
@@ -1985,6 +2145,17 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       return;
     }
     if(up(e.target,"#syncOff")){disconnectSync();toast("함께 보기를 껐어요. 기록은 이 폰에 그대로 있어요.");return;}
+
+    if(up(e.target,"#skSave")){
+      var ev=parseInt(($("skEvery")||{}).value,10);
+      var gv=parseInt(($("skGive")||{}).value,10);
+      if(!(ev>0&&ev<=365)){skMsg="며칠마다는 1일에서 365일 사이로 적어 주세요.";renderKeep();return;}
+      if(!(gv>0&&gv<=99)){skMsg="스티커 수는 1개에서 99개 사이로 적어 주세요.";renderKeep();return;}
+      state.sk={every:ev,give:gv}; state.skAt=Date.now();
+      skMsg=""; save(); lastSk=null; renderAll();
+      toast(ev+"일 완성할 때마다 스티커 "+gv+"개를 드릴게요.");
+      return;
+    }
 
     if(up(e.target,"#doExport")){exportData();return;}
     if(up(e.target,"#doImport")||up(e.target,"#doImport2")){pickFile();return;}
@@ -2063,6 +2234,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* 작성 폼의 글자·숫자·날짜는 입력할 때마다 상태에만 담는다.
      화면을 다시 그리지 않으므로 키보드가 닫히거나 커서가 튀지 않는다. */
   function bindField(e){
+    var ee=up(e.target,"[data-e]");
+    if(ee&&editor){editor[ee.getAttribute("data-e")]=ee.value;editor.err="";return true;}
     var el=up(e.target,"[data-c]");
     if(!el||!composer) return false;
     var k=el.getAttribute("data-c");
@@ -2087,7 +2260,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* 키보드가 올라올 때 입력창이 가려지지 않게 */
   document.addEventListener("focusin",function(e){
-    var input=up(e.target,'.composer input');
+    var input=up(e.target,'.composer input,.composer.edit input');
     if(!input) return;
     setTimeout(function(){
       try{input.scrollIntoView({block:"center",behavior:"smooth"});}catch(err){}
