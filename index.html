@@ -525,6 +525,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 }
 .sec-t{font-size:var(--fs-lg);color:var(--violet);flex:none}
 .syncbox.on .sec-t{color:var(--pulse)}
+/* 켜져 있으면 오른쪽 한 줄 요약도 같은 핑크로 — 연결이 끊겼을 때만 빨강 */
+.syncbox.on .sec-sum{color:var(--pulse)}
+.syncbox.on .sec-sum.warn{color:var(--coral)}
 .sec-sum{
   flex:1;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;
@@ -668,7 +671,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-23g</span>
+    <span class="ver">v2026-09-23h</span>
   </footer>
 </div>
 
