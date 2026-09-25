@@ -313,6 +313,65 @@ header .mark svg{width:100%;height:100%;display:block}
 .del{flex:none;color:var(--ink-3);width:38px;height:38px;margin:-6px -8px -6px 0;
   border-radius:9px;display:grid;place-items:center}
 .del svg{width:16px;height:16px}
+/* ── 아직 안 한 학습 — 형광펜 밑줄(글자에만) ── */
+.todo:not(.on):not(.ghost):not(.skipped) .txt .tt,.kid:not(.on):not(.note):not(.ghost) .kt .hl{
+  background:linear-gradient(transparent 55%,#ffe81a 55%,#ffe81a 94%,transparent 94%);
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 2px}
+/* ── 옮긴 학습 ── */
+.carry.mv{color:var(--violet);background:#efe9fb}
+button.carry.mv{font:inherit;font-size:var(--fs-2xs);border:0;cursor:pointer}
+.todo.ghost .box{color:#c4c4c4}
+.todo.ghost .tt{color:#a8a8a8;text-decoration:line-through;text-decoration-color:#cfcfcf}
+.todo.ghost .carry.mv,.kid.ghost .carry.mv{color:#7a7a7a;background:#f0f0f0}
+/* ── 역할 이름표 ── */
+.by{display:inline-flex;align-items:center;font-size:11px;line-height:1;padding:3px 6px;border-radius:999px;color:#fff;margin-left:5px;vertical-align:1px}
+.chips.roles .chip{min-width:64px}
+.chips.roles .chip.on{color:#fff}
+/* ── 하위 항목 (ㄴ 추가 학습 · ㄴ 코멘트) — 내용이 메인 학습 글자와 같은 세로줄에서 시작한다 ── */
+.addkid{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:var(--pulse-strong);
+  background:var(--pulse-wash);border:1.5px solid var(--pulse-dim)}
+.addkid svg{width:14px;height:14px}
+.kid{display:flex;align-items:center;gap:4px;padding:3px 0;font-size:var(--fs-sm);line-height:1.4}
+.kid-l{flex:none;width:12px;color:var(--ink-3);font-size:var(--fs-2xs)}
+.kbox{flex:none;position:relative;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);background:#fff;
+  display:grid;place-items:center;color:#fff;padding:0}
+.kbox::after{content:"";position:absolute;top:50%;left:50%;width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
+.kbox svg{width:12px;height:12px}
+.kid.on .kbox{background:var(--pulse);border-color:var(--pulse)}
+.kid .kt{flex:1;min-width:0;word-break:break-word;text-align:left;padding:2px 0}
+.kid.on .kt{color:var(--pulse)}
+.kid.note .kt{color:var(--ink-2)}
+.kic{flex:none;width:18px;height:18px;display:grid;place-items:center;color:var(--violet)}
+.kic svg{width:16px;height:16px}
+.kid.ghost .kt{color:#a8a8a8;text-decoration:line-through;text-decoration-color:#cfcfcf}
+.kid.ghost .kbox{border-color:#e2e2e2;background:var(--bg2)}
+.kid .del{width:32px;height:32px}
+.kidform{margin:4px 0 8px 38px;padding:9px 10px;border-radius:var(--r-sm);background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);
+  display:flex;flex-direction:column;gap:7px}
+.kidform input{width:100%;font-family:inherit;font-size:16px;min-height:var(--tap);padding:8px 12px;color:var(--ink);background:#fff;
+  border:2px solid var(--line);border-radius:var(--r-sm);-webkit-appearance:none;appearance:none}
+.kidform input:focus{outline:0;border-color:var(--pulse-dim)}
+.kidform .dates{display:flex;align-items:center;gap:7px}
+.kidform .dates input{flex:1;min-width:0}
+.kf-foot{display:flex;align-items:center;gap:7px}
+.kf-me{flex:1;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
+.kf-foot .btn{flex:none}
+.btn.warn{color:var(--coral);border-color:var(--coral)}
+/* ── 목록 보기 탭 ── */
+.lmode{display:flex;gap:4px;margin:2px 0 8px;padding:3px;border-radius:999px;background:var(--bg2);border:1px solid var(--line)}
+.lmode button{flex:1;min-height:32px;border-radius:999px;font-size:var(--fs-sm);color:var(--ink-3)}
+.lmode button.on{background:var(--pulse);color:var(--pulse-ink)}
+.lrange{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.lrange input{flex:1;min-width:0;font-family:inherit;font-size:16px;min-height:var(--tap);padding:6px 10px;color:var(--ink);
+  background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);-webkit-appearance:none;appearance:none}
+.lrange span{color:var(--ink-3)}
+.lsum{font-size:var(--fs-2xs);color:var(--ink-3);margin:-2px 0 6px}
+.lday{padding:4px 0 6px}
+.lday+.lday{border-top:1px dashed var(--line)}
+.lday-h{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:32px;font-size:var(--fs-sm);color:var(--violet)}
+.lday-h em{font-style:normal;font-size:var(--fs-2xs);color:#fff;background:var(--pulse);padding:1px 7px;border-radius:999px;margin-left:4px}
+.lday-n{font-size:var(--fs-2xs);color:var(--ink-3)}
+
 /* ── 할 일 만들기 ───────────────────────────────────────── */
 .addbtn{
   display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
@@ -690,7 +749,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-25s</span>
+    <span class="ver">v2026-09-26a</span>
   </footer>
 </div>
 
@@ -743,6 +802,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       chev:'<path d="M6 9.5l6 6 6-6"/>',
       mvup:'<path d="M12 19.5V5.5M6 11.5l6-6 6 6"/>',
       mvdown:'<path d="M12 4.5v14M6 12.5l6 6 6-6"/>',
+      chat:'<path d="M4.5 5.5h15a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.5V16.5h-1A1.5 1.5 0 0 1 3 15V7a1.5 1.5 0 0 1 1.5-1.5z"/>',
       link:'<path d="M10.2 13.8a4 4 0 0 0 5.7 0l2.6-2.6a4 4 0 0 0-5.7-5.7l-1.3 1.3"/>'+
            '<path d="M13.8 10.2a4 4 0 0 0-5.7 0l-2.6 2.6a4 4 0 0 0 5.7 5.7l1.3-1.3"/>',
     }[name];
@@ -930,11 +990,12 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     state.todos.forEach(function(t){
       /* 반복으로 만든 할 일은 이관하지 않는다 — 매주 돌아오는 일이라
          하루 걸렀다고 오늘로 몰아오면 목록이 금세 쌓인다. */
-      if(!t.done&&!t.del&&t.date<CUR&&!t.series&&!t.back){
+      if(!t.parent&&!t.ghost&&!t.done&&!t.del&&t.date<CUR&&!t.series&&!t.back){
         if(!t.origDate) t.origDate=t.date;
         t.date=CUR; moved=true;
       }
     });
+    if(syncKids()) moved=true;
     if(moved) save();
   }
 
@@ -958,7 +1019,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* 하루의 상태 — {total:그날 학습 수, done:해낸 수, complete:다 했나} */
   function dayStat(d){
-    var list=todosFor(d),n=0;
+    var list=tasksFor(d),n=0;
     list.forEach(function(t){if(t.done)n++;});
     var now={total:list.length,done:n,complete:list.length>0&&n===list.length};
     if(isLegacy(d)){
@@ -984,15 +1045,34 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function liveTodos(){return state.todos.filter(function(t){return !t.del;});}
   /* 손으로 정한 차례가 있으면 그대로 따른다. 차례가 없던 옛 기록은
      원래 들어온 순서를 지킨다(정렬이 안정적이라 서로 자리를 바꾸지 않는다). */
+  /* 메인 학습만 — 하위 항목(추가 학습·코멘트)은 부모 밑에 붙어 그려진다 */
   function todosFor(d){
-    return state.todos.filter(function(t){return t.date===d&&!t.del;})
+    return state.todos.filter(function(t){return t.date===d&&!t.del&&!t.parent;})
       .sort(function(a,b){return (a.ord||0)-(b.ord||0);});
   }
 
+  /* 하루의 할 일 전체 — 메인 + 추가 학습 (코멘트와 옮긴 자국은 세지 않는다) */
+  function tasksFor(d){return state.todos.filter(function(t){return t.date===d&&!t.del&&!t.ghost&&t.kind!=="note";});}
+  function kidsOf(id){
+    return state.todos.filter(function(t){return t.parent===id&&!t.del;}).sort(function(a,b){return (a.ord||0)-(b.ord||0);});
+  }
+  /* 하위 항목은 늘 부모와 같은 날에 있고, 부모를 지우면 함께 지워진다 */
+  function syncKids(){
+    var by={},ch=false;
+    state.todos.forEach(function(t){by[t.id]=t;});
+    state.todos.forEach(function(t){
+      if(!t.parent) return;
+      var p=by[t.parent]; if(!p) return;
+      if(p.del&&!t.del){t.del=true;t.u=Date.now();ch=true;}
+      if(t.date!==p.date){t.date=p.date;t.u=Date.now();ch=true;}
+    });
+    return ch;
+  }
   function newId(){return "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 
   function pushTodo(d,text,count,unit,series){
     var t={id:newId(),date:d,text:text,done:false,u:Date.now()};
+    if(getMe()) t.by=getMe();
     /* 지난 날짜에 일부러 넣은 학습은 그 날에 그대로 둔다 —
        그날 한 일을 뒤늦게 적는 경우이므로 오늘로 끌어오면 안 된다. */
     if(d<CUR) t.back=true;
@@ -1077,7 +1157,65 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     state.todos.forEach(function(t){
       if(t.id===id){t.del=true; t.u=Date.now();}
     });
+    syncKids();
     save();
+  }
+  /* 메인 학습 밑에 추가 학습(kind:task) 또는 코멘트(kind:note)를 단다 */
+  function addKid(pid,kind,text){
+    var p=findTodo(pid); text=(text||"").trim();
+    if(!p) return "학습을 찾지 못했어요.";
+    if(!text) return kind==="note"?"코멘트를 적어 주세요.":"추가 학습을 적어 주세요.";
+    var k={id:newId(),date:p.date,text:text,parent:p.id,kind:kind==="note"?"note":"task",
+      done:false,u:Date.now(),ord:kidsOf(p.id).length};
+    if(getMe()) k.by=getMe();
+    state.todos.push(k); save(); return null;
+  }
+  /* 학습 옮기기
+     · 오늘·앞으로의 학습 — 지금 날에서 빠지고, 옮긴 날에 메인 학습으로 들어간다.
+     · 지난 학습 — 원래 날에는 회색 '이동 → mm/dd' 자국이 남고(세지 않음), 옮긴 날에 메인 학습으로 들어간다.
+     옮긴 날의 학습에는 '이동 ← mm/dd' 가 붙고, 하위 학습·코멘트는 메인을 따라간다. */
+  function relocate(t,to){
+    var from=t.date;
+    if(from<CUR){
+      state.todos.push({id:newId(),date:from,text:t.text,ghost:true,movedTo:to,
+        count:t.count,unit:t.unit,by:t.by,u:Date.now(),ord:t.ord||0});
+    }
+    t.date=to; t.movedFrom=from;
+    delete t.origDate; delete t.back; delete t.skip;
+    t.ord=todosFor(to).length; t.u=Date.now();
+  }
+  function moveOne(id,to){
+    var t=findTodo(id); if(!t||t.parent||t.ghost) return "학습을 찾지 못했어요.";
+    if(!to||to<CUR||to>END) return "오늘부터 앞으로의 날짜로 골라 주세요.";
+    if(to===t.date) return "지금과 같은 날이에요.";
+    relocate(t,to); syncKids(); save(); return null;
+  }
+  /* 추가 학습만 따로 옮기면 그날의 메인 학습이 된다 */
+  function moveKid(id,to){
+    var k=findTodo(id); if(!k||!k.parent||k.ghost||k.kind==="note") return "추가 학습을 찾지 못했어요.";
+    if(!to||to<CUR||to>END) return "오늘부터 앞으로의 날짜로 골라 주세요.";
+    var from=k.date;
+    if(from<CUR){
+      state.todos.push({id:newId(),date:from,text:k.text,parent:k.parent,kind:"task",ghost:true,movedTo:to,
+        by:k.by,u:Date.now(),ord:k.ord||0});
+    }
+    delete k.parent; delete k.kind;
+    k.date=to; k.movedFrom=from; k.ord=todosFor(to).length; k.u=Date.now();
+    save(); return null;
+  }
+  function mmdd(d){return d.slice(5,7)+"/"+d.slice(8,10);}
+
+  /* 역할 — 이 폰을 누가 쓰는지. 기기마다 따로 정하고(동기화하지 않음), 새로 쓰는 글에 이름이 남는다 */
+  var ROLES=[{id:"dad",name:"아빠",color:"#3b5bff"},{id:"mom",name:"엄마",color:"#ff8a3d"},{id:"doa",name:"도아",color:"#e83e96"}];
+  var ME_KEY=KEY+":me";
+  function getMe(){var v=readKey(ME_KEY);return ROLES.some(function(r){return r.id===v;})?v:null;}
+  function roleOf(id){for(var i=0;i<ROLES.length;i++) if(ROLES[i].id===id) return ROLES[i];return null;}
+  function byTag(id){var r=roleOf(id);return r?'<span class="by" style="background:'+r.color+'">'+r.name+'</span>':'';}
+  function roleChips(){
+    var me=getMe();
+    return '<div class="chips roles">'+ROLES.map(function(r){
+      return '<button class="chip'+(me===r.id?" on":"")+'" data-role="'+r.id+'"'+(me===r.id?' style="background:'+r.color+';border-color:'+r.color+'"':'')+'>'+r.name+'</button>';
+    }).join("")+'</div>';
   }
 
   /* ---------- 집계 ---------- */
@@ -1111,7 +1249,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
      (달력에서는 회색 '안 함'으로 보인다). */
   /* 그날 아직 남은 학습 — 해낸 것과 건너뛴 것은 뺀다 */
   function pendingOf(d){
-    return todosFor(d).filter(function(t){return !t.done&&!t.skip;});
+    return tasksFor(d).filter(function(t){return !t.done&&!t.skip;});
   }
   function missedDays(){
     var out=[],d=START;
@@ -1134,13 +1272,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     if(to===d) return "같은 날이에요. 다른 날을 골라 주세요.";
     var n=0;
     state.todos.forEach(function(t){
-      if(t.date===d&&!t.del&&!t.done&&!t.skip){
-        if(!t.origDate) t.origDate=t.date;
-        t.date=to;
-        t.back=true;      /* 손으로 옮긴 날에 그대로 머문다 */
-        t.u=Date.now(); n++;
+      if(t.date===d&&!t.parent&&!t.ghost&&!t.del&&!t.done&&!t.skip){
+        relocate(t,to); n++;
       }
     });
+    syncKids();
     if(!n) return "옮길 학습이 없어요.";
     save();
     return {n:n};
@@ -1148,7 +1284,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function skipDay(d){
     var n=0;
     state.todos.forEach(function(t){
-      if(t.date===d&&!t.del&&!t.done&&!t.skip){t.skip=true;t.u=Date.now();n++;}
+      if(t.date===d&&!t.ghost&&!t.del&&!t.done&&!t.skip){t.skip=true;t.u=Date.now();n++;}
     });
     if(n) save();
     return n;
@@ -1188,10 +1324,18 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var list=todosFor(d);
     if(!list.length) return '<div class="empty">추가한 학습이 없어요.</div>';
     return list.map(function(t,i){
+      if(t.ghost){
+        /* 지난 날에 남은 자국 — 회색, 체크할 수 없고, 배지를 누르면 옮긴 날로 간다 */
+        return '<div class="todo ghost"><span class="box">'+opIcon(i)+'</span>'+
+          '<span class="txt"><span class="tt">'+esc(t.text)+'</span>'+
+            '<button class="carry mv" data-open="'+t.movedTo+'">이동 → '+mmdd(t.movedTo)+'</button></span>'+
+          '<button class="del" data-del="'+t.id+'" aria-label="자국 지우기">'+icon("close")+'</button></div>';
+      }
       var late=0;
       if(t.origDate&&!t.done) late=Math.round((parse(t.date)-parse(t.origDate))/86400000);
       var badge=late>0?'<span class="carry'+(late>=7?" long":"")+'">'+late+'일 이관</span>':"";
       if(t.skip&&!t.done) badge+='<button class="skipchip" data-unskip="'+t.id+'">건너뜀 · 되돌리기</button>';
+      if(t.movedFrom&&t.movedFrom!==t.date) badge+='<span class="carry mv">이동 ← '+mmdd(t.movedFrom)+'</span>';
       var key="t:"+t.id;
       var cnt='<button class="t-count'+(t.count?"":" empty")+
         (editor&&editor.id===t.id?" open":"")+'" data-edit="'+t.id+'" '+
@@ -1200,13 +1344,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       /* 기호는 목록 차례대로 + − × ÷ 가 돌아간다 — 앱 아이콘과 같은 순서 */
       var row='<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
         '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+opIcon(i)+'</button>'+
-        '<span class="txt">'+esc(t.text)+badge+'</span>'+
+        '<span class="txt"><span class="tt">'+esc(t.text)+'</span>'+byTag(t.by)+badge+'</span>'+
         '<span class="tst">'+(t.done?sticker("smile",pop===key):"")+'</span>'+
         cnt+
+        '<button class="addkid" data-addkid="'+t.id+'" aria-label="추가 학습·코멘트 달기">'+icon("plus")+'</button>'+
         '<button class="del" data-del="'+t.id+'" aria-label="삭제">'+icon("close")+'</button>'+
         '</div>';
       if(editor&&editor.id===t.id) row+=editArea(t,i,list.length);
-      return row;
+      return row+kidsHtml(t);
     }).join("");
   }
 
@@ -1244,10 +1389,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         '<button class="chip" data-ord="-1"'+(i===0?" disabled":"")+'>'+icon("mvup")+'위로</button>'+
         '<button class="chip" data-ord="1"'+(i===n-1?" disabled":"")+'>'+icon("mvdown")+'아래로</button>'+
       '</div></div>'+
+      '<div class="fld"><span class="lb">다른 날로 옮기기 (계획이 바뀌었을 때)</span><div class="dates">'+
+        '<input type="date" id="mvDate" value="'+(t.date<CUR?CUR:t.date)+'" min="'+CUR+'" max="'+END+'" aria-label="옮길 날짜">'+
+        '<button class="btn" data-move-one="'+t.id+'" style="flex:none">옮기기</button></div></div>'+
+      (t.by?'<div class="chint">처음 작성 '+byTag(t.by)+'</div>':'')+
       (c.err?'<div class="cerr">'+esc(c.err)+'</div>':'')+
       '<div class="cacts">'+
-        '<button class="btn" data-edit-cancel>취소</button>'+
         '<button class="btn primary" data-edit-save>저장</button>'+
+        '<button class="btn" data-edit-cancel>취소</button>'+
       '</div></div>';
   }
 
@@ -1336,7 +1485,93 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     return n?("학습 "+n+"개가 만들어져요."):"그 기간에는 고른 요일이 없어요.";
   }
 
+  /* 하위 항목 — ㄴ 추가 학습(체크 칸) · ㄴ 코멘트(말풍선) */
+  var kidForm=null;   /* {pid, kind, text, err} */
+  var kidEdit=null;   /* {id, text, err} */
+  function kidEditArea(k){
+    var task=k.kind!=="note";
+    return '<div class="kidform">'+
+      '<input type="text" id="kidEd" data-ke="text" value="'+esc(kidEdit.text)+'" maxlength="80" '+INPUT_ATTRS+'>'+
+      (task?'<div class="dates"><span class="kf-me" style="flex:none">다른 날로 옮기기</span>'+
+        '<input type="date" id="kidMv" value="'+(k.date<CUR?CUR:k.date)+'" min="'+CUR+'" max="'+END+'" aria-label="옮길 날짜">'+
+        '<button class="btn" data-kmove="'+k.id+'" style="flex:none">옮기기</button></div>'+
+        '<div class="chint">옮기면 그날의 메인 학습이 돼요.</div>':'')+
+      (kidEdit.err?'<div class="cerr">'+esc(kidEdit.err)+'</div>':'')+
+      '<div class="kf-foot"><span class="kf-me">'+(k.by?'작성 '+byTag(k.by):'')+'</span>'+
+      '<button class="btn primary" data-kedit-save>저장</button><button class="btn" data-kedit-cancel>취소</button>'+
+      '<button class="btn warn" data-kdel="'+k.id+'">삭제</button></div></div>';
+  }
+  function kidsHtml(t){
+    var html=kidsOf(t.id).map(function(k){
+      if(kidEdit&&kidEdit.id===k.id) return kidEditArea(k);
+      if(k.ghost){
+        return '<div class="kid ghost"><span class="kid-l">ㄴ</span><span class="kbox"></span>'+
+          '<span class="kt">'+esc(k.text)+'</span>'+
+          '<button class="carry mv" data-open="'+k.movedTo+'">이동 → '+mmdd(k.movedTo)+'</button>'+
+          '<button class="del" data-del="'+k.id+'" aria-label="자국 지우기">'+icon("close")+'</button></div>';
+      }
+      if(k.kind==="note"){
+        return '<div class="kid note"><span class="kid-l">ㄴ</span><span class="kic">'+icon("chat")+'</span>'+
+          '<button class="kt" data-kedit="'+k.id+'">'+esc(k.text)+'</button>'+byTag(k.by)+
+          '<button class="del" data-del="'+k.id+'" aria-label="코멘트 삭제">'+icon("close")+'</button></div>';
+      }
+      return '<div class="kid'+(k.done?" on":"")+'"><span class="kid-l">ㄴ</span>'+
+        '<button class="kbox" data-todo="'+k.id+'" aria-label="'+(k.done?"완료 취소":"완료 표시")+'">'+(k.done?icon("check"):"")+'</button>'+
+        '<button class="kt" data-kedit="'+k.id+'"><span class="hl">'+esc(k.text)+'</span></button>'+byTag(k.by)+
+        '<button class="del" data-del="'+k.id+'" aria-label="추가 학습 삭제">'+icon("close")+'</button></div>';
+    }).join("");
+    if(kidForm&&kidForm.pid===t.id){
+      var me=roleOf(getMe());
+      html+='<div class="kidform">'+
+        '<div class="chips"><button class="chip'+(kidForm.kind==="task"?" on":"")+'" data-kkind="task">ㄴ 추가 학습</button>'+
+        '<button class="chip'+(kidForm.kind==="note"?" on":"")+'" data-kkind="note">ㄴ 코멘트</button></div>'+
+        '<input type="text" id="kidIn" data-k="text" value="'+esc(kidForm.text)+'" maxlength="80" placeholder="'+
+          (kidForm.kind==="note"?"예: 끝까지 집중해서 풀었어!":"예: 오답노트 쓰기")+'" '+INPUT_ATTRS+'>'+
+        (kidForm.err?'<div class="cerr">'+esc(kidForm.err)+'</div>':'')+
+        '<div class="kf-foot"><span class="kf-me">'+(me?'작성 '+byTag(me.id):'기록 보관 아래 내 역할을 고르면 누가 썼는지 남아요')+'</span>'+
+        '<button class="btn primary" data-kid-save>추가</button><button class="btn" data-kid-cancel>취소</button></div></div>';
+    }
+    return html;
+  }
+
+  /* 학습 목록 보기 — 하루(기본: 오늘) · 이번 주 · 이번 달 · 기간 */
+  var listMode="day", listFrom=null, listTo=null;
+  function weekStart(d){var p=parse(d);return shift(d,-((p.getDay()+6)%7));}
+  function modeRange(){
+    if(listMode==="week"){var a=weekStart(CUR);return [a,shift(a,6)];}
+    if(listMode==="month"){var p=parse(CUR);return [CUR.slice(0,8)+"01",fmt(new Date(p.getFullYear(),p.getMonth()+1,0))];}
+    if(listMode==="range"){var f=listFrom||weekStart(CUR),t=listTo||shift(f,6); if(f>t){var x=f;f=t;t=x;} return [f,t];}
+    return [SEL,SEL];
+  }
+  function modeTabs(){
+    var tabs=[["day","오늘"],["week","이번 주"],["month","이번 달"],["range","기간"]];
+    return '<div class="lmode">'+tabs.map(function(t){
+      var on=t[0]===listMode&&(t[0]!=="day"||SEL===CUR);
+      return '<button data-lmode="'+t[0]+'" class="'+(on?"on":"")+'">'+t[1]+'</button>';
+    }).join("")+'</div>';
+  }
+  function renderList(){
+    var r=modeRange(),from=r[0],to=r[1],total=0,done=0,html="",d=from,g=0;
+    var names={week:"이번 주의 학습",month:"이번 달의 학습",range:"기간 학습"};
+    var head='<div class="today-head"><div><div class="eyebrow">'+names[listMode]+'</div>'+
+      '<div class="today-date">'+label(from)+' ~ '+label(to)+'</div></div></div>'+modeTabs();
+    if(listMode==="range"){
+      head+='<div class="lrange"><input type="date" id="lrFrom" data-lr="from" value="'+from+'" min="'+START+'" max="'+END+'" aria-label="시작일">'+
+        '<span>~</span><input type="date" id="lrTo" data-lr="to" value="'+to+'" min="'+START+'" max="'+END+'" aria-label="종료일"></div>';
+    }
+    while(d<=to&&g++<400){
+      if(todosFor(d).length){
+        var st=dayStat(d); total+=st.total; done+=st.done;
+        html+='<div class="lday"><button class="lday-h" data-open="'+d+'"><span>'+label(d)+' '+dowOf(d)+'요일'+(d===CUR?' <em>오늘</em>':'')+'</span>'+
+          '<span class="lday-n">'+(st.complete?'다 했어요':st.done+' / '+st.total)+'</span></button>'+todoList(d)+'</div>';
+      }
+      d=shift(d,1);
+    }
+    if(total) head+='<div class="lsum">해낸 학습 '+done+' / '+total+'</div>';
+    $("dayPanel").innerHTML=head+'<div class="todos">'+(html||'<div class="empty">이 기간에는 계획한 학습이 없어요.</div>')+'</div>';
+  }
   function renderDay(){
+    if(listMode!=="day"){renderList();return;}
     var d=SEL,complete=isComplete(d);
     /* '오늘의 학습' 옆에 또 '오늘'을 붙이면 같은 말이 두 번이다 —
        오늘이 아닌 날에만 지난/앞으로를 표시한다. */
@@ -1347,7 +1582,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var html='<div class="today-head"><div>'+
       '<div class="eyebrow">오늘의 학습'+
         (when?'<span class="when">'+when+'</span>':"")+'</div>'+
-      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+badge+'</div>';
+      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+badge+'</div>'+modeTabs();
     html+='<div class="todos">'+todoList(d)+addArea(d,"today")+'</div>';
     if(complete){
       html+='<div class="cheer">'+sticker("crown")+'<span>'+dayCheer(d)+'</span></div>';
@@ -1370,6 +1605,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     SEL=d;
     composer=null;
     editor=null;
+    kidForm=null; kidEdit=null; listMode="day";
     var p=parse(d);
     view.y=p.getFullYear(); view.m=p.getMonth();
     renderAll();
@@ -1694,7 +1930,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         '</div>'+
       '</div>'+
       rewardBox()+
-      syncBox();
+      syncBox()+
+      roleBox();
+  }
+  function roleBox(){
+    var me=roleOf(getMe());
+    return '<div class="syncbox'+(me?" on":"")+'">'+secHead("role","내 역할",me?me.name:"정하지 않음",!me)+
+      '<div class="sec-body"'+(secOpen.role?"":" hidden")+'><p><b>이 폰은 누가 쓰나요?</b> 골라 두면 학습·추가 학습·코멘트에 누가 썼는지 이름이 함께 남아요.</p>'+
+      roleChips()+'</div></div>';
   }
 
   /* --- 칭찬 스티커 칸 --- */
@@ -1751,7 +1994,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* 접었다 펴는 칸 — 평소에는 접혀 있고, 눌렀을 때만 열린다.
      앱을 다시 열면 다시 접힌 상태로 돌아온다. */
-  var secOpen={keep:false,sync:false,sk:false};
+  var secOpen={keep:false,sync:false,sk:false,role:false};
 
   function secHead(id,title,summary,warn){
     return '<button class="sec-head'+(secOpen[id]?" open":"")+'" data-sec="'+id+'" '+
@@ -2020,11 +2263,66 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var el;
     askPersist();   /* 첫 조작 때 저장 공간 보호를 요청한다 */
 
+    /* 역할 · 하위 항목 · 옮기기 · 목록 보기 */
+    if((el=up(e.target,"[data-role]"))){
+      writeKey(ME_KEY,el.getAttribute("data-role"));
+      renderAll(); toast("이 폰은 '"+roleOf(el.getAttribute("data-role")).name+"'(으)로 기록돼요."); return;
+    }
+    if((el=up(e.target,"[data-lmode]"))){
+      listMode=el.getAttribute("data-lmode"); composer=null; editor=null; kidForm=null; kidEdit=null;
+      if(listMode==="day"){SEL=CUR;var pc=parse(CUR);view.y=pc.getFullYear();view.m=pc.getMonth();}
+      renderAll(); return;
+    }
+    if((el=up(e.target,"[data-addkid]"))){
+      var pid=el.getAttribute("data-addkid");
+      kidForm=(kidForm&&kidForm.pid===pid)?null:{pid:pid,kind:"task",text:"",err:""};
+      kidEdit=null; composer=null; editor=null; renderAll();
+      setTimeout(function(){var i=$("kidIn");if(i)try{i.focus();}catch(err){}},60);
+      return;
+    }
+    if(kidForm){
+      if((el=up(e.target,"[data-kkind]"))){kidForm.kind=el.getAttribute("data-kkind");kidForm.err="";renderAll();
+        setTimeout(function(){var i=$("kidIn");if(i)try{i.focus();}catch(err){}},60);return;}
+      if(up(e.target,"[data-kid-cancel]")){kidForm=null;renderAll();return;}
+      if(up(e.target,"[data-kid-save]")){
+        var ke=addKid(kidForm.pid,kidForm.kind,kidForm.text);
+        if(ke){kidForm.err=ke;renderAll();return;}
+        var kk=kidForm.kind; kidForm=null; renderAll();
+        toast(kk==="note"?"코멘트를 달았어요.":"추가 학습을 넣었어요.");return;
+      }
+    }
+    if((el=up(e.target,"[data-kedit]"))){
+      var ke0=findTodo(el.getAttribute("data-kedit"));
+      if(ke0){kidEdit={id:ke0.id,text:ke0.text,err:""};kidForm=null;composer=null;editor=null;renderAll();}
+      return;
+    }
+    if(kidEdit){
+      if(up(e.target,"[data-kedit-cancel]")){kidEdit=null;renderAll();return;}
+      if(up(e.target,"[data-kedit-save]")){
+        var kt=findTodo(kidEdit.id),tx=(kidEdit.text||"").trim();
+        if(!tx){kidEdit.err="내용을 적어 주세요.";renderAll();return;}
+        if(kt){kt.text=tx;kt.u=Date.now();save();}
+        kidEdit=null;renderAll();toast("고쳤어요.");return;
+      }
+      if((el=up(e.target,"[data-kdel]"))){delTodo(el.getAttribute("data-kdel"));kidEdit=null;renderAll();toast("지웠어요.");return;}
+      if((el=up(e.target,"[data-kmove]"))){
+        var kto=($("kidMv")||{}).value,kerr=moveKid(el.getAttribute("data-kmove"),kto);
+        if(kerr){kidEdit.err=kerr;renderAll();return;}
+        kidEdit=null;renderAll();toast(label(kto)+"의 메인 학습으로 옮겼어요.");return;
+      }
+    }
+    if((el=up(e.target,"[data-move-one]"))){
+      var mid=el.getAttribute("data-move-one"),mto=($("mvDate")||{}).value;
+      var me2=moveOne(mid,mto);
+      if(me2){if(editor){editor.err=me2;renderAll();}else toast(me2);return;}
+      editor=null; renderAll(); toast(label(mto)+"로 옮겼어요.");return;
+    }
+
     /* 한 줄 고치기 */
     if((el=up(e.target,"[data-edit]"))){
       var eid=el.getAttribute("data-edit");
       if(editor&&editor.id===eid){editor=null;}
-      else{var t1=findTodo(eid); if(t1){composer=null;openEditor(t1);}}
+      else{var t1=findTodo(eid); if(t1){composer=null;kidForm=null;kidEdit=null;openEditor(t1);}}
       renderAll();return;
     }
     if(editor){
@@ -2187,6 +2485,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* 작성 폼의 글자·숫자·날짜는 입력할 때마다 상태에만 담는다.
      화면을 다시 그리지 않으므로 키보드가 닫히거나 커서가 튀지 않는다. */
   function bindField(e){
+    var kx=up(e.target,"[data-ke]");
+    if(kx&&kidEdit){kidEdit.text=kx.value;kidEdit.err="";return true;}
+    var kf=up(e.target,"[data-k]");
+    if(kf&&kidForm){kidForm.text=kf.value;kidForm.err="";return true;}
     var ee=up(e.target,"[data-e]");
     if(ee&&editor){editor[ee.getAttribute("data-e")]=ee.value;editor.err="";return true;}
     var el=up(e.target,"[data-c]");
@@ -2207,6 +2509,18 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   document.addEventListener("change",function(e){
     var el=up(e.target,'[data-mv="to"]');
     if(el&&mover){mover.to=el.value;mover.err="";}
+  });
+  document.addEventListener("change",function(e){
+    var el=up(e.target,"[data-lr]"); if(!el||!el.value) return;
+    if(el.getAttribute("data-lr")==="from") listFrom=el.value; else listTo=el.value;
+    renderDay();
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key!=="Enter") return;
+    var b=null;
+    if(up(e.target,"#kidIn")) b=document.querySelector("[data-kid-save]");
+    else if(up(e.target,"#kidEd")) b=document.querySelector("[data-kedit-save]");
+    if(b){e.preventDefault();b.click();}
   });
   document.addEventListener("input",bindField);
   document.addEventListener("change",bindField);
