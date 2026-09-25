@@ -604,6 +604,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 }
 .syncbox p{font-size:var(--fs-2xs);color:var(--ink-3);line-height:1.6;margin:0}
 .syncbox p b{font-weight:600;color:var(--ink-2)}
+.syncbox p.hint{margin-top:5px;padding:7px 9px;background:var(--bg1);border-radius:var(--r-sm)}
 .syncbox .sst{font-size:var(--fs-sm);color:var(--ink-2);margin-bottom:3px}
 .syncbox .sst .warn{color:var(--coral)}
 .syncbox .acts{display:flex;gap:7px;margin-top:9px}
@@ -689,7 +690,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-23j</span>
+    <span class="ver">v2026-09-25a</span>
   </footer>
 </div>
 
@@ -1722,7 +1723,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   function prefillDb(){
     var o=otherSync();
-    return (o&&o.db)?o.db:DEFAULT_DB;
+    return (o&&o.db)||DEFAULT_DB;
   }
 
   function syncBox(){
@@ -1745,10 +1746,13 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         var mate=otherSync();
         body=((mate&&mate.db)
             ? '<p>다른 앱에서 쓰던 주소를 채워 뒀어요. <b>연결</b>만 누르면 두 앱이 같은 곳을 보게 돼요.</p>'
-            : '<p>기본 주소를 채워 뒀어요. 그대로 <b>연결</b>을 누르면 돼요. '+
-              '다른 데이터베이스를 쓰시려면 주소를 지우고 새 주소를 붙여넣은 뒤 연결하세요.</p>')+
+            : '<p>쓰던 주소를 미리 채워 뒀어요. 그대로 <b>연결</b>을 누르면 돼요. '+
+              '다른 데이터베이스를 쓰시려면 주소를 지우고 새 주소를 넣어 주세요.</p>'+
+              '<p class="hint">이미 쓰고 있는 기기가 있다면, 그 기기에서 받은 '+
+              '<b>함께 보기 링크를 그대로 여기에 붙여넣으세요.</b> 같은 방으로 이어져요. '+
+              '주소만 넣으면 이 기기만의 새 방이 만들어집니다.</p>')+
           '<div class="fld"><input type="text" id="syncUrlIn" value="'+esc(prefillDb())+'" '+
-          'placeholder="https://....firebasedatabase.app" '+
+          'placeholder="주소 또는 함께 보기 링크" '+
           'inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'+
           (syncMsg?'<div class="cerr">'+esc(syncMsg)+'</div>':'')+
           '<div class="acts">'+
@@ -1761,7 +1765,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
              : syncing ? '주고받는 중…'
              : (syncAt ? '마지막 동기화 '+whenLabel(new Date(syncAt).toISOString()) : '연결됨');
       body='<p class="sst">'+st+'</p>'+
-        '<p>아래 버튼으로 링크를 보내면, 받은 사람도 같은 기록을 보고 체크할 수 있어요.</p>'+
+        '<p>아래 버튼으로 링크를 보내면, 받은 사람도 같은 기록을 보고 체크할 수 있어요. '+
+        '받은 기기에서 홈 화면 앱으로 쓸 때는, 앱을 먼저 추가한 뒤 '+
+        '<b>앱 안에서</b> 그 링크를 붙여넣어 연결해 주세요.</p>'+
+        '<p class="hint">방 코드 <b>'+esc(sync.room)+'</b><br>'+
+        '두 기기의 방 코드가 같아야 같은 기록을 봅니다.</p>'+
         '<div class="acts">'+
           '<button class="btn primary" id="syncShare">'+icon("link")+'링크 보내기</button>'+
           '<button class="btn" id="syncOff">연결 끊기</button>'+
@@ -1903,21 +1911,25 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var tag=btoa(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
     return location.origin+location.pathname.replace(/index\.html$/,"")+"#s="+tag;
   }
-  function readLinkConfig(){
-    var m=(location.hash||"").match(/[#&]s=([^&]+)/);
-    if(!m) return false;
+  /* 공유 링크(#s=...)를 풀어 {db, room} 으로 돌려준다.
+     주소창으로 열었을 때도, 연결칸에 붙여넣었을 때도 같은 해독기를 쓴다. */
+  function parseShare(v){
+    var m=String(v||"").match(/[#&]s=([^&\s]+)/);
+    if(!m) return null;
     try{
       var t=m[1].replace(/-/g,"+").replace(/_/g,"/");
       while(t.length%4) t+="=";
       var parts=atob(t).split("|");
-      if(parts.length===2&&/^https:\/\//.test(parts[0])){
-        sync={db:parts[0],room:parts[1]};
-        saveSync();
-        try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}
-        return true;
-      }
+      if(parts.length===2&&/^https:\/\//.test(parts[0])) return {db:parts[0],room:parts[1]};
     }catch(e){}
-    return false;
+    return null;
+  }
+  function readLinkConfig(){
+    var got=parseShare(location.hash||"");
+    if(!got) return false;
+    sync=got; saveSync();
+    try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}
+    return true;
   }
 
   /* --- 합치기 --- */
@@ -2022,9 +2034,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   }
 
   function connectSync(dbUrl,room){
+    /* 함께 보기 링크를 통째로 붙여넣어도 되게 한다 —
+       아이패드처럼 홈 화면 앱의 저장 공간이 사파리와 분리된 기기에서는
+       링크로 열어도 설정이 앱 안으로 따라오지 않기 때문이다. */
+    var shared=parseShare(dbUrl);
+    if(shared){ dbUrl=shared.db; room=shared.room; }
     dbUrl=(dbUrl||"").trim().replace(/\/+$/,"");
     if(!/^https:\/\/[\w.-]+\.(firebaseio\.com|firebasedatabase\.app)$/.test(dbUrl)){
-      return "주소가 올바르지 않아요. https:// 로 시작하는 데이터베이스 주소를 붙여넣어 주세요.";
+      return "주소가 올바르지 않아요. 데이터베이스 주소나 받은 함께 보기 링크를 붙여넣어 주세요.";
     }
     var mate=otherSync();
     sync={db:dbUrl,room:room||(mate&&mate.db===dbUrl?mate.room:roomId())};
