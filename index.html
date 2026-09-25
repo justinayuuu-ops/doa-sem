@@ -690,7 +690,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-25b</span>
+    <span class="ver">v2026-09-25s</span>
   </footer>
 </div>
 
@@ -1721,10 +1721,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* --- 함께 보기 칸 --- */
   var syncForm=false, syncMsg="";
 
-  function prefillDb(){
-    var o=otherSync();
-    return (o&&o.db)||DEFAULT_DB;
-  }
 
   function syncBox(){
     /* 연결 상태를 머리글에 한 줄로 요약한다 — 펼치지 않아도 보이게 */
@@ -1733,52 +1729,24 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     else if(syncErr){ sum="연결 안 됨"; warn=true; }
     else if(syncing){ sum="주고받는 중"; }
     else { sum="켜짐"; }
-
-    var open=secOpen.sync||syncForm;   /* 설정하는 중이면 접지 않는다 */
     var body;
-
     if(!sync){
-      if(!syncForm){
-        body='<p>다른 사람 폰에서도 같은 기록을 보고 체크하게 만들 수 있어요. '+
-          '한 번만 설정하면 링크를 보내는 것으로 끝나요.</p>'+
-          '<div class="acts"><button class="btn" id="syncStart">'+icon("link")+'함께 보기 설정</button></div>';
-      }else{
-        var mate=otherSync();
-        body=((mate&&mate.db)
-            ? '<p>다른 앱에서 쓰던 주소를 채워 뒀어요. <b>연결</b>만 누르면 두 앱이 같은 곳을 보게 돼요.</p>'
-            : '<p>쓰던 주소를 미리 채워 뒀어요. 그대로 <b>연결</b>을 누르면 돼요. '+
-              '다른 데이터베이스를 쓰시려면 주소를 지우고 새 주소를 넣어 주세요.</p>'+
-              '<p class="hint">이미 쓰고 있는 기기가 있다면, 그 기기에서 받은 '+
-              '<b>함께 보기 링크를 그대로 여기에 붙여넣으세요.</b> 같은 방으로 이어져요. '+
-              '주소만 넣으면 이 기기만의 새 방이 만들어집니다.</p>')+
-          '<div class="fld"><input type="text" id="syncUrlIn" value="'+esc(prefillDb())+'" '+
-          'placeholder="주소 또는 함께 보기 링크" '+
-          'inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'+
-          (syncMsg?'<div class="cerr">'+esc(syncMsg)+'</div>':'')+
-          '<div class="acts">'+
-            '<button class="btn" id="syncCancel">취소</button>'+
-            '<button class="btn primary" id="syncSave">연결</button>'+
-          '</div>';
-      }
+      body='<p>같은 데이터베이스 주소로 연결한 기기끼리 기록이 함께 보여요.</p>'+
+        '<div class="fld"><input type="text" id="syncUrlIn" value="'+esc(DEFAULT_DB)+'" '+
+        'inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'+
+        (syncMsg?'<div class="cerr">'+esc(syncMsg)+'</div>':'')+
+        '<div class="acts"><button class="btn primary" id="syncSave">'+icon("link")+'연결</button></div>';
     }else{
       var st = syncErr ? '<span class="warn">연결이 안 돼요 — 인터넷을 확인해 주세요</span>'
              : syncing ? '주고받는 중…'
              : (syncAt ? '마지막 동기화 '+whenLabel(new Date(syncAt).toISOString()) : '연결됨');
       body='<p class="sst">'+st+'</p>'+
-        '<p>아래 버튼으로 링크를 보내면, 받은 사람도 같은 기록을 보고 체크할 수 있어요. '+
-        '받은 기기에서 홈 화면 앱으로 쓸 때는, 앱을 먼저 추가한 뒤 '+
-        '<b>앱 안에서</b> 그 링크를 붙여넣어 연결해 주세요.</p>'+
-        '<p class="hint">방 코드 <b>'+esc(sync.room)+'</b><br>'+
-        '두 기기의 방 코드가 같아야 같은 기록을 봅니다.</p>'+
-        '<div class="acts">'+
-          '<button class="btn primary" id="syncShare">'+icon("link")+'링크 보내기</button>'+
-          '<button class="btn" id="syncOff">연결 끊기</button>'+
-        '</div>';
+        '<p>'+esc(sync.db.replace(/^https:\/\//,""))+'</p>'+
+        '<div class="acts"><button class="btn" id="syncOff">연결 끊기</button></div>';
     }
-
     return '<div class="syncbox'+(sync?" on":"")+'">'+
       secHead("sync","함께 보기",sum,warn)+
-      '<div class="sec-body"'+(open?"":" hidden")+'>'+body+'</div></div>';
+      '<div class="sec-body"'+(secOpen.sync?"":" hidden")+'>'+body+'</div></div>';
   }
 
   /* 접었다 펴는 칸 — 평소에는 접혀 있고, 눌렀을 때만 열린다.
@@ -1833,7 +1801,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     /* 홈 화면 앱은 브라우저와 저장 공간이 따로다 —
        설치 직후 기록이 비어 있으면 옮겨오는 길을 알려준다 */
     var fresh=!state.savedAt&&!state.todos.length;
-    if(!isStandalone()||!fresh||hidden("carry")){wrap.innerHTML="";return;}
+    if(!isStandalone()||!fresh||hidden("carry")||sync){wrap.innerHTML="";return;}
     wrap.innerHTML='<div class="carryover"><h2>브라우저에서 쓰던 기록 옮기기</h2>'+
       '<p>홈 화면 앱은 브라우저와 저장 공간이 따로예요. '+
       '브라우저에서 <b>백업 파일 저장</b>을 누른 뒤, 여기서 불러오면 그대로 이어집니다.</p>'+
@@ -1878,58 +1846,23 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   var sync=null;          /* {db:"https://...firebaseio.com", room:"..."} */
   var syncAt=null, syncing=false, syncErr=false, pushTimer=null, pollTimer=null;
 
+  /* 같은 DB 주소를 쓰는 기기는 모두 같은 자리(family)를 본다 — 방 번호·링크 없이 주소만으로 공유.
+     기본은 '켜짐': 홈 화면 앱은 사파리와 저장 공간이 따로라 설정을 물려받지 못하므로,
+     처음 여는 순간 기본 DB에 붙어 기록을 받아 온다. 직접 '연결 끊기'를 누른 기기만 꺼져 있다. */
+  var SHARED="family";
   function loadSync(){
-    try{
-      var raw=readKey(SYNC_KEY);
-      if(raw){var o=JSON.parse(raw); if(o&&o.db&&o.room) sync=o;}
-    }catch(e){}
+    var o=null; try{o=JSON.parse(readKey(SYNC_KEY)||"null");}catch(e){}
+    if(o&&o.off){sync=null;return;}
+    sync={db:(o&&o.db)||DEFAULT_DB};
+    /* 예전 방식(방 번호)으로 쓰던 기록은 한 번만 옛 방에서 받아 와 합친다 */
+    if(o&&o.room&&!o.moved) sync.legacy=o.room;
+    saveSync();
   }
   function saveSync(){
-    if(sync) writeKey(SYNC_KEY,JSON.stringify(sync));
-    else{ try{localStorage.removeItem(SYNC_KEY);}catch(e){} }
+    writeKey(SYNC_KEY,JSON.stringify(sync?{db:sync.db,room:sync.legacy||undefined,moved:!sync.legacy}:{off:true}));
   }
-  /* 같은 폰의 다른 앱이 이미 연결돼 있으면 그 설정을 물려받는다 —
-     주소를 두 번 붙여넣지 않아도 되고, 두 앱이 같은 방을 쓰게 된다. */
-  function otherSync(){
-    try{
-      var raw=localStorage.getItem(OTHER_KEY+":sync");
-      if(raw){var o=JSON.parse(raw); if(o&&o.db&&o.room) return o;}
-    }catch(e){}
-    return null;
-  }
-  function roomId(){
-    return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);
-  }
-  function syncUrl(){
-    var db=sync.db.replace(/\/+$/,"");
-    return db+"/"+encodeURIComponent(sync.room)+"/"+encodeURIComponent(KEY)+".json";
-  }
-
-  /* 공유 링크 — 주소 뒤에 설정을 실어 보낸다 */
-  function shareLink(){
-    var raw=sync.db+"|"+sync.room;
-    var tag=btoa(raw).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-    return location.origin+location.pathname.replace(/index\.html$/,"")+"#s="+tag;
-  }
-  /* 공유 링크(#s=...)를 풀어 {db, room} 으로 돌려준다.
-     주소창으로 열었을 때도, 연결칸에 붙여넣었을 때도 같은 해독기를 쓴다. */
-  function parseShare(v){
-    var m=String(v||"").match(/[#&]s=([^&\s]+)/);
-    if(!m) return null;
-    try{
-      var t=m[1].replace(/-/g,"+").replace(/_/g,"/");
-      while(t.length%4) t+="=";
-      var parts=atob(t).split("|");
-      if(parts.length===2&&/^https:\/\//.test(parts[0])) return {db:parts[0],room:parts[1]};
-    }catch(e){}
-    return null;
-  }
-  function readLinkConfig(){
-    var got=parseShare(location.hash||"");
-    if(!got) return false;
-    sync=got; saveSync();
-    try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}
-    return true;
+  function syncUrl(room){
+    return sync.db.replace(/\/+$/,"")+"/"+encodeURIComponent(room||SHARED)+"/"+encodeURIComponent(KEY)+".json";
   }
 
   /* --- 합치기 --- */
@@ -1982,73 +1915,85 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
             sk:state.sk,skAt:state.skAt,at:Date.now()};
   }
 
-  function pull(then){
-    if(!sync) return;
-    syncing=true; if(booted) renderKeep();
-    fetch(syncUrl(),{cache:"no-store"}).then(function(r){
+  /* 합친 결과를 저장하되, 그 저장이 또 보내기를 부르지 않게 한다 */
+  var quietSave=false;
+  function saveQuiet(){quietSave=true;try{save();}finally{quietSave=false;}}
+  /* 서버에 없는(또는 서버보다 새로운) 기록이 이 기기에 있는지 */
+  function remoteBehind(rem){
+    if(!rem) return true;
+    var m={}; (rem.todos||[]).forEach(function(t){if(t&&t.id) m[t.id]=t.u||0;});
+    for(var i=0;i<state.todos.length;i++){var t=state.todos[i]; if(!(t.id in m)||(t.u||0)>m[t.id]) return true;}
+    var rm=rem.dmeta||{}, dm=state.dmeta||{};
+    for(var d in dm){ if((dm[d]||0)>(rm[d]||0)) return true; }
+    if((+state.ruleAt||0)>(+rem.ruleAt||0)) return true;
+    if((+state.skAt||0)>(+rem.skAt||0)) return true;
+    return false;
+  }
+  function afterMerge(changed){
+    if(changed){ saveQuiet(); rollover(); lastStreak=null; renderAll(); lastStreak=streak(); }
+    else if(booted) renderKeep();
+  }
+  function getRemote(room){
+    return fetch(syncUrl(room),{cache:"no-store"}).then(function(r){
       if(!r.ok) throw new Error("bad");
       return r.json();
-    }).then(function(rem){
+    });
+  }
+  /* 옛 방 기록을 한 번 받아 합친다 — 실패해도 조용히 넘어간다 */
+  function pullLegacy(){
+    if(!sync||!sync.legacy) return Promise.resolve();
+    var room=sync.legacy;
+    return getRemote(room).then(function(rem){
+      if(rem&&mergeRemote(rem)) saveQuiet();
+      if(sync){ delete sync.legacy; saveSync(); }
+    }).catch(function(){});
+  }
+  function pull(){
+    if(!sync) return;
+    syncing=true; if(booted) renderKeep();
+    pullLegacy().then(function(){ return getRemote(); }).then(function(rem){
       syncErr=false; syncing=false; syncAt=Date.now();
-      var changed=rem?mergeRemote(rem):false;
-      if(changed){
-        save();
-        rollover();
-        lastStreak=null; renderAll(); lastStreak=streak();
-      }else if(booted) renderKeep();
-      if(then) then(!rem);
+      afterMerge(rem?mergeRemote(rem):false);
+      if(remoteBehind(rem)) schedulePush();   /* 이 기기에만 있는 기록은 올린다 */
     }).catch(function(){
       syncErr=true; syncing=false;
       if(booted) renderKeep();
     });
   }
-
+  /* 보내기 전에 서버 것을 먼저 받아 합친다 — 다른 기기가 방금 넣은 기록을 덮어쓰지 않게 */
+  var pushing=false, pushAgain=false;
   function pushNow(){
     if(!sync) return;
-    fetch(syncUrl(),{
-      method:"PUT",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(payload())
-    }).then(function(r){
-      syncErr=!r.ok; if(r.ok) syncAt=Date.now();
-      if(booted) renderKeep();
-    }).catch(function(){
-      syncErr=true; if(booted) renderKeep();
-    });
+    if(pushing){ pushAgain=true; return; }
+    pushing=true;
+    getRemote().then(function(rem){
+      if(rem) afterMerge(mergeRemote(rem));
+      return fetch(syncUrl(),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload())});
+    }).then(function(r){ syncErr=!r.ok; if(r.ok) syncAt=Date.now(); })
+      .catch(function(){ syncErr=true; })
+      .then(function(){
+        pushing=false; if(booted) renderKeep();
+        if(pushAgain){ pushAgain=false; schedulePush(); }
+      });
   }
-
   /* 연달아 체크할 때 매번 보내지 않도록 잠깐 모아서 보낸다 */
   function schedulePush(){
-    if(!sync) return;
+    if(!sync||quietSave) return;
     clearTimeout(pushTimer);
     pushTimer=setTimeout(pushNow,1200);
   }
-
   function startPolling(){
     clearInterval(pollTimer);
     if(!sync) return;
-    /* 화면을 보고 있을 때만 주기적으로 상대 변경을 받아온다 */
-    pollTimer=setInterval(function(){
-      if(!document.hidden) pull();
-    },20000);
+    pollTimer=setInterval(function(){ if(!document.hidden) pull(); },15000);
   }
-
-  function connectSync(dbUrl,room){
-    /* 함께 보기 링크를 통째로 붙여넣어도 되게 한다 —
-       아이패드처럼 홈 화면 앱의 저장 공간이 사파리와 분리된 기기에서는
-       링크로 열어도 설정이 앱 안으로 따라오지 않기 때문이다. */
-    var shared=parseShare(dbUrl);
-    if(shared){ dbUrl=shared.db; room=shared.room; }
+  function connectSync(dbUrl){
     dbUrl=(dbUrl||"").trim().replace(/\/+$/,"");
     if(!/^https:\/\/[\w.-]+\.(firebaseio\.com|firebasedatabase\.app)$/.test(dbUrl)){
-      return "주소가 올바르지 않아요. 데이터베이스 주소나 받은 함께 보기 링크를 붙여넣어 주세요.";
+      return "주소가 올바르지 않아요. https:// 로 시작하는 Firebase 데이터베이스 주소를 넣어 주세요.";
     }
-    var mate=otherSync();
-    sync={db:dbUrl,room:room||(mate&&mate.db===dbUrl?mate.room:roomId())};
-    saveSync();
-    /* 처음 연결이면 지금 기록을 올리고, 이미 있으면 받아서 합친다 */
-    pull(function(empty){ if(empty) pushNow(); else schedulePush(); });
-    startPolling();
+    sync={db:dbUrl}; saveSync();
+    pull(); startPolling();
     return null;
   }
   function disconnectSync(){
@@ -2144,21 +2089,12 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     }
 
     /* 함께 보기 */
-    if(up(e.target,"#syncStart")){syncForm=true;secOpen.sync=true;syncMsg="";renderKeep();return;}
-    if(up(e.target,"#syncCancel")){syncForm=false;syncMsg="";renderKeep();return;}
     if(up(e.target,"#syncSave")){
       var box=$("syncUrlIn");
       var err=connectSync(box?box.value:"");
       if(err){syncMsg=err;renderKeep();return;}
-      syncForm=false;syncMsg="";renderKeep();
-      toast("함께 보기를 켰어요. 링크를 보내면 같이 볼 수 있어요.");
-      return;
-    }
-    if(up(e.target,"#syncShare")){
-      var link=shareLink();
-      if(navigator.share){navigator.share({title:document.title,url:link}).catch(function(){});}
-      else if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){toast("링크를 복사했어요.");});}
-      else toast(link);
+      syncMsg="";renderKeep();
+      toast("함께 보기를 켰어요. 같은 주소로 연결한 기기와 기록이 함께 보여요.");
       return;
     }
     if(up(e.target,"#syncOff")){disconnectSync();toast("함께 보기를 껐어요. 기록은 이 폰에 그대로 있어요.");return;}
@@ -2322,7 +2258,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   rollover();
   booted=true;
   checkPersist();
-  readLinkConfig();   /* 공유 링크로 열었으면 설정을 받아 둔다 */
   loadSync();
   if(sync){ pull(); startPolling(); }
   renderAll();
