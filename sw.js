@@ -4,7 +4,7 @@
    학습 기록 자체는 여기 캐시가 아니라 localStorage 에 있으므로
    캐시를 비워도 데이터는 사라지지 않는다. */
 
-var VERSION = "doasem-2026-09-26a";
+var VERSION = "doasem-2026-09-27a";
 var PREFIX = "doasem-";
 var SHELL = PREFIX + "shell-" + VERSION;
 var FONTS = PREFIX + "fonts-" + VERSION;
@@ -105,6 +105,12 @@ self.addEventListener("fetch", function (e) {
 
   /* 화면 이동 — 네트워크 우선, 끊기면 캐시된 화면 */
   if (req.mode === "navigate") {
+    e.respondWith(networkFirst(req, SHELL));
+    return;
+  }
+
+  /* 아이콘·매니페스트는 늘 새것을 먼저 — 아이콘을 바꿔도 예전 그림이 남지 않게 */
+  if (/\.(png|webmanifest)$/.test(url.pathname)) {
     e.respondWith(networkFirst(req, SHELL));
     return;
   }
