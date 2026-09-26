@@ -261,7 +261,7 @@ header .mark svg{width:100%;height:100%;display:block}
   background:var(--bg1);color:var(--ink-3);vertical-align:1px;
 }
 
-.today-date{font-size:var(--fs-xl);line-height:1.3}
+.today-date{font-size:15px;line-height:1.3}
 
 /* 완료 스티커 배지 */
 .badge{
@@ -279,9 +279,9 @@ header .mark svg{width:100%;height:100%;display:block}
 /* 공 27px, 스티커 30px,
    학습량은 오른쪽 끝. 두 목록이 같은 세로선 위에 놓인다. */
 /* 공은 글줄 한가운데에 놓인다 — 줄이 두 줄이 되어도 가운데를 지킨다 */
-.todo{display:flex;align-items:center;gap:11px;padding:4px 0}
+.todo{display:flex;align-items:center;gap:6px;padding:3px 0}
 .todo .box{
-  flex:none;width:27px;height:27px;border:0;
+  flex:none;width:22px;height:22px;border:0;
   border-radius:50%;background:transparent;display:grid;place-items:center;
   position:relative;color:var(--ink);line-height:0;
   transition:color .18s var(--ease);
@@ -292,60 +292,67 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo .box svg{width:100%;height:100%;display:block}
 .todo.on .box{color:var(--pulse)}
 
-.todo .txt{flex:1;min-width:0;font-size:var(--fs-md);word-break:break-word;line-height:1.4}
+.todo .txt{flex:1;min-width:0;font-size:13px;word-break:break-word;line-height:1.35}
 /* 해낸 학습은 지우는 게 아니라 해냈다는 표시다 — 공과 같은 핑크로 물든다 */
-.todo.on .txt{color:var(--pulse)}
-.todo .tst{flex:none;width:30px;height:30px}
-.todo .tst .st{width:30px;height:30px}
+.todo.on .txt{color:#f2a9cd}   /* 해낸 학습은 옅은 핑크로 */
+/* 스티커는 해낸 줄에만 자리를 차지한다 */
+.todo .tst{flex:none;width:22px;height:22px}
+.todo .tst .st{width:22px;height:22px}
 /* 학습량 — 누르면 그 줄을 고치는 칸이 열린다 */
-.t-count{flex:none;font-size:var(--fs-md);color:var(--ink-3);font-variant-numeric:tabular-nums;
-  padding:3px 7px;border-radius:9px;border:1px dashed var(--line);line-height:1.3}
-.t-count.empty{font-size:var(--fs-xs);color:var(--ink-3)}
-.t-count u{text-decoration:none;font-size:var(--fs-xs)}
+.t-count{flex:none;font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;
+  padding:2px 5px;border-radius:8px;border:1px dashed var(--line);line-height:1.3;white-space:nowrap}
+.t-count.empty{font-size:10px;color:var(--ink-3)}
+.t-count u{text-decoration:none;font-size:11px}
 .todo.on .t-count{color:var(--pulse);border-color:var(--pulse-dim)}
 /* 고치는 중인 줄은 칸을 채워 어느 줄을 고치는지 보이게 한다 */
 .t-count.open{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
 .carry{
-  display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;
-  font-size:var(--fs-2xs);white-space:nowrap;
+  display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;
+  font-size:10px;white-space:nowrap;
   color:var(--amber);background:var(--amber-wash);
 }
 .carry.long{color:var(--coral);background:var(--coral-wash)}
-.del{flex:none;color:var(--ink-3);width:38px;height:38px;margin:-6px -8px -6px 0;
-  border-radius:9px;display:grid;place-items:center}
-.del svg{width:16px;height:16px}
+.del{flex:none;color:var(--ink-3);width:26px;height:26px;margin:-4px -6px -4px 0;
+  border-radius:8px;display:grid;place-items:center;position:relative}
+/* 보이는 크기만 줄이고 손가락이 닿는 범위는 그대로 넓게 둔다 */
+.del::after,.addkid::after{content:"";position:absolute;top:50%;left:50%;
+  width:38px;height:38px;transform:translate(-50%,-50%)}
+.del svg{width:14px;height:14px}
 /* ── 아직 안 한 학습 — 형광펜 밑줄(글자에만) ── */
 .todo:not(.on):not(.ghost):not(.skipped) .txt .tt,.kid:not(.on):not(.note):not(.ghost) .kt .hl{
   background:linear-gradient(transparent 55%,#ffe81a 55%,#ffe81a 94%,transparent 94%);
   -webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 2px}
 /* ── 옮긴 학습 ── */
 .carry.mv{color:var(--violet);background:#efe9fb}
-button.carry.mv{font:inherit;font-size:var(--fs-2xs);border:0;cursor:pointer}
-.todo.ghost .box{color:#c4c4c4}
-.todo.ghost .tt{color:#a8a8a8;text-decoration:line-through;text-decoration-color:#cfcfcf}
+button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
+/* 옮긴 자국 — 글자만 연한 회색, 체크 칸은 해야 할 일처럼 그대로. 체크는 옮긴 날에서만 */
+.todo.ghost.gdone .box{color:var(--pulse)}
+.kid.ghost.gdone .kbox{background:#fff;border-color:var(--pulse)}
+.todo.ghost .tt{color:#b5b5b5}
 .todo.ghost .carry.mv,.kid.ghost .carry.mv{color:#7a7a7a;background:#f0f0f0}
 /* ── 역할 이름표 ── */
-.by{display:inline-flex;align-items:center;font-size:11px;line-height:1;padding:3px 6px;border-radius:999px;color:#fff;margin-left:5px;vertical-align:1px}
+.by{display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;padding:0;font-size:10px;line-height:1;
+  border-radius:50%;color:#fff;margin-left:4px;vertical-align:-2px}
 .chips.roles .chip{min-width:64px}
 .chips.roles .chip.on{color:#fff}
 /* ── 하위 항목 (ㄴ 추가 학습 · ㄴ 코멘트) — 내용이 메인 학습 글자와 같은 세로줄에서 시작한다 ── */
-.addkid{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:var(--pulse-strong);
-  background:var(--pulse-wash);border:1.5px solid var(--pulse-dim)}
-.addkid svg{width:14px;height:14px}
-.kid{display:flex;align-items:center;gap:4px;padding:3px 0;font-size:var(--fs-sm);line-height:1.4}
+.addkid{flex:none;width:23px;height:23px;border-radius:8px;display:grid;place-items:center;color:var(--pulse-strong);
+  background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);position:relative}
+.addkid svg{width:13px;height:13px}
+.kid{display:flex;align-items:center;gap:4px;padding:2px 0;font-size:12px;line-height:1.35}
 .kid-l{flex:none;width:12px;color:var(--ink-3);font-size:var(--fs-2xs)}
-.kbox{flex:none;position:relative;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);background:#fff;
-  display:grid;place-items:center;color:#fff;padding:0}
+.kbox{flex:none;position:relative;width:18px;height:18px;border-radius:4px;border:2px solid var(--line);background:#fff;
+  display:grid;place-items:center;color:var(--pulse);padding:0}   /* 네모 칸 안에 V */
 .kbox::after{content:"";position:absolute;top:50%;left:50%;width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
-.kbox svg{width:12px;height:12px}
-.kid.on .kbox{background:var(--pulse);border-color:var(--pulse)}
+.kbox svg{width:13px;height:13px;stroke-width:2.6}
+.kid.on .kbox{background:#fff;border-color:var(--pulse)}
 .kid .kt{flex:1;min-width:0;word-break:break-word;text-align:left;padding:2px 0}
-.kid.on .kt{color:var(--pulse)}
+.kid.on .kt{color:#f2a9cd}
 .kid.note .kt{color:var(--ink-2)}
 .kic{flex:none;width:18px;height:18px;display:grid;place-items:center;color:var(--violet)}
 .kic svg{width:16px;height:16px}
-.kid.ghost .kt{color:#a8a8a8;text-decoration:line-through;text-decoration-color:#cfcfcf}
-.kid.ghost .kbox{border-color:#e2e2e2;background:var(--bg2)}
+.kid.ghost .kt{color:#b5b5b5}
 .kid .del{width:32px;height:32px}
 .kidform{margin:4px 0 8px 38px;padding:9px 10px;border-radius:var(--r-sm);background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);
   display:flex;flex-direction:column;gap:7px}
@@ -466,8 +473,8 @@ button.carry.mv{font:inherit;font-size:var(--fs-2xs);border:0;cursor:pointer}
 .mv .err{flex:1 1 100%;font-size:var(--fs-xs);color:var(--coral);line-height:1.5}
 /* 건너뛴 학습 — 해내지 못한 그대로 두되 밀린 목록에서는 빠진다 */
 .skipchip{
-  display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;
-  font-size:var(--fs-2xs);white-space:nowrap;
+  display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;
+  font-size:10px;white-space:nowrap;
   color:var(--ink-3);background:var(--bg1);
 }
 .todo.skipped .txt{color:var(--ink-3)}
@@ -480,7 +487,7 @@ button.carry.mv{font:inherit;font-size:var(--fs-2xs);border:0;cursor:pointer}
   box-shadow:var(--shadow-1);padding:11px 13px 12px;
 }
 .cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
-.cal-title{font-size:var(--fs-xl);font-variant-numeric:tabular-nums;color:var(--violet)}
+.cal-title{font-size:15px;font-variant-numeric:tabular-nums;color:var(--violet)}
 .nav{display:flex;gap:6px;align-items:center}
 .nav .jump{
   width:auto;padding:0 10px;font-size:var(--fs-2xs);color:var(--violet);
@@ -712,6 +719,12 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   .day .dst,.day .dst .st{width:15px;height:15px}
   .prog{width:60%}
   .badge{font-size:var(--fs-md);padding:4px 9px 4px 7px}
+  .todo{gap:5px}
+  .todo .txt,.kid{font-size:11px}
+  .todo .box{width:20px;height:20px}
+  .t-count{font-size:10px;padding:2px 4px}
+  .del{width:24px;height:24px}
+  .addkid{width:21px;height:21px}
 }
 
 /* 가로 모드 */
@@ -764,7 +777,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-26b</span>
+    <span class="ver">v2026-09-26h</span>
   </footer>
 </div>
 
@@ -1036,7 +1049,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* 하루의 상태 — {total:그날 학습 수, done:해낸 수, complete:다 했나} */
   function dayStat(d){
     var list=tasksFor(d),n=0;
-    list.forEach(function(t){if(t.done)n++;});
+    list.forEach(function(t){if(isDone(t))n++;});
     var now={total:list.length,done:n,complete:list.length>0&&n===list.length};
     if(isLegacy(d)){
       var c=countDone(d),ms=missionsFor(d);
@@ -1068,7 +1081,33 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   }
 
   /* 하루의 할 일 전체 — 메인 + 추가 학습 (코멘트와 옮긴 자국은 세지 않는다) */
-  function tasksFor(d){return state.todos.filter(function(t){return t.date===d&&!t.del&&!t.ghost&&t.kind!=="note";});}
+  /* 옮겨 간 학습의 자국도 그날의 할 일로 센다 — 옮긴 곳에서 해내면 이 날도 해낸 것으로 친다 */
+  function tasksFor(d){return state.todos.filter(function(t){return t.date===d&&!t.del&&t.kind!=="note"&&(!t.ghost||t.srcId);});}
+  function isDone(t){
+    if(!t.ghost) return !!t.done;
+    var seen={},x=t;
+    while(x&&x.ghost&&x.srcId&&!seen[x.id]){seen[x.id]=1;x=findTodo(x.srcId);}
+    return !!(x&&!x.ghost&&!x.del&&x.done);
+  }
+  function repairMoves(){
+    var ch=false;
+    state.todos.forEach(function(g){
+      if(!g.ghost||g.del) return;
+      if(!g.srcId){
+        var src=null;
+        state.todos.forEach(function(t){
+          if(src||t.ghost||t.del||t.text!==g.text||t.movedFrom!==g.date) return;
+          if(t.date===g.movedTo||(g.parent&&t.parent===g.parent)) src=t;
+        });
+        if(src){g.srcId=src.id;g.u=Date.now();ch=true;}
+      }
+      var t=g.srcId&&findTodo(g.srcId);
+      if(t&&g.parent&&t.parent===g.parent&&!t.ghost&&!t.del&&t.date===g.date){
+        delete t.parent; delete t.kind; t.date=g.movedTo; t.movedFrom=g.date; t.ord=todosFor(g.movedTo).length; t.u=Date.now(); ch=true;
+      }
+    });
+    return ch;
+  }
   function kidsOf(id){
     return state.todos.filter(function(t){return t.parent===id&&!t.del;}).sort(function(a,b){return (a.ord||0)-(b.ord||0);});
   }
@@ -1174,7 +1213,15 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(t.id===id){t.del=true; t.u=Date.now();}
     });
     syncKids();
+    tombstones();
     save();
+  }
+  /* 지운 학습은 '지움' 표시만 남기고 내용은 비운다 — 어디로 넘어가도 다시 살아나지 않고, 저장 공간도 아낀다 */
+  function tombstones(){
+    state.todos.forEach(function(t){
+      if(!t.del) return;
+      for(var k in t) if(k!=="id"&&k!=="del"&&k!=="u"&&k!=="date"&&k!=="parent") delete t[k];
+    });
   }
   /* 메인 학습 밑에 추가 학습(kind:task) 또는 코멘트(kind:note)를 단다 */
   function addKid(pid,kind,text){
@@ -1193,7 +1240,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function relocate(t,to){
     var from=t.date;
     if(from<CUR){
-      state.todos.push({id:newId(),date:from,text:t.text,ghost:true,movedTo:to,
+      state.todos.push({id:newId(),date:from,text:t.text,ghost:true,movedTo:to,srcId:t.id,
         count:t.count,unit:t.unit,by:t.by,u:Date.now(),ord:t.ord||0});
     }
     t.date=to; t.movedFrom=from;
@@ -1212,7 +1259,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     if(!to||to<CUR||to>END) return "오늘부터 앞으로의 날짜로 골라 주세요.";
     var from=k.date;
     if(from<CUR){
-      state.todos.push({id:newId(),date:from,text:k.text,parent:k.parent,kind:"task",ghost:true,movedTo:to,
+      state.todos.push({id:newId(),date:from,text:k.text,parent:k.parent,kind:"task",ghost:true,movedTo:to,srcId:k.id,
         by:k.by,u:Date.now(),ord:k.ord||0});
     }
     delete k.parent; delete k.kind;
@@ -1222,11 +1269,18 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function mmdd(d){return d.slice(5,7)+"/"+d.slice(8,10);}
 
   /* 역할 — 이 폰을 누가 쓰는지. 기기마다 따로 정하고(동기화하지 않음), 새로 쓰는 글에 이름이 남는다 */
-  var ROLES=[{id:"dad",name:"아빠",color:"#3b5bff"},{id:"mom",name:"엄마",color:"#ff8a3d"},{id:"doa",name:"도아",color:"#e83e96"}];
+  /* short — 줄이 좁으므로 배지에는 한 글자만 쓴다 */
+  var ROLES=[{id:"dad",name:"아빠",short:"아",color:"#3b5bff"},
+             {id:"mom",name:"엄마",short:"엄",color:"#ff8a3d"},
+             {id:"doa",name:"도아",short:"도",color:"#e83e96"}];
   var ME_KEY=KEY+":me";
   function getMe(){var v=readKey(ME_KEY);return ROLES.some(function(r){return r.id===v;})?v:null;}
   function roleOf(id){for(var i=0;i<ROLES.length;i++) if(ROLES[i].id===id) return ROLES[i];return null;}
-  function byTag(id){var r=roleOf(id);return r?'<span class="by" style="background:'+r.color+'">'+r.name+'</span>':'';}
+  function byTag(id){
+    var r=roleOf(id);
+    return r?'<span class="by" style="background:'+r.color+'" title="'+r.name+'">'+
+      (r.short||r.name)+'</span>':'';
+  }
   function roleChips(){
     var me=getMe();
     return '<div class="chips roles">'+ROLES.map(function(r){
@@ -1265,7 +1319,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
      (달력에서는 회색 '안 함'으로 보인다). */
   /* 그날 아직 남은 학습 — 해낸 것과 건너뛴 것은 뺀다 */
   function pendingOf(d){
-    return tasksFor(d).filter(function(t){return !t.done&&!t.skip;});
+    return tasksFor(d).filter(function(t){return !t.ghost&&!t.done&&!t.skip;});
   }
   function missedDays(){
     var out=[],d=START;
@@ -1342,7 +1396,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     return list.map(function(t,i){
       if(t.ghost){
         /* 지난 날에 남은 자국 — 회색, 체크할 수 없고, 배지를 누르면 옮긴 날로 간다 */
-        return '<div class="todo ghost"><span class="box">'+opIcon(i)+'</span>'+
+        var gd=isDone(t);
+        return '<div class="todo ghost'+(gd?" gdone":"")+'"><button class="box" data-ghost="'+t.movedTo+'" aria-label="'+mmdd(t.movedTo)+'에서 체크할 수 있어요">'+opIcon(i)+'</button>'+
           '<span class="txt"><span class="tt">'+esc(t.text)+'</span>'+
             '<button class="carry mv" data-open="'+t.movedTo+'">이동 → '+mmdd(t.movedTo)+'</button></span>'+
           '<button class="del" data-del="'+t.id+'" aria-label="자국 지우기">'+icon("close")+'</button></div>';
@@ -1361,7 +1416,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var row='<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
         '<button class="box" data-todo="'+t.id+'" aria-label="완료 표시">'+opIcon(i)+'</button>'+
         '<span class="txt"><span class="tt">'+esc(t.text)+'</span>'+byTag(t.by)+badge+'</span>'+
-        '<span class="tst">'+(t.done?sticker("smile",pop===key):"")+'</span>'+
+        (t.done?'<span class="tst">'+sticker("smile",pop===key)+'</span>':'')+
         cnt+
         '<button class="addkid" data-addkid="'+t.id+'" aria-label="추가 학습·코멘트 달기">'+icon("plus")+'</button>'+
         '<button class="del" data-del="'+t.id+'" aria-label="삭제">'+icon("close")+'</button>'+
@@ -1521,19 +1576,20 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var html=kidsOf(t.id).map(function(k){
       if(kidEdit&&kidEdit.id===k.id) return kidEditArea(k);
       if(k.ghost){
-        return '<div class="kid ghost"><span class="kid-l">ㄴ</span><span class="kbox"></span>'+
+        var kgd=isDone(k);
+        return '<div class="kid ghost'+(kgd?" gdone":"")+'"><span class="kid-l">ㄴ</span><button class="kbox" data-ghost="'+k.movedTo+'" aria-label="'+mmdd(k.movedTo)+'에서 체크할 수 있어요">'+(kgd?icon("check"):'')+'</button>'+
           '<span class="kt">'+esc(k.text)+'</span>'+
           '<button class="carry mv" data-open="'+k.movedTo+'">이동 → '+mmdd(k.movedTo)+'</button>'+
           '<button class="del" data-del="'+k.id+'" aria-label="자국 지우기">'+icon("close")+'</button></div>';
       }
       if(k.kind==="note"){
         return '<div class="kid note"><span class="kid-l">ㄴ</span><span class="kic">'+icon("chat")+'</span>'+
-          '<button class="kt" data-kedit="'+k.id+'">'+esc(k.text)+'</button>'+byTag(k.by)+
+          '<button class="kt" data-kedit="'+k.id+'">'+esc(k.text)+byTag(k.by)+'</button>'+
           '<button class="del" data-del="'+k.id+'" aria-label="코멘트 삭제">'+icon("close")+'</button></div>';
       }
       return '<div class="kid'+(k.done?" on":"")+'"><span class="kid-l">ㄴ</span>'+
         '<button class="kbox" data-todo="'+k.id+'" aria-label="'+(k.done?"완료 취소":"완료 표시")+'">'+(k.done?icon("check"):"")+'</button>'+
-        '<button class="kt" data-kedit="'+k.id+'"><span class="hl">'+esc(k.text)+'</span></button>'+byTag(k.by)+
+        '<button class="kt" data-kedit="'+k.id+'"><span class="hl">'+esc(k.text)+'</span>'+byTag(k.by)+'</button>'+
         '<button class="del" data-del="'+k.id+'" aria-label="추가 학습 삭제">'+icon("close")+'</button></div>';
     }).join("");
     if(kidForm&&kidForm.pid===t.id){
@@ -2161,7 +2217,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(!t||!t.id) return;
       var mine=byId[t.id];
       if(!mine){ state.todos.push(t); changed=true; }
-      else if((t.u||0)>(mine.u||0)){
+      else if(mine.del&&!t.del){}   /* 지운 기록은 무조건 지운 채로 — 다른 폰의 옛 사본이 되살리지 못하게 */
+      else if((t.del&&!mine.del)||(t.u||0)>(mine.u||0)){
+        for(var k0 in mine) if(!(k0 in t)) delete mine[k0];   /* 통째로 바꾼다 — 한쪽에서 지운 칸이 되살아나지 않게 */
         for(var k in t) mine[k]=t[k];
         changed=true;
       }
@@ -2180,8 +2238,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* 서버에 없는(또는 서버보다 새로운) 기록이 이 기기에 있는지 */
   function remoteBehind(rem){
     if(!rem) return true;
-    var m={}; (rem.todos||[]).forEach(function(t){if(t&&t.id) m[t.id]=t.u||0;});
-    for(var i=0;i<state.todos.length;i++){var t=state.todos[i]; if(!(t.id in m)||(t.u||0)>m[t.id]) return true;}
+    var m={},rd={}; (rem.todos||[]).forEach(function(t){if(t&&t.id){m[t.id]=t.u||0; if(t.del) rd[t.id]=1;}});
+    for(var i=0;i<state.todos.length;i++){var t=state.todos[i]; if(!(t.id in m)||(t.u||0)>m[t.id]||(t.del&&!rd[t.id])) return true;}
     var rm=rem.dmeta||{}, dm=state.dmeta||{};
     for(var d in dm){ if((dm[d]||0)>(rm[d]||0)) return true; }
     if((+state.ruleAt||0)>(+rem.ruleAt||0)) return true;
@@ -2189,6 +2247,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     return false;
   }
   function afterMerge(changed){
+    if(repairMoves()) changed=true;
     if(changed){ saveQuiet(); rollover(); lastStreak=null; renderAll(); lastStreak=streak(); }
     else if(booted) renderKeep();
   }
@@ -2443,6 +2502,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       return;
     }
     if(up(e.target,"#kick")){kickBall();return;}
+    if((el=up(e.target,"[data-ghost]"))){toast(mmdd(el.getAttribute("data-ghost"))+"로 옮긴 학습이에요. 그날에서 체크하면 여기도 함께 체크돼요.");return;}
     if((el=up(e.target,"[data-todo]"))){
       var tid=el.getAttribute("data-todo");
       var t0=state.todos.filter(function(x){return x.id===tid;})[0];
@@ -2593,6 +2653,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   $("prev").innerHTML=icon("left");
   $("next").innerHTML=icon("right");
   purgeBasic();
+  if(repairMoves()) save();
   rollover();
   booted=true;
   checkPersist();
