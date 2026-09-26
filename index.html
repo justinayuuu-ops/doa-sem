@@ -446,13 +446,17 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .empty{font-size:var(--fs-sm);color:var(--ink-3);padding:2px 0}
 
 /* ── 밀린 학습 ──────────────────────────────────────────── */
-.backlog{background:var(--pulse-wash);border:2px solid var(--pulse);border-radius:var(--r-md);padding:10px 12px 9px}
-.backlog h2{font-size:var(--fs-lg);font-weight:400;color:var(--pulse-strong);margin:0 0 1px}
-.backlog p{font-size:var(--fs-sm);color:var(--ink-2);margin:0 0 6px}
-.bl{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--pulse-dim);
+.backlog{background:var(--surface-1);border:2px solid var(--pulse);border-radius:var(--r-md);box-shadow:var(--shadow-1);padding:11px 13px 12px}
+.bl-in{padding:9px 10px 10px;border-radius:var(--r-sm);background:var(--pulse-wash)}
+.backlog h2{font-size:13px;font-weight:400;color:var(--pulse-strong);margin:0 0 3px}
+.backlog h2 .hl{background:linear-gradient(transparent 55%,#ffe81a 55%,#ffe81a 94%,transparent 94%);padding:0 2px}   /* 해야 할 일과 같은 형광펜 */
+.backlog p{font-size:var(--fs-xs);color:var(--ink-2);margin:0 0 7px;line-height:1.5}
+.bl-list{background:#fff;border-radius:var(--r-sm);padding:2px 10px}
+.bl-list .bl:first-child{border-top:0}
+.bl{display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid var(--line-soft);
   min-height:40px;flex-wrap:wrap}
-.bl .d{flex:none;min-width:72px;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
-.bl .w{flex:1 1 90px;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
+.bl .d{flex:none;min-width:58px;font-size:13px;font-variant-numeric:tabular-nums}
+.bl .w{flex:1 1 70px;min-width:0;font-size:var(--fs-xs);color:var(--ink-3)}
 .bl .acts{display:flex;gap:6px;flex:none;margin-left:auto}
 /* 셋 다 같은 무게로 둔다 — 지금 고른 것만 채워서 표시한다 */
 .bl .go{flex:none;font-size:var(--fs-xs);padding:9px 11px;border-radius:999px;
@@ -478,7 +482,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
   color:var(--ink-3);background:var(--bg1);
 }
 .todo.skipped .txt{color:var(--ink-3)}
-.bl-more{font-size:var(--fs-2xs);color:var(--ink-3);margin-top:7px}
+.bl-more{font-size:var(--fs-xs);color:var(--ink-3);margin-top:7px}
 
 /* ── 달력 ───────────────────────────────────────────────── */
 /* 달력도 다른 영역과 같은 판 위에 올린다 */
@@ -530,7 +534,8 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 }
 .day.pad,.day.out{background:var(--bg1)}
 .day.out{opacity:.5}
-.day .n{font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums}
+.day .n{font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
+  flex:none;width:clamp(22px,7vw,28px);height:clamp(22px,7vw,28px);display:flex;align-items:center;justify-content:center;border-radius:8px}   /* 모든 날 같은 상자 — 고른 날도 눈금 높이가 그대로 */
 .day.sun .n{color:var(--coral)}
 /* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
@@ -777,7 +782,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-27a</span>
+    <span class="ver">v2026-09-27b</span>
   </footer>
 </div>
 
@@ -1720,11 +1725,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       }
       return row;
     }).join("");
-    wrap.innerHTML='<div class="backlog"><h2>밀린 학습 '+missed.length+'일</h2>'+
+    wrap.innerHTML='<div class="backlog"><div class="bl-in"><h2><span class="hl">밀린 학습 '+missed.length+'일</span></h2>'+
       '<p>채우기는 그날로 가서 체크하고, 이동은 남은 학습을 다른 날로 옮기고, '+
-      '스킵은 못 한 채로 두고 이 목록에서만 빼요.</p>'+rows+
+      '스킵은 못 한 채로 두고 이 목록에서만 빼요.</p><div class="bl-list">'+rows+'</div>'+
       (missed.length>show.length?'<div class="bl-more">그 밖에 '+(missed.length-show.length)+'일 더 — 달력에서 확인</div>':"")+
-      '</div>';
+      '</div></div>';
   }
 
   var view={y:parse(CUR).getFullYear(),m:parse(CUR).getMonth()};
