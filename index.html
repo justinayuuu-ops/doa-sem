@@ -525,7 +525,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .bl .w{flex:1 1 70px;min-width:0;font-size:var(--fs-xs);color:var(--ink-3)}
 .bl .acts{display:flex;gap:6px;flex:none;margin-left:auto}
 /* 셋 다 같은 무게로 둔다 — 지금 고른 것만 채워서 표시한다 */
-.bl .go{flex:none;font-size:var(--fs-xs);padding:9px 11px;border-radius:999px;
+.bl .go{flex:none;font-size:11px;line-height:1;padding:7px 9px;border-radius:999px;
   background:var(--surface-1);
   color:var(--pulse-strong);border:1.5px solid var(--pulse);white-space:nowrap}
 .bl .go.on{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
@@ -550,7 +550,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .todo.skipped .txt{color:var(--ink-3)}
 /* 밀린 학습 — 날짜 아래에 학습을 한 줄씩 */
 .blday{padding-bottom:4px}
-.bi{display:flex;align-items:center;gap:6px;padding:3px 0 3px 8px}
+.bi{display:flex;align-items:center;gap:5px;padding:3px 0 3px 6px}
 .bi .box{flex:none;width:21px;height:21px;border:0;background:transparent;
   display:grid;place-items:center;position:relative;color:var(--ink);line-height:0}
 .bi .box::after{content:"";position:absolute;top:50%;left:50%;
@@ -558,7 +558,11 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .bi .box svg{width:100%;height:100%;display:block}
 .bi .bt{flex:1;min-width:0;font-size:11px;line-height:1.35;word-break:break-word}
 .bi .bc{margin-left:5px;font-size:10px;color:var(--ink-3);font-variant-numeric:tabular-nums}
-.bi .go{flex:none;font-size:10px;padding:6px 8px}
+/* 옮기기·건너뛰기 — 글자가 접히지 않게 한 줄로 못 박고 칸은 바짝 좁힌다 */
+.bi .go{flex:none;font-size:10px;line-height:1;padding:5px 7px;border-radius:999px;
+  white-space:nowrap;word-break:keep-all;
+  background:var(--surface-1);color:var(--pulse-strong);border:1.5px solid var(--pulse-dim)}
+.bi .go.on{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
 .bl-more{font-size:var(--fs-xs);color:var(--ink-3);margin-top:7px}
 
 /* ── 달력 ───────────────────────────────────────────────── */
@@ -859,7 +863,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-27i</span>
+    <span class="ver">v2026-09-27j</span>
   </footer>
 </div>
 
