@@ -279,7 +279,9 @@ header .mark svg{width:100%;height:100%;display:block}
 /* 공 27px, 스티커 30px,
    학습량은 오른쪽 끝. 두 목록이 같은 세로선 위에 놓인다. */
 /* 공은 글줄 한가운데에 놓인다 — 줄이 두 줄이 되어도 가운데를 지킨다 */
-.todo{display:flex;align-items:center;gap:6px;padding:3px 0}
+/* 줄 사이 숨 — 아유 보드와 같은 32px 간격이 되도록 위아래를 5px 씩 둔다 */
+.todo{display:flex;align-items:center;gap:6px;padding:5px 0}
+.todo .txt{padding:2px 0}
 .todo .box{
   flex:none;width:22px;height:22px;border:0;
   border-radius:50%;background:transparent;display:grid;place-items:center;
@@ -867,7 +869,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-27m</span>
+    <span class="ver">v2026-09-27n</span>
   </footer>
 </div>
 
