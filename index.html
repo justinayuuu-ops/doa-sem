@@ -357,15 +357,23 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .kic svg{width:16px;height:16px}
 .kid.ghost .kt{color:#b5b5b5}
 .kid .del{width:32px;height:32px}
-.kidform{margin:4px 0 8px 38px;padding:9px 10px;border-radius:var(--r-sm);background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);
-  display:flex;flex-direction:column;gap:7px}
-.kidform input{width:100%;font-family:inherit;font-size:16px;min-height:var(--tap);padding:8px 12px;color:var(--ink);background:#fff;
+/* 서브 학습 칸 — 학습 추가·고치기 칸과 같은 저울로 맞춘다 */
+.kidform{margin:3px 0 7px 32px;padding:8px 9px;border-radius:var(--r-sm);background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);
+  display:flex;flex-direction:column;gap:6px}
+.kidform input{width:100%;font-family:inherit;font-size:13px;min-height:34px;padding:5px 9px;color:var(--ink);background:#fff;
   border:2px solid var(--line);border-radius:var(--r-sm);-webkit-appearance:none;appearance:none}
+.kidform input::placeholder{color:var(--ink-3)}
 .kidform input:focus{outline:0;border-color:var(--pulse-dim)}
-.kidform .dates{display:flex;align-items:center;gap:7px}
+.kidform input[type=date]{font-size:13px;min-height:34px;line-height:1.2}
+.kidform .chips{gap:5px}
+.kidform .chip{min-height:30px;padding:0 10px;font-size:12px}
+.kidform .cerr,.kidform .chint{font-size:11px}
+.kidform .btn{min-height:34px;padding:0 11px;font-size:12px}
+.kidform .by{width:13px;height:13px;font-size:9px}
+.kidform .dates{display:flex;align-items:center;gap:6px}
 .kidform .dates input{flex:1;min-width:0}
-.kf-foot{display:flex;align-items:center;gap:7px}
-.kf-me{flex:1;min-width:0;font-size:var(--fs-2xs);color:var(--ink-3)}
+.kf-foot{display:flex;align-items:center;gap:6px}
+.kf-me{flex:1;min-width:0;font-size:11px;color:var(--ink-3);line-height:1.4}
 .kf-foot .btn{flex:none}
 .btn.warn{color:var(--coral);border-color:var(--coral)}
 /* ── 목록 보기 탭 ── */
@@ -859,7 +867,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-27l</span>
+    <span class="ver">v2026-09-27m</span>
   </footer>
 </div>
 
