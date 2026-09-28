@@ -661,7 +661,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .day{
   background:var(--surface-2);aspect-ratio:1/1;min-height:44px;position:relative;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  padding:1px;overflow:hidden;-webkit-appearance:none;appearance:none;
+  padding:2px 1px;overflow:hidden;-webkit-appearance:none;appearance:none;
 }
 /* aspect-ratio 미지원 구형 웹뷰 대비 — 정사각형에 가깝게 유지 */
 @supports not (aspect-ratio:1/1){
@@ -669,21 +669,22 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 }
 .day.pad,.day.out{background:var(--bg1)}
 .day.out{opacity:.5}
-/* 숫자와 스티커는 칸 위아래에 각각 못 박아 둔다.
-   세로로 쌓으면 스티커가 붙는 순간 숫자가 밀려 올라가는데,
-   이렇게 두면 어떤 상태에서도 숫자는 같은 자리, 사이 간격도 그대로다. */
+/* 숫자 상자는 어떤 상태에서도 같은 크기다.
+   아래의 표시 자리도 늘 같은 높이로 잡아 두었으므로,
+   스티커가 붙든 안 붙든 숫자는 같은 자리에 있고 위아래 여백도 같다. */
 .day .n{
-  position:absolute;top:3px;left:50%;transform:translateX(-50%);
+  flex:none;
   font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
   width:clamp(20px,6.4vw,25px);height:clamp(20px,6.4vw,25px);
   display:flex;align-items:center;justify-content:center;border-radius:8px;
 }
 .day.sun .n{color:var(--coral)}
 /* 스티커·눈금이 들어설 자리 — 비어 있어도 높이를 지켜 날짜가 오르내리지 않게 한다 */
+/* 표시 자리 — 비어 있어도 높이를 지킨다. 다 해낸 날의 큰 스티커에 맞춰
+   잡아 두어서, 스티커가 커져도 숫자가 밀리지 않는다. */
 .day .mk{
-  position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
-  display:flex;align-items:center;justify-content:center;
-  width:100%;height:clamp(14px,4.2vw,17px);
+  flex:none;display:flex;align-items:center;justify-content:center;
+  width:100%;height:clamp(15px,4.4vw,18px);
 }
 /* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
@@ -692,8 +693,12 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .prog i{display:block;height:100%;border-radius:3px;background:var(--pulse)}
 .day.missed .n{color:var(--ink-3)}
 .day.full{background:var(--pulse-wash)}
+/* 다 해낸 날은 숫자도 앱 색으로 — 오늘·고른 날 표시는 그대로 얹힌다 */
+.day.full .n{color:var(--pulse-strong);font-weight:600}
+.day.full.today .n{color:var(--pulse-ink)}
 /* 칸이 좁은 폰에서도 날짜·스티커가 함께 들어가도록 칸 너비를 따라간다 */
-.day .dst,.day .dst .st{width:clamp(14px,4.2vw,17px);height:clamp(14px,4.2vw,17px)}
+/* 다 해낸 날의 스티커는 표시 자리를 꽉 채운다 — 한눈에 구분되게 */
+.day .dst,.day .dst .st{width:clamp(15px,4.4vw,18px);height:clamp(15px,4.4vw,18px)}
 /* 오늘 표시 · 고른 날 표시 — 둘 다 날짜 숫자 뒤의 같은 둥근 네모를 쓴다.
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
@@ -863,7 +868,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 @media (max-width:359px){
   .wrap{padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));gap:16px}
   .board .cell{padding:6px 6px 7px}
-  .day .dst,.day .dst .st{width:14px;height:14px}
+  .day .dst,.day .dst .st{width:15px;height:15px}
   .prog{width:60%}
   .badge{font-size:var(--fs-md);padding:4px 9px 4px 7px}
   .todo{gap:5px}
@@ -928,7 +933,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28f</span>
+    <span class="ver">v2026-09-28g</span>
   </footer>
 </div>
 
