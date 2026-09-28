@@ -334,8 +334,10 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .todo.ghost .tt{color:#b5b5b5}
 .todo.ghost .carry.mv,.kid.ghost .carry.mv{color:#7a7a7a;background:#f0f0f0}
 /* ── 역할 이름표 ── */
-/* 줄에서 한 칸으로 설 때는 글줄에 딸려 내려가지 않게 여백을 지운다 */
-.todo>.by,.bi>.by{margin-left:0;vertical-align:0;flex:none}
+/* 학습명 칸은 배지와 이름을 한 줄에 세운다 */
+.todo .txt{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.todo .txt .by{margin-left:0}
+.bi .bt .by{margin-left:0;margin-right:4px}
 /* 역할은 이름이 다 보이는 알약, 과목은 한 글자 동그라미 */
 .by{display:inline-flex;align-items:center;justify-content:center;flex:none;
   padding:2px 6px;font-size:10px;line-height:1;
@@ -431,6 +433,10 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .sm-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-top:1px solid var(--line-soft)}
 .sm-row:first-of-type{border-top:0}
 .sm-row.new{border-top:1px dashed var(--line);margin-top:4px}
+.sm-ic{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  border:1.5px solid var(--line);background:var(--surface-1)}
+.sm-ic.on{border-color:var(--pulse)}
+.sm-ic .smicon{width:20px;height:20px}
 .sm-col{flex:none;width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line)}
 .sm-row input{flex:1;min-width:0;font-family:inherit;font-size:16px;height:34px;padding:0 9px;color:var(--ink);
   background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);
@@ -463,6 +469,10 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
   font-size:11px;color:var(--ink-2)}
 .askrow .chip{min-height:28px;font-size:var(--fs-2xs);padding:0 10px}
 .askrow .chip.plain{color:var(--ink-3)}
+/* 자주 쓰는 학습 이름 — 이름 칸 바로 아래 */
+.chips.sugg{margin-top:5px}
+.chips.sugg .chip{min-height:26px;padding:0 9px;font-size:11px;
+  border-style:dashed;color:var(--ink-3)}
 .chips.sub{margin-top:5px}
 .chip.subjchip{background:#fff}
 .chip.sym{padding:0 9px 0 6px;gap:3px}
@@ -558,6 +568,41 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
   color:var(--ink-3);background:var(--bg1);
 }
 .todo.skipped .txt{color:var(--ink-3)}
+/* ── 수의 나라 여행 ── */
+.stage{background:var(--pulse-wash);border:2px solid var(--pulse-dim);border-radius:var(--r-md);
+  padding:9px 12px 10px}
+.s-top{display:flex;align-items:center;gap:8px}
+.s-ic{flex:none;width:26px;height:26px;color:var(--pulse-strong)}
+.s-ic svg{width:100%;height:100%;display:block}
+.s-txt{flex:1;min-width:0}
+.s-name{font-size:13px;color:var(--pulse-strong);line-height:1.3}
+.s-say{font-size:11px;color:var(--ink-2);line-height:1.4}
+.s-n{flex:none;font-size:16px;color:var(--pulse-strong);font-variant-numeric:tabular-nums}
+.s-n u{text-decoration:none;font-size:10px;margin-left:1px}
+.s-bar{display:block;height:7px;border-radius:4px;background:#fff;overflow:hidden;margin:7px 0 5px}
+.s-bar i{display:block;height:100%;border-radius:4px;background:var(--pulse)}
+.s-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:10px;color:var(--ink-3)}
+.sdots{display:flex;gap:3px;flex:none}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--pulse-dim)}
+.sdot.on{background:var(--pulse)}
+
+/* ── 과목별 성장 ── */
+.growth{background:var(--surface-1);border:2px solid var(--violet);border-radius:var(--r-md);
+  box-shadow:var(--shadow-1);padding:10px 12px 11px}
+.g-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  flex-wrap:wrap;margin-bottom:7px}
+.g-head h2{font-size:var(--fs-lg);font-weight:400;color:var(--violet);margin:0}
+.g-head .chip{min-height:26px;padding:0 9px;font-size:11px}
+.gr{display:flex;align-items:center;gap:6px;padding:4px 0;
+  border-top:1px solid var(--line-soft);font-size:11px}
+.gr:first-of-type{border-top:0}
+.gname{flex:none;min-width:38px;color:var(--ink-2)}
+.gbar{flex:1;min-width:24px;height:7px;border-radius:4px;background:var(--bg1);overflow:hidden}
+.gbar i{display:block;height:100%;border-radius:4px}
+.gnum{flex:none;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.gnum u{text-decoration:none;font-size:10px}
+
 /* 밀린 학습 — 날짜 아래에 학습을 한 줄씩 */
 .blday{padding-bottom:4px}
 .bi{display:flex;align-items:center;gap:5px;padding:3px 0 3px 6px}
@@ -628,9 +673,12 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .day .n{font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
   flex:none;width:clamp(22px,7vw,28px);height:clamp(22px,7vw,28px);display:flex;align-items:center;justify-content:center;border-radius:8px}   /* 모든 날 같은 상자 — 고른 날도 눈금 높이가 그대로 */
 .day.sun .n{color:var(--coral)}
+/* 스티커·눈금이 들어설 자리 — 비어 있어도 높이를 지켜 날짜가 오르내리지 않게 한다 */
+.day .mk{flex:none;display:flex;align-items:center;justify-content:center;
+  width:100%;height:clamp(15px,4.6vw,19px)}
 /* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
-.prog{display:block;width:52%;min-width:15px;height:4px;margin-top:2px;
+.prog{display:block;width:52%;min-width:15px;height:4px;
   border-radius:3px;background:var(--line);overflow:hidden}
 .prog i{display:block;height:100%;border-radius:3px;background:var(--pulse)}
 .day.missed .n{color:var(--ink-3)}
@@ -641,13 +689,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
    오늘은 핑크로 채우고, 고른 날은 보라 테두리를 두른다. */
-.day.today .n,.day.sel .n{
-  flex:none;
-  width:clamp(22px,7vw,28px);height:clamp(22px,7vw,28px);
-  display:flex;align-items:center;justify-content:center;
-  border-radius:8px;
-  font-weight:600;
-}
+.day.today .n,.day.sel .n{font-weight:600}
 .day.today .n{background:var(--pulse);color:var(--pulse-ink)}
 .day.today.sun .n{color:var(--pulse-ink)}
 /* 고른 날 — 같은 둥근 네모에 보라 테두리를 두른다.
@@ -859,6 +901,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   <section class="daypanel" id="dayPanel"></section>
 
+  <section id="stageWrap"></section>
+
+  <section id="growWrap"></section>
+
   <section id="backlogWrap"></section>
 
   <section id="installWrap"></section>
@@ -873,7 +919,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28a</span>
+    <span class="ver">v2026-09-28c</span>
   </footer>
 </div>
 
@@ -967,9 +1013,40 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
            ' font-weight="bold" font-size="10" fill="currentColor" stroke="none">Aa</text>',
     pen:   '<path d="M6.2 17.8l.9-3.1L15 6.8a1.9 1.9 0 0 1 2.7 2.7l-7.9 7.9z" stroke-width="1.6"/>',
     star:  '<path d="M12 7.1l1.5 3 3.3.5-2.4 2.3.6 3.3-3-1.6-3 1.6.6-3.3-2.4-2.3 3.3-.5z" stroke-width="1.5"/>',
-    dot:   '<circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/>'
+    dot:   '<circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/>',
+    /* 과목 아이콘 — 과정이 없는 과목의 동그라미에 들어간다 */
+    calc:  '<rect x="7.4" y="5.6" width="9.2" height="12.8" rx="1.8" stroke-width="1.5"/>'+
+           '<path d="M9.4 8.4h5.2" stroke-width="1.4"/>'+
+           '<path d="M9.7 12h.6M11.7 12h.6M13.7 12h.6M9.7 15.2h.6M11.7 15.2h.6M13.7 15.2h.6" stroke-width="1.6"/>',
+    brush: '<path d="M8.2 15.4l4-8.2a1.6 1.6 0 0 1 2.9 1.4l-3.6 8" stroke-width="1.5"/>'+
+           '<path d="M8.4 15.2c1.4-.7 2.6-.2 3.3 1.1.6 1.2-.2 2.4-1.7 2.4-1.2 0-1.8-.7-2.1-1.6" stroke-width="1.5"/>',
+    globe: '<circle cx="12" cy="12" r="5.6" stroke-width="1.5"/>'+
+           '<path d="M6.4 12h11.2M12 6.4c1.6 1.8 1.6 9.4 0 11.2M12 6.4c-1.6 1.8-1.6 9.4 0 11.2" stroke-width="1.3"/>',
+    palette:'<path d="M12 6.2a5.8 5.8 0 0 0 0 11.6c1 0 1.2-.7.7-1.3-.5-.7-.2-1.5.7-1.5h1a3.4 3.4 0 0 0 3.4-3.4c0-3-2.6-5.4-5.8-5.4z" stroke-width="1.4"/>'+
+           '<circle cx="10" cy="10.4" r=".9" fill="currentColor" stroke="none"/>'+
+           '<circle cx="13.6" cy="9.6" r=".9" fill="currentColor" stroke="none"/>',
+    ball:  '<circle cx="12" cy="12" r="5.6" stroke-width="1.5"/>'+
+           '<path d="M12 6.4v11.2M6.4 12h11.2" stroke-width="1.2"/>',
+    ruler: '<rect x="6" y="9" width="12" height="6" rx="1.2" stroke-width="1.5"/>'+
+           '<path d="M9 9v2M12 9v3M15 9v2" stroke-width="1.4"/>',
+    lens:  '<circle cx="11" cy="11" r="4.2" stroke-width="1.5"/><path d="M14.2 14.2l3.2 3.2" stroke-width="1.7"/>',
+    music: '<path d="M10 16.2V7.6l6-1.2v8.2" stroke-width="1.5"/>'+
+           '<circle cx="8.6" cy="16.4" r="1.5" stroke-width="1.4"/><circle cx="14.6" cy="15.1" r="1.5" stroke-width="1.4"/>'
   };
   var SYM_LIST=["plus","minus","times","divide","equal","shape","rule","circle","book","abc","star","dot"];
+  /* 과목에 붙일 수 있는 그림들 */
+  var SUBJ_ICONS=["pen","abc","calc","book","shape","globe","brush","palette","music","ball","ruler","lens","star","dot"];
+  /* 이름을 보고 어울리는 그림을 짐작한다 — 새 과목에 처음 붙는다 */
+  function guessIcon(n){
+    var m=[[/한문|한자|서예|붓/,"brush"],[/음악|피아노|바이올린|노래|악기/,"music"],
+      [/사회|지리|역사|세계/,"globe"],[/미술|그림|만들기|색칠/,"palette"],
+      [/운동|체육|줄넘기|수영|태권/,"ball"],[/과학|실험|관찰/,"lens"],
+      [/수학|연산|계산|셈/,"calc"],[/영어|파닉스|단어/,"abc"],
+      [/국어|받아쓰기|글쓰기|일기/,"pen"],[/독서|책/,"book"],
+      [/도형|모양/,"shape"],[/길이|재기|자/,"ruler"]];
+    for(var i=0;i<m.length;i++) if(m[i][0].test(n||"")) return m[i][1];
+    return "star";
+  }
   function symIcon(name,cls){
     var p=SYMS[name]||SYMS.dot;
     return '<svg class="'+(cls||"")+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
@@ -1493,6 +1570,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     ]},
     {id:"read",name:"독서",short:"독",color:"#ff9500",icon:"book", tracks:[]}
   ];
+  /* 과목마다 자주 쓰는 학습 이름 — 누르면 이름 칸이 채워진다 */
+  var SUGG={
+    kor:["받아쓰기","일기 쓰기","국어 문제집","맞춤법"],
+    eng:["파닉스","단어","리딩","듣기"],
+    math:["기적의 계산법","필즈 예습","필즈 복습","수학 익힘책","연산"],
+    read:["책 읽기","독서록","소리 내어 읽기"]
+  };
+  function suggOf(id){return SUGG[id]||[];}
   var PALETTE=["#3b5bff","#ff9500","#ff3b7f","#e83e96","#9a4dff","#00b3a1",
                "#ff5a36","#1a96ff","#6b8e23","#c2277f"];
   /* 처음 한 번만 기본 과목을 베껴 둔다 — load() 보다 늦게 불리므로 안전하다.
@@ -1691,10 +1776,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var row='<div class="todo'+(t.done?" on":"")+(t.skip&&!t.done?" skipped":"")+'">'+
         '<button class="box" data-todo="'+t.id+'"'+boxStyle+' aria-label="완료 표시">'+
           opIcon(t,i)+'</button>'+
-        subjTag(t)+
         '<button class="txt" data-edit="'+t.id+'" aria-label="학습 고치기">'+
-          '<span class="tt">'+esc(t.text)+'</span>'+badge+'</button>'+
-        byTag(t.by)+
+          subjTag(t)+'<span class="tt">'+esc(t.text)+'</span>'+byTag(t.by)+badge+'</button>'+
         (t.done?'<span class="tst">'+sticker("smile",pop===key)+'</span>':'')+
         cnt+
         '<button class="addkid" data-addkid="'+t.id+'" aria-label="추가 학습·코멘트 달기">'+icon("plus")+'</button>'+
@@ -1860,10 +1943,16 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         '<div class="chint">'+previewCount(c)+'</div>';
     }
 
+    var sugg=suggOf(c.subj).filter(function(x){return x!==c.text;});
+    var suggRow=sugg.length
+      ? '<div class="chips sugg">'+sugg.map(function(x){
+          return '<button class="chip" data-sugg="'+esc(x)+'">'+esc(x)+'</button>';
+        }).join("")+'</div>'
+      : '';
     return '<div class="composer">'+
       '<div class="fld"><span class="lb">학습</span>'+
         '<input type="text" data-c="text" value="'+esc(c.text)+'" maxlength="60" '+
-        'placeholder="예: 기적의 계산법" '+INPUT_ATTRS+'></div>'+
+        'placeholder="예: 기적의 계산법" '+INPUT_ATTRS+'>'+suggRow+'</div>'+
       '<div class="row2">'+
         '<div class="fld num"><span class="lb">학습량</span>'+
           amountInput(c,"data-c")+'</div>'+
@@ -2051,7 +2140,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         var one='<div class="bi">'+
           '<button class="box" data-blchk="'+t.id+'"'+(sj?' style="color:'+sj.color+'"':'')+
             ' aria-label="해냈어요">'+opIcon(t,0)+'</button>'+
-          subjTag(t)+'<span class="bt">'+esc(t.text)+amount+'</span>'+
+          '<span class="bt">'+subjTag(t)+esc(t.text)+amount+'</span>'+
           '<button class="go'+(mover&&mover.id===t.id?" on":"")+'" data-blmv="'+t.id+'">옮기기</button>'+
           '<button class="go" data-blskip="'+t.id+'">건너뛰기</button>'+
         '</div>';
@@ -2094,7 +2183,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var key=fmt(new Date(view.y,view.m,day));
       var cls="day"+(new Date(view.y,view.m,day).getDay()===0?" sun":"");
       if(!inRange(key)){
-        cells+='<div class="'+cls+' out"><span class="n">'+day+'</span></div>';
+        cells+='<div class="'+cls+' out"><span class="n">'+day+'</span><span class="mk"></span></div>';
         continue;
       }
       var st=dayStat(key);
@@ -2105,13 +2194,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(key===SEL) cls+=" sel";
       /* 다 해낸 날엔 스티커, 하는 중인 날엔 얼마나 했는지 눈금이 붙는다.
          학습 수가 날마다 다르므로 개수 대신 비율로 그린다. */
+      /* 표시 자리는 늘 같은 높이로 비워 둔다 — 스티커가 붙어도 날짜가 밀려 올라가지 않는다 */
       var mark="";
       if(st.complete) mark='<span class="dst">'+sticker(daySticker(key),pop==="day:"+key)+'</span>';
       else if(st.total>0) mark='<span class="prog"><i style="width:'+
         Math.round(st.done/st.total*100)+'%"></i></span>';
       cells+='<button class="'+cls+'" data-open="'+key+'"'+
         (key===SEL?' aria-current="date"':"")+'>'+
-        '<span class="n">'+day+'</span>'+mark+'</button>';
+        '<span class="n">'+day+'</span><span class="mk">'+mark+'</span></button>';
     }
     /* 마지막 주의 남은 칸도 앞쪽 빈칸과 같은 모양으로 채운다 */
     var used=first.getDay()+dim;
@@ -2122,8 +2212,121 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     $("today").disabled=SEL===CUR&&view.y===parse(CUR).getFullYear()&&view.m===parse(CUR).getMonth();
   }
 
+  /* ---------- 수의 나라 여행 ----------
+     해낸 학습이 쌓일수록 한 걸음씩 나아간다. 스티커와 달리
+     '지금 어디까지 왔나'를 한 장면으로 보여 주는 자리다. */
+  var STAGES=[
+    {at:0,   name:"출발선",     say:"연필을 깎고 길을 나섰어요"},
+    {at:10,  name:"한 자리 마을",say:"1부터 9까지 모두 친구가 됐어요"},
+    {at:25,  name:"열의 다리",   say:"10씩 묶어 성큼성큼 건너요"},
+    {at:50,  name:"백의 언덕",   say:"100까지 올라왔어요"},
+    {at:90,  name:"천의 숲",     say:"1000을 세며 숲을 지나요"},
+    {at:140, name:"만의 강",     value:"",say:"만 단위로 물이 흘러요"},
+    {at:200, name:"도형 성",     say:"세모와 네모의 성에 닿았어요"},
+    {at:280, name:"분수 계곡",   say:"반으로 나누며 계곡을 건너요"},
+    {at:365, name:"수의 우주",   say:"수와 함께 우주로 날아올라요"}
+  ];
+  function doneTotal(){
+    var n=0;
+    state.todos.forEach(function(t){
+      if(t.done&&!t.del&&!t.ghost&&t.kind!=="note") n++;
+    });
+    return n;
+  }
+  function stageOf(n){
+    var i=0;
+    for(var k=0;k<STAGES.length;k++) if(n>=STAGES[k].at) i=k;
+    return {idx:i,cur:STAGES[i],next:STAGES[i+1]||null};
+  }
+  function renderStage(){
+    var wrap=$("stageWrap");
+    if(!wrap) return;
+    var n=doneTotal(),st=stageOf(n);
+    var pct=100,left=0;
+    if(st.next){
+      var span=st.next.at-st.cur.at;
+      pct=Math.max(4,Math.min(100,Math.round((n-st.cur.at)/span*100)));
+      left=st.next.at-n;
+    }
+    var dots=STAGES.map(function(x,k){
+      return '<span class="sdot'+(k<=st.idx?" on":"")+'"></span>';
+    }).join("");
+    wrap.innerHTML='<div class="stage">'+
+      '<div class="s-top">'+
+        '<span class="s-ic">'+symIcon(["dot","plus","equal","shape","book","rule","circle","divide","star"][st.idx]||"star")+'</span>'+
+        '<div class="s-txt"><div class="s-name">'+esc(st.cur.name)+'</div>'+
+        '<div class="s-say">'+esc(st.cur.say)+'</div></div>'+
+        '<span class="s-n">'+n+'<u>개</u></span>'+
+      '</div>'+
+      '<span class="s-bar"><i style="width:'+pct+'%"></i></span>'+
+      '<div class="s-foot"><span class="sdots">'+dots+'</span>'+
+        '<span>'+(st.next?('다음 '+esc(st.next.name)+'까지 '+left+'개'):'마지막 단계까지 왔어요!')+'</span></div>'+
+    '</div>';
+  }
+
+  /* ---------- 과목별 성장 ----------
+     고른 기간 안에서 과목마다 몇 개를 해냈는지, 시간은 얼마인지 모은다. */
+  var growRange="week";
+  function growFrom(){
+    if(growRange==="month") return CUR.slice(0,8)+"01";
+    if(growRange==="all") return START;
+    var p=parse(CUR);
+    return shift(CUR,-((p.getDay()+6)%7));   /* 이번 주 월요일 */
+  }
+  function growthStats(){
+    var from=growFrom(),out=[],by={};
+    subjects().forEach(function(g){
+      by[g.id]={id:g.id,name:g.name,short:g.short||g.name.charAt(0),
+        color:g.color,icon:g.icon,done:0,total:0,min:0};
+      out.push(by[g.id]);
+    });
+    state.todos.forEach(function(t){
+      if(t.del||t.ghost||t.kind==="note") return;
+      if(t.date<from||t.date>CUR) return;
+      var box=by[t.subj];
+      if(!box) return;
+      box.total++;
+      if(t.done){
+        box.done++;
+        if(t.unit==="분") box.min+=(parseInt(t.count,10)||0);
+        else if(t.unit==="시간") box.min+=(parseInt(t.count,10)||0)*60;
+      }
+    });
+    return out.filter(function(x){return x.total>0;});
+  }
+  function fmtMin(m){
+    if(!m) return "";
+    if(m<60) return m+"분";
+    var h=Math.floor(m/60),r=m%60;
+    return h+"시간"+(r?" "+r+"분":"");
+  }
+  function renderGrowth(){
+    var wrap=$("growWrap");
+    if(!wrap) return;
+    var list=growthStats();
+    if(!list.length){wrap.innerHTML="";return;}
+    var max=1;
+    list.forEach(function(x){if(x.total>max) max=x.total;});
+    var tabs=[["week","이번 주"],["month","이번 달"],["all","전체"]].map(function(t){
+      return '<button class="chip'+(growRange===t[0]?" on":"")+'" data-grow="'+t[0]+'">'+t[1]+'</button>';
+    }).join("");
+    var rows=list.map(function(x){
+      var pct=Math.round(x.done/x.total*100);
+      return '<div class="gr">'+
+        '<span class="by subj" style="background:'+x.color+'">'+esc(x.short)+'</span>'+
+        '<span class="gname">'+esc(x.name)+'</span>'+
+        '<span class="gbar" style="width:'+Math.round(x.total/max*100)+'%">'+
+          '<i style="width:'+pct+'%;background:'+x.color+'"></i></span>'+
+        '<span class="gnum">'+x.done+'<u>/'+x.total+'</u>'+
+          (x.min?' · '+fmtMin(x.min):'')+'</span>'+
+      '</div>';
+    }).join("");
+    wrap.innerHTML='<div class="growth"><div class="g-head">'+
+      '<h2>과목별 성장</h2><div class="chips">'+tabs+'</div></div>'+rows+'</div>';
+  }
+
   function renderAll(){
-    renderBoard(); renderCal(); renderDay(); renderBacklog();
+    renderBoard(); renderStage(); renderCal(); renderDay(); renderGrowth(); renderBacklog();
     if(booted){renderKeep(); renderInstall(); renderCarry();}
     pop=null;   /* 스티커 등장 애니메이션은 한 번만 */
   }
@@ -2373,6 +2576,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* --- 과목 관리 칸 --- */
   var smOpen=null;      /* 과정을 펼쳐 둔 과목 */
+  var smIcon=null;      /* 그림을 고르는 중인 과목 */
   var trName="", trSym="plus", smNew="", smMsg="";
 
   function touchSubjects(){ state.subjAt=Date.now(); save(); }
@@ -2382,12 +2586,20 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var rows=list.map(function(g){
       var ts=g.tracks||[];
       var row='<div class="sm-row">'+
+        '<button class="sm-ic'+(smIcon===g.id?" on":"")+'" data-sm-icon="'+g.id+'" '+
+          'style="color:'+g.color+'" aria-label="그림 바꾸기">'+symIcon(g.icon||"star","smicon")+'</button>'+
         '<button class="sm-col" data-sm-color="'+g.id+'" style="background:'+g.color+'" aria-label="색 바꾸기"></button>'+
         '<input type="text" data-sm-name="'+g.id+'" value="'+esc(g.name)+'" maxlength="10" aria-label="과목 이름" '+INPUT_ATTRS+'>'+
         '<input type="text" class="sm-short" data-sm-short="'+g.id+'" value="'+esc(g.short||g.name.charAt(0))+'" maxlength="2" aria-label="배지 글자" '+INPUT_ATTRS+'>'+
         '<button class="chip sm-tr'+(smOpen===g.id?" on":"")+'" data-sm-tracks="'+g.id+'">과정 '+ts.length+'</button>'+
         '<button class="sm-del" data-sm-del="'+g.id+'" aria-label="'+esc(g.name)+' 지우기">'+icon("close")+'</button>'+
       '</div>';
+      if(smIcon===g.id){
+        row+='<div class="sm-tracks"><div class="chips syms">'+SUBJ_ICONS.map(function(k){
+          return '<button class="chip sym'+((g.icon||"star")===k?" on":"")+'" data-sm-seticon="'+g.id+'|'+k+'">'+
+            symIcon(k,"symic")+'</button>';
+        }).join("")+'</div></div>';
+      }
       if(smOpen===g.id){
         row+='<div class="sm-tracks">'+
           (ts.length
@@ -2871,6 +3083,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         renderAll();return;
       }
       if((el=up(e.target,"[data-unit]"))){composer.unit=el.getAttribute("data-unit");renderAll();return;}
+      if((el=up(e.target,"[data-sugg]"))){
+        composer.text=el.getAttribute("data-sugg"); composer.err="";
+        renderAll();return;
+      }
       if((el=up(e.target,"[data-subj]"))){
         composer.subj=el.getAttribute("data-subj"); composer.track=null; composer.err="";
         renderAll();return;
@@ -2928,9 +3144,20 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       }
       return;
     }
+    if((el=up(e.target,"[data-sm-icon]"))){
+      var ig=el.getAttribute("data-sm-icon");
+      smIcon=(smIcon===ig)?null:ig; smOpen=null; smMsg="";
+      renderKeep();return;
+    }
+    if((el=up(e.target,"[data-sm-seticon]"))){
+      var ip=el.getAttribute("data-sm-seticon").split("|");
+      var ig2=subjOf(ip[0]);
+      if(ig2){ig2.icon=ip[1];touchSubjects();}
+      smIcon=null; renderAll();return;
+    }
     if((el=up(e.target,"[data-sm-tracks]"))){
       var tg=el.getAttribute("data-sm-tracks");
-      smOpen=(smOpen===tg)?null:tg; smMsg="";
+      smOpen=(smOpen===tg)?null:tg; smIcon=null; smMsg="";
       renderKeep();return;
     }
     if((el=up(e.target,"[data-sm-sym]"))){trSym=el.getAttribute("data-sm-sym");renderKeep();return;}
@@ -2967,7 +3194,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(!nn){smMsg="과목 이름을 적어 주세요.";renderKeep();return;}
       var cur=subjects();
       state.subjects=cur.concat([{id:newSubjId(),name:nn,short:nn.charAt(0),
-        color:PALETTE[cur.length%PALETTE.length],icon:"note",tracks:[]}]);
+        color:PALETTE[cur.length%PALETTE.length],icon:guessIcon(nn),tracks:[]}]);
       smNew=""; smMsg=""; touchSubjects(); renderAll();
       toast(nn+" 과목을 더했어요.");
       return;
@@ -3038,6 +3265,10 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
     /* 밀린 학습 — 이동 · 스킵 */
     /* 밀린 학습 — 줄마다 체크·옮기기·건너뛰기 */
+    if((el=up(e.target,"[data-grow]"))){
+      growRange=el.getAttribute("data-grow");
+      renderGrowth();return;
+    }
     if((el=up(e.target,"[data-blchk]"))){
       var bid=el.getAttribute("data-blchk");
       var bt=findTodo(bid);
