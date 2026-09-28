@@ -928,7 +928,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28e</span>
+    <span class="ver">v2026-09-28f</span>
   </footer>
 </div>
 
@@ -2268,8 +2268,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function growFrom(){
     if(growRange==="month") return CUR.slice(0,8)+"01";
     if(growRange==="all") return START;
-    var p=parse(CUR);
-    return shift(CUR,-((p.getDay()+6)%7));   /* 이번 주 월요일 */
+    /* 달력이 일요일로 한 주를 시작하므로 여기서도 일요일부터 센다 */
+    return shift(CUR,-parse(CUR).getDay());
   }
   function growthStats(){
     var from=growFrom(),out=[],by={};
@@ -2278,11 +2278,13 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         color:g.color,icon:g.icon,done:0,total:0,min:0};
       out.push(by[g.id]);
     });
+    /* 과목을 고르기 전에 적어 둔 학습도 빠뜨리지 않는다 */
+    var etc={id:"__etc",name:"기타",short:"기",color:"#8a8a8a",done:0,total:0,min:0};
+    out.push(etc);
     state.todos.forEach(function(t){
       if(t.del||t.ghost||t.kind==="note") return;
       if(t.date<from||t.date>CUR) return;
-      var box=by[t.subj];
-      if(!box) return;
+      var box=by[t.subj]||etc;
       box.total++;
       if(t.done){
         box.done++;
@@ -3130,7 +3132,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var sid=el.getAttribute("data-sec");
       secOpen[sid]=!secOpen[sid];
       if(sid==="sync"&&!secOpen.sync){syncForm=false;syncMsg="";}
-      renderKeep();return;
+      /* 과목별 성장은 설정 칸 밖에 있으므로 제 칸을 다시 그려야 열린다 */
+      if(sid==="grow") renderGrowth(); else renderKeep();
+      return;
     }
 
     /* 함께 보기 */
@@ -3275,9 +3279,6 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
     /* 밀린 학습 — 이동 · 스킵 */
     /* 밀린 학습 — 줄마다 체크·옮기기·건너뛰기 */
-    if((el=up(e.target,'[data-sec="grow"]'))){
-      secOpen.grow=!secOpen.grow; renderGrowth();return;
-    }
     if((el=up(e.target,"[data-grow]"))){
       growRange=el.getAttribute("data-grow");
       renderGrowth();return;
