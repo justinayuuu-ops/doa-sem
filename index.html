@@ -569,17 +569,18 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 }
 .todo.skipped .txt{color:var(--ink-3)}
 /* ── 수의 나라 여행 ── */
-.stage{background:var(--pulse-wash);border:2px solid var(--pulse-dim);border-radius:var(--r-md);
-  padding:9px 12px 10px}
+.stage{background:var(--surface-1);border:2px solid var(--pulse);border-radius:var(--r-md);
+  box-shadow:var(--shadow-1);padding:10px 12px 11px}
 .s-top{display:flex;align-items:center;gap:8px}
 .s-ic{flex:none;width:26px;height:26px;color:var(--pulse-strong)}
 .s-ic svg{width:100%;height:100%;display:block}
 .s-txt{flex:1;min-width:0}
 .s-name{font-size:13px;color:var(--pulse-strong);line-height:1.3}
+.s-goal{font-size:11px;color:var(--ink-3);line-height:1.4}
 .s-say{font-size:11px;color:var(--ink-2);line-height:1.4}
 .s-n{flex:none;font-size:16px;color:var(--pulse-strong);font-variant-numeric:tabular-nums}
 .s-n u{text-decoration:none;font-size:10px;margin-left:1px}
-.s-bar{display:block;height:7px;border-radius:4px;background:#fff;overflow:hidden;margin:7px 0 5px}
+.s-bar{display:block;height:7px;border-radius:4px;background:var(--bg1);overflow:hidden;margin:7px 0 5px}
 .s-bar i{display:block;height:100%;border-radius:4px;background:var(--pulse)}
 .s-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;
   font-size:10px;color:var(--ink-3)}
@@ -588,11 +589,12 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .sdot.on{background:var(--pulse)}
 
 /* ── 과목별 성장 ── */
-.growth{background:var(--surface-1);border:2px solid var(--violet);border-radius:var(--r-md);
-  box-shadow:var(--shadow-1);padding:10px 12px 11px}
-.g-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
-  flex-wrap:wrap;margin-bottom:7px}
-.g-head h2{font-size:var(--fs-lg);font-weight:400;color:var(--violet);margin:0}
+.growth{background:var(--surface-1);border:2px solid var(--pulse);border-radius:var(--r-md);
+  box-shadow:var(--shadow-1);padding:8px 12px 10px}
+.g-head{display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  flex-wrap:wrap;margin:2px 0 7px}
+.growth .sec-t{color:var(--pulse-strong)}
+.g-head h2{font-size:var(--fs-lg);font-weight:400;color:var(--pulse-strong);margin:0}
 .g-head .chip{min-height:26px;padding:0 9px;font-size:11px}
 .gr{display:flex;align-items:center;gap:6px;padding:4px 0;
   border-top:1px solid var(--line-soft);font-size:11px}
@@ -664,18 +666,25 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 /* aspect-ratio 미지원 구형 웹뷰 대비 — 정사각형에 가깝게 유지 */
 @supports not (aspect-ratio:1/1){
   .day{height:0;padding-bottom:100%;min-height:0}
-  .day>*{position:absolute}
-  .day .n{top:26%}
-  .day .prog,.day .dst{bottom:22%}
 }
 .day.pad,.day.out{background:var(--bg1)}
 .day.out{opacity:.5}
-.day .n{font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
-  flex:none;width:clamp(22px,7vw,28px);height:clamp(22px,7vw,28px);display:flex;align-items:center;justify-content:center;border-radius:8px}   /* 모든 날 같은 상자 — 고른 날도 눈금 높이가 그대로 */
+/* 숫자와 스티커는 칸 위아래에 각각 못 박아 둔다.
+   세로로 쌓으면 스티커가 붙는 순간 숫자가 밀려 올라가는데,
+   이렇게 두면 어떤 상태에서도 숫자는 같은 자리, 사이 간격도 그대로다. */
+.day .n{
+  position:absolute;top:3px;left:50%;transform:translateX(-50%);
+  font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
+  width:clamp(20px,6.4vw,25px);height:clamp(20px,6.4vw,25px);
+  display:flex;align-items:center;justify-content:center;border-radius:8px;
+}
 .day.sun .n{color:var(--coral)}
 /* 스티커·눈금이 들어설 자리 — 비어 있어도 높이를 지켜 날짜가 오르내리지 않게 한다 */
-.day .mk{flex:none;display:flex;align-items:center;justify-content:center;
-  width:100%;height:clamp(15px,4.6vw,19px)}
+.day .mk{
+  position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;justify-content:center;
+  width:100%;height:clamp(14px,4.2vw,17px);
+}
 /* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
 .prog{display:block;width:52%;min-width:15px;height:4px;
@@ -684,7 +693,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .day.missed .n{color:var(--ink-3)}
 .day.full{background:var(--pulse-wash)}
 /* 칸이 좁은 폰에서도 날짜·스티커가 함께 들어가도록 칸 너비를 따라간다 */
-.day .dst,.day .dst .st{width:clamp(15px,4.6vw,19px);height:clamp(15px,4.6vw,19px)}
+.day .dst,.day .dst .st{width:clamp(14px,4.2vw,17px);height:clamp(14px,4.2vw,17px)}
 /* 오늘 표시 · 고른 날 표시 — 둘 다 날짜 숫자 뒤의 같은 둥근 네모를 쓴다.
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
@@ -809,8 +818,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   background:none;box-shadow:none}
 
 /* 옮겨오기 안내 — 설치 직후 기록이 비어 있을 때만 */
-.carryover{background:var(--amber-wash);border:2px solid var(--amber);border-radius:var(--r-md);padding:10px 12px 11px}
-.carryover h2{font-size:var(--fs-lg);font-weight:400;color:var(--amber);margin:0 0 2px}
+.carryover{background:var(--pulse-wash);border:2px solid var(--pulse);border-radius:var(--r-md);padding:10px 12px 11px}
+.carryover h2{font-size:var(--fs-lg);font-weight:400;color:var(--pulse-strong);margin:0 0 2px}
 .carryover p{font-size:var(--fs-sm);color:var(--ink-2);margin:0;line-height:1.55}
 
 /* 함께 보기 칸 */
@@ -854,7 +863,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 @media (max-width:359px){
   .wrap{padding-left:calc(12px + var(--safe-l));padding-right:calc(12px + var(--safe-r));gap:16px}
   .board .cell{padding:6px 6px 7px}
-  .day .dst,.day .dst .st{width:15px;height:15px}
+  .day .dst,.day .dst .st{width:14px;height:14px}
   .prog{width:60%}
   .badge{font-size:var(--fs-md);padding:4px 9px 4px 7px}
   .todo{gap:5px}
@@ -919,7 +928,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28c</span>
+    <span class="ver">v2026-09-28e</span>
   </footer>
 </div>
 
@@ -2212,55 +2221,44 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     $("today").disabled=SEL===CUR&&view.y===parse(CUR).getFullYear()&&view.m===parse(CUR).getMonth();
   }
 
-  /* ---------- 수의 나라 여행 ----------
-     해낸 학습이 쌓일수록 한 걸음씩 나아간다. 스티커와 달리
-     '지금 어디까지 왔나'를 한 장면으로 보여 주는 자리다. */
-  var STAGES=[
-    {at:0,   name:"출발선",     say:"연필을 깎고 길을 나섰어요"},
-    {at:10,  name:"한 자리 마을",say:"1부터 9까지 모두 친구가 됐어요"},
-    {at:25,  name:"열의 다리",   say:"10씩 묶어 성큼성큼 건너요"},
-    {at:50,  name:"백의 언덕",   say:"100까지 올라왔어요"},
-    {at:90,  name:"천의 숲",     say:"1000을 세며 숲을 지나요"},
-    {at:140, name:"만의 강",     value:"",say:"만 단위로 물이 흘러요"},
-    {at:200, name:"도형 성",     say:"세모와 네모의 성에 닿았어요"},
-    {at:280, name:"분수 계곡",   say:"반으로 나누며 계곡을 건너요"},
-    {at:365, name:"수의 우주",   say:"수와 함께 우주로 날아올라요"}
+  /* ---------- 365일 여정 ----------
+     이 앱의 목표는 '365일 하루도 빠짐없이'다. 그 목표를 얼마나 채웠는지,
+     다음 이정표까지 며칠 남았는지를 한 자리에서 보여 준다. */
+  var JOURNEY=[
+    {at:0,   name:"시작",       say:"오늘부터 하루씩 채워요",  sym:"dot"},
+    {at:7,   name:"일주일",     say:"이레를 채웠어요",         sym:"plus"},
+    {at:30,  name:"한 달",      say:"한 달을 채웠어요",        sym:"equal"},
+    {at:60,  name:"두 달",      say:"두 달째 이어 가요",       sym:"circle"},
+    {at:100, name:"백 일",      say:"백 일을 넘었어요",        sym:"shape"},
+    {at:180, name:"반년",       say:"절반을 지났어요",         sym:"rule"},
+    {at:270, name:"아홉 달",    say:"마지막 계절이에요",       sym:"times"},
+    {at:365, name:"일 년 완주", say:"365일을 다 채웠어요!",    sym:"star"}
   ];
-  function doneTotal(){
-    var n=0;
-    state.todos.forEach(function(t){
-      if(t.done&&!t.del&&!t.ghost&&t.kind!=="note") n++;
-    });
-    return n;
-  }
   function stageOf(n){
     var i=0;
-    for(var k=0;k<STAGES.length;k++) if(n>=STAGES[k].at) i=k;
-    return {idx:i,cur:STAGES[i],next:STAGES[i+1]||null};
+    for(var k=0;k<JOURNEY.length;k++) if(n>=JOURNEY[k].at) i=k;
+    return {idx:i,cur:JOURNEY[i],next:JOURNEY[i+1]||null};
   }
   function renderStage(){
     var wrap=$("stageWrap");
     if(!wrap) return;
-    var n=doneTotal(),st=stageOf(n);
-    var pct=100,left=0;
-    if(st.next){
-      var span=st.next.at-st.cur.at;
-      pct=Math.max(4,Math.min(100,Math.round((n-st.cur.at)/span*100)));
-      left=st.next.at-n;
-    }
-    var dots=STAGES.map(function(x,k){
-      return '<span class="sdot'+(k<=st.idx?" on":"")+'"></span>';
+    var t=tally(),n=t.doneDays,st=stageOf(n);
+    var pct=Math.max(n?2:0,Math.min(100,Math.round(n/TOTAL*100)));
+    var dots=JOURNEY.map(function(x,k){
+      return '<span class="sdot'+(k<=st.idx?" on":"")+'" title="'+esc(x.name)+'"></span>';
     }).join("");
     wrap.innerHTML='<div class="stage">'+
       '<div class="s-top">'+
-        '<span class="s-ic">'+symIcon(["dot","plus","equal","shape","book","rule","circle","divide","star"][st.idx]||"star")+'</span>'+
-        '<div class="s-txt"><div class="s-name">'+esc(st.cur.name)+'</div>'+
-        '<div class="s-say">'+esc(st.cur.say)+'</div></div>'+
-        '<span class="s-n">'+n+'<u>개</u></span>'+
+        '<span class="s-ic">'+symIcon(st.cur.sym)+'</span>'+
+        '<div class="s-txt">'+
+          '<div class="s-name">'+esc(st.cur.name)+' · '+esc(st.cur.say)+'</div>'+
+          '<div class="s-goal">목표 365일 가운데 '+n+'일을 해냈어요 · '+pct+'%</div>'+
+        '</div>'+
+        '<span class="s-n">'+n+'<u>/'+TOTAL+'</u></span>'+
       '</div>'+
       '<span class="s-bar"><i style="width:'+pct+'%"></i></span>'+
       '<div class="s-foot"><span class="sdots">'+dots+'</span>'+
-        '<span>'+(st.next?('다음 '+esc(st.next.name)+'까지 '+left+'개'):'마지막 단계까지 왔어요!')+'</span></div>'+
+        '<span>'+(st.next?('다음 이정표 '+esc(st.next.name)+'까지 '+(st.next.at-n)+'일'):'365일을 다 채웠어요!')+'</span></div>'+
     '</div>';
   }
 
@@ -2304,13 +2302,22 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var wrap=$("growWrap");
     if(!wrap) return;
     var list=growthStats();
-    if(!list.length){wrap.innerHTML="";return;}
+    /* 고른 기간이 비었다고 칸을 통째로 감추면 기간을 바꿀 수가 없다 —
+       기록이 하나라도 있으면 칸은 남겨 두고 안내만 바꾼다. */
+    var any=false;
+    state.todos.forEach(function(t){if(!t.del&&!t.ghost&&t.kind!=="note") any=true;});
+    if(!any){wrap.innerHTML="";return;}
     var max=1;
     list.forEach(function(x){if(x.total>max) max=x.total;});
     var tabs=[["week","이번 주"],["month","이번 달"],["all","전체"]].map(function(t){
       return '<button class="chip'+(growRange===t[0]?" on":"")+'" data-grow="'+t[0]+'">'+t[1]+'</button>';
     }).join("");
-    var rows=list.map(function(x){
+    var lab={week:"이번 주",month:"이번 달",all:"전체"}[growRange];
+    var sumDone=0;
+    list.forEach(function(x){sumDone+=x.done;});
+    var rows=!list.length
+      ? '<div class="chint">이 기간에는 아직 기록이 없어요.</div>'
+      : list.map(function(x){
       var pct=Math.round(x.done/x.total*100);
       return '<div class="gr">'+
         '<span class="by subj" style="background:'+x.color+'">'+esc(x.short)+'</span>'+
@@ -2321,8 +2328,11 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
           (x.min?' · '+fmtMin(x.min):'')+'</span>'+
       '</div>';
     }).join("");
-    wrap.innerHTML='<div class="growth"><div class="g-head">'+
-      '<h2>과목별 성장</h2><div class="chips">'+tabs+'</div></div>'+rows+'</div>';
+    wrap.innerHTML='<div class="growth">'+
+      secHead("grow","과목별 성장",lab+" "+sumDone+"개",false)+
+      '<div class="sec-body"'+(secOpen.grow?"":" hidden")+'>'+
+        '<div class="g-head"><div class="chips">'+tabs+'</div></div>'+rows+
+      '</div></div>';
   }
 
   function renderAll(){
@@ -2686,7 +2696,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* 접었다 펴는 칸 — 평소에는 접혀 있고, 눌렀을 때만 열린다.
      앱을 다시 열면 다시 접힌 상태로 돌아온다. */
-  var secOpen={keep:false,sync:false,sk:false,role:false,subj:false};
+  var secOpen={keep:false,sync:false,sk:false,role:false,subj:false,grow:false};
 
   function secHead(id,title,summary,warn){
     return '<button class="sec-head'+(secOpen[id]?" open":"")+'" data-sec="'+id+'" '+
@@ -3265,6 +3275,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
     /* 밀린 학습 — 이동 · 스킵 */
     /* 밀린 학습 — 줄마다 체크·옮기기·건너뛰기 */
+    if((el=up(e.target,'[data-sec="grow"]'))){
+      secOpen.grow=!secOpen.grow; renderGrowth();return;
+    }
     if((el=up(e.target,"[data-grow]"))){
       growRange=el.getAttribute("data-grow");
       renderGrowth();return;
