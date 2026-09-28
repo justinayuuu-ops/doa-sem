@@ -677,6 +677,10 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
   font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
   width:clamp(20px,6.4vw,25px);height:clamp(20px,6.4vw,25px);
   display:flex;align-items:center;justify-content:center;border-radius:8px;
+  /* 주아체는 글자가 상자 위쪽에 붙는다 — 위에 여백을 조금 줘서
+     숫자가 상자(오늘 칠·고른 날 테두리) 한가운데에 오게 한다.
+     box-sizing 이 border-box 라 상자 크기는 그대로다. */
+  padding-top:3px;
 }
 .day.sun .n{color:var(--coral)}
 /* 스티커·눈금이 들어설 자리 — 비어 있어도 높이를 지켜 날짜가 오르내리지 않게 한다 */
@@ -732,7 +736,7 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .day.full .n{box-shadow:none!important}
 /* 스티커를 숫자 쪽으로 끌어올린다. 표시 자리의 높이는 그대로라
    다 해낸 날이든 아니든 숫자는 여전히 같은 높이에 있다. */
-.day .dst{margin-top:-5px}
+.day .dst{margin-top:-6px}
 
 .note{font-size:var(--fs-sm);color:var(--ink-2);background:var(--bg1);
   border-radius:var(--r-sm);padding:8px 10px;margin-top:9px;line-height:1.5}
@@ -939,7 +943,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28l</span>
+    <span class="ver">v2026-09-28m</span>
   </footer>
 </div>
 
