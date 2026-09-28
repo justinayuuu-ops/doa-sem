@@ -669,19 +669,23 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 }
 .day.pad,.day.out{background:var(--bg1)}
 .day.out{opacity:.5}
-/* 숫자 상자 — 아유 보드와 같은 25px 고정 */
+/* 숫자 상자는 어떤 상태에서도 같은 크기다.
+   아래의 표시 자리도 늘 같은 높이로 잡아 두었으므로,
+   다 해낸 날이든 아니든 숫자는 정확히 같은 높이에 있다. */
 .day .n{
   flex:none;
   font-size:var(--fs-sm);line-height:1;font-variant-numeric:tabular-nums;
-  width:25px;height:25px;
+  width:clamp(20px,6.4vw,25px);height:clamp(20px,6.4vw,25px);
   display:flex;align-items:center;justify-content:center;border-radius:8px;
 }
 .day.sun .n{color:var(--coral)}
 /* 스티커·눈금이 들어설 자리 — 비어 있어도 높이를 지켜 날짜가 오르내리지 않게 한다 */
-/* 하는 중인 날 — 과목마다 점 하나, 그 과목을 다 해내면 진해진다 */
-.dots{display:flex;gap:2px;margin-top:3px;height:5px}
-.dots i{width:5px;height:5px;border-radius:50%;opacity:.35}
-.dots i.on{opacity:1}
+/* 표시 자리 — 비어 있어도 높이를 지킨다.
+   이 자리가 있어야 스티커가 붙은 날과 안 붙은 날의 숫자 높이가 같아진다. */
+.day .mk{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  width:100%;height:clamp(13px,3.9vw,15px);
+}
 /* 하는 중인 날의 눈금 — 학습 수가 날마다 다르므로 개수가 아니라
    '얼마나 했나'를 한 줄로 보여 준다 */
 .prog{display:block;width:52%;min-width:15px;height:4px;
@@ -693,9 +697,8 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 .day.full .n{color:var(--pulse-strong);font-weight:600}
 .day.full.today .n{color:var(--pulse-ink)}
 /* 칸이 좁은 폰에서도 날짜·스티커가 함께 들어가도록 칸 너비를 따라간다 */
-/* 다 해낸 날 스티커 — 위아래 여백 4 + 숫자 상자 25 + 사이 1 + 스티커 13 = 43px,
-   가장 작은 칸(44px)에도 잘리지 않는다 */
-.day .dst,.day .dst .st{width:13px;height:13px;margin-top:0}
+/* 다 해낸 날의 스티커는 표시 자리를 꽉 채운다 */
+.day .dst,.day .dst .st{width:clamp(13px,3.9vw,15px);height:clamp(13px,3.9vw,15px)}
 /* 오늘 표시 · 고른 날 표시 — 둘 다 날짜 숫자 뒤의 같은 둥근 네모를 쓴다.
    칸 전체에 테두리를 두르면 격자선·소수 열 너비와 겹쳐 한쪽 변만
    굵어 보이므로, 숫자 뒤 상자에만 얹는다.
@@ -929,7 +932,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28i</span>
+    <span class="ver">v2026-09-28j</span>
   </footer>
 </div>
 
@@ -2193,7 +2196,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var key=fmt(new Date(view.y,view.m,day));
       var cls="day"+(new Date(view.y,view.m,day).getDay()===0?" sun":"");
       if(!inRange(key)){
-        cells+='<div class="'+cls+' out"><span class="n">'+day+'</span></div>';
+        cells+='<div class="'+cls+' out"><span class="n">'+day+'</span><span class="mk"></span></div>';
         continue;
       }
       var st=dayStat(key);
@@ -2204,27 +2207,14 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(key===SEL) cls+=" sel";
       /* 다 해낸 날엔 스티커, 하는 중인 날엔 얼마나 했는지 눈금이 붙는다.
          학습 수가 날마다 다르므로 개수 대신 비율로 그린다. */
-      /* 다 해낸 날엔 스티커, 하는 중인 날엔 과목마다 점 하나(최대 넷) */
+      /* 표시 자리는 늘 같은 높이로 비워 둔다 — 스티커가 붙어도 날짜가 밀려 올라가지 않는다 */
       var mark="";
       if(st.complete) mark='<span class="dst">'+sticker(daySticker(key),pop==="day:"+key)+'</span>';
-      else if(st.total>0){
-        var subs={},order=[];
-        tasksFor(key).forEach(function(t){
-          if(t.ghost) return;
-          var sid=t.subj||"__etc";
-          if(!subs[sid]){subs[sid]={done:0,total:0};order.push(sid);}
-          subs[sid].total++;
-          if(t.done) subs[sid].done++;
-        });
-        mark='<span class="dots">'+order.slice(0,4).map(function(sid){
-          var sj=subjOf(sid),o=subs[sid];
-          return '<i class="'+(o.done===o.total?"on":"")+'" style="background:'+
-            ((sj&&sj.color)||"#8a8a8a")+'"></i>';
-        }).join("")+'</span>';
-      }
+      else if(st.total>0) mark='<span class="prog"><i style="width:'+
+        Math.round(st.done/st.total*100)+'%"></i></span>';
       cells+='<button class="'+cls+'" data-open="'+key+'"'+
         (key===SEL?' aria-current="date"':"")+'>'+
-        '<span class="n">'+day+'</span>'+mark+'</button>';
+        '<span class="n">'+day+'</span><span class="mk">'+mark+'</span></button>';
     }
     /* 마지막 주의 남은 칸도 앞쪽 빈칸과 같은 모양으로 채운다 */
     var used=first.getDay()+dim;
