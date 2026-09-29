@@ -984,7 +984,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-29b</span>
+    <span class="ver">v2026-09-29c</span>
   </footer>
 </div>
 
@@ -3002,7 +3002,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     return changed;
   }
 
-  function payload(){
+  function payload(){ var pl=payloadBody(); lastAt=pl.at; return pl; }
+  function payloadBody(){
     return {done:state.done,dmeta:state.dmeta,todos:state.todos,mcut:state.mcut,
             subjects:state.subjects,subjAt:state.subjAt||0,subjV:state.subjV||0,
             sk:state.sk,skAt:state.skAt,events:state.events,calOpt:state.calOpt,calAt:state.calAt||0,at:Date.now()};
@@ -3045,11 +3046,22 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(sync){ delete sync.legacy; saveSync(); }
     }).catch(function(){});
   }
+  var lastAt=0,liteN=0;   /* 마지막으로 받거나 올린 서버 기록의 시각 */
+  function remoteAt(){return fetch(syncUrl().replace(/\.json$/,"/at.json"),{cache:"no-store"}).then(function(r){if(!r.ok) throw 0;return r.json();});}
   function pull(){
+    if(!sync) return;
+    /* 10번에 한 번(약 5분)은 확인 없이 전체를 받는다 — 혹시 놓친 것이 없게 */
+    if(!lastAt||(++liteN%10)===0){pullFull();return;}
+    remoteAt().then(function(at){
+      if(at&&at===lastAt){syncErr=false;syncAt=Date.now();return;}   /* 바뀐 것 없음 — 전체 기록은 받지 않는다 */
+      pullFull();
+    }).catch(function(){pullFull();});
+  }
+  function pullFull(){
     if(!sync) return;
     syncing=true; if(booted) renderKeep();
     pullLegacy().then(function(){ return getRemote(); }).then(function(rem){
-      syncErr=false; syncing=false; syncAt=Date.now();
+      syncErr=false; syncing=false; syncAt=Date.now(); lastAt=(rem&&rem.at)||0;
       afterMerge(rem?mergeRemote(rem):false);
       if(remoteBehind(rem)) schedulePush();   /* 이 기기에만 있는 기록은 올린다 */
     }).catch(function(){
@@ -3082,7 +3094,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function startPolling(){
     clearInterval(pollTimer);
     if(!sync) return;
-    pollTimer=setInterval(function(){ if(!document.hidden) pull(); },15000);
+    pollTimer=setInterval(function(){ if(!document.hidden) pull(); },30000);
   }
   function connectSync(dbUrl){
     dbUrl=(dbUrl||"").trim().replace(/\/+$/,"");
