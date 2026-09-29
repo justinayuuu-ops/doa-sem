@@ -4,7 +4,7 @@
    학습 기록 자체는 여기 캐시가 아니라 localStorage 에 있으므로
    캐시를 비워도 데이터는 사라지지 않는다. */
 
-var VERSION = "doasem-2026-09-29e";
+var VERSION = "doasem-2026-09-29f";
 var PREFIX = "doasem-";
 var SHELL = PREFIX + "shell-" + VERSION;
 var FONTS = PREFIX + "fonts-" + VERSION;
@@ -13,14 +13,14 @@ var SHELL_FILES = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./manifest.webmanifest?v=r3",
-  "./apple-touch-icon-r3.png",
-  "./apple-touch-icon-precomposed-r3.png",
-  "./icon-180-r3.png",
-  "./icon-192-r3.png",
-  "./icon-512-r3.png",
-  "./icon-maskable-512-r3.png",
-  "./favicon-48-r3.png",
+  "./manifest.webmanifest?v=r4",
+  "./apple-touch-icon-r4.png",
+  "./apple-touch-icon-precomposed-r4.png",
+  "./icon-180-r4.png",
+  "./icon-192-r4.png",
+  "./icon-512-r4.png",
+  "./icon-maskable-512-r4.png",
+  "./favicon-48-r4.png",
   "./Jua-Korean.woff2",
   "./KakaoSmallSans-Regular.woff2",
   "./KakaoSmallSans-Bold.woff2"
