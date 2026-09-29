@@ -984,7 +984,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-29a</span>
+    <span class="ver">v2026-09-29b</span>
   </footer>
 </div>
 
@@ -1410,7 +1410,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(!t.parent) return;
       var p=by[t.parent]; if(!p) return;
       if(p.del&&!t.del){t.del=true;t.u=Date.now();ch=true;}
-      if(t.date!==p.date){t.date=p.date;t.u=Date.now();ch=true;}
+      if(t.date!==p.date){t.date=p.date;ch=true;}   /* 날짜는 부모를 따라갈 뿐 — 수정 시각을 올리면 오래된 폰이 다른 폰의 체크를 덮어쓴다 */
     });
     return ch;
   }
