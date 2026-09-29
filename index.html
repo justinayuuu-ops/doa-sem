@@ -903,6 +903,42 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 .st,.badge,.board .v,.day .n{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ── 캘린더: 공휴일 · 개인 일정 ── */
+.day.holi .n{color:var(--coral)}
+.day.today.holi .n{color:var(--pulse-ink)}
+.evbar{position:absolute;top:0;left:0;right:0;height:2.5px;display:flex;justify-content:center;gap:2px;pointer-events:none;z-index:1}
+.evbar i{display:block;height:2.5px;border-radius:2px}
+.evbar i.pt{width:12px}
+.evbar i.rg{flex:1;margin:0 3px}
+.evbar i.rg.l{margin-left:0;border-top-left-radius:0;border-bottom-left-radius:0}
+.evbar i.rg.r{margin-right:0;border-top-right-radius:0;border-bottom-right-radius:0}
+.dtags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.dtag{display:inline-flex;align-items:center;gap:4px;font-size:11px;line-height:1;padding:3px 7px;border-radius:999px;background:var(--bg1);color:var(--ink-2)}
+.dtag i{width:8px;height:3px;border-radius:2px}
+.dtag.holi{color:var(--coral);background:var(--coral-wash)}
+.cal-opt{display:flex;align-items:center;gap:8px}
+.cal-opt .lb{font-size:13px;color:var(--ink-2)}
+.cal-opt .chip{min-height:28px;padding:0 12px;font-size:12px}
+.ev-hint{font-size:11px;color:var(--ink-3);line-height:1.5}
+.ev-list{display:flex;flex-direction:column;margin-bottom:8px}
+.ev-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-top:1px solid var(--line-soft);font-size:13px}
+.ev-row:first-child{border-top:0}
+.ev-row>i{flex:none;width:12px;height:4px;border-radius:2px}
+.ev-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-w{flex:none;font-size:11px;color:var(--ink-3)}
+.ev-del{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-3)}
+.ev-del svg{width:15px;height:15px}
+.ev-form{display:flex;flex-direction:column;gap:6px;padding:8px 9px;border-radius:var(--r-sm);background:var(--bg2);border:1.5px solid var(--line)}
+.ev-form input{width:100%;min-width:0;font-family:inherit;font-size:13px;height:34px;padding:0 10px;color:var(--ink);
+  background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);-webkit-appearance:none;appearance:none}
+.ev-form .chips{display:flex;flex-wrap:wrap;gap:5px}
+.ev-form .chip{min-height:28px;padding:0 10px;font-size:12px}
+.ev-form .dates{display:flex;align-items:center;gap:6px}
+.ev-form .dates input{flex:1}
+.ev-colors{display:flex;align-items:center;gap:7px}
+.evc{flex:none;width:22px;height:22px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line)}
+.evc.on{box-shadow:0 0 0 2px var(--ink-2)}
+.ev-colors .btn{margin-left:auto;flex:none;min-height:32px;height:32px;font-size:12px;padding:0 12px;box-shadow:none}
 </style>
 </head>
 <body>
@@ -948,7 +984,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-28p</span>
+    <span class="ver">v2026-09-29a</span>
   </footer>
 </div>
 
@@ -1205,6 +1241,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       sk:(p.sk&&typeof p.sk==="object")?p.sk:null,
       skAt:(typeof p.skAt==="number")?p.skAt:0,
       seed:!!p.seed,
+      events:Array.isArray(p.events)?p.events:[],
+      calOpt:(p.calOpt&&typeof p.calOpt==="object")?{holi:p.calOpt.holi!==false}:{holi:true},
+      calAt:+p.calAt||0,
       savedAt:p.savedAt||null,
       backupAt:p.backupAt||null
     };
@@ -1224,6 +1263,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       subjects:null,subjAt:0,subjV:0,sk:null,skAt:0,
       seed:false,savedAt:null,backupAt:null};
     if(!base.dmeta) base.dmeta={};
+    if(!Array.isArray(base.events)) base.events=[];
+    if(!base.calOpt) base.calOpt={holi:true};
     if(!base.sk||!(base.sk.every>0)||!(base.sk.give>0)) base.sk={every:7,give:1};
     /* 고정 공부를 걷어낸 날을 한 번만 적어 둔다 — 그 전날까지는 옛 기록을
        그대로 읽고, 그날부터는 학습 목록으로 센다. */
@@ -1576,6 +1617,38 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     delete k.parent; delete k.kind;
     k.date=to; k.movedFrom=from; k.ord=todosFor(to).length; k.u=Date.now();
     save(); return null;
+  }
+  var HOLI={
+    "2026-09-24":"추석 연휴","2026-09-25":"추석","2026-09-26":"추석 연휴","2026-10-03":"개천절","2026-10-05":"대체공휴일",
+    "2026-10-09":"한글날","2026-12-25":"성탄절",
+    "2027-01-01":"신정","2027-02-06":"설날 연휴","2027-02-07":"설날","2027-02-08":"설날 연휴","2027-02-09":"대체공휴일",
+    "2027-03-01":"삼일절","2027-05-01":"노동절","2027-05-03":"대체공휴일","2027-05-05":"어린이날","2027-05-13":"부처님오신날",
+    "2027-06-06":"현충일","2027-07-17":"제헌절","2027-07-19":"대체공휴일","2027-08-15":"광복절","2027-08-16":"대체공휴일",
+    "2027-09-14":"추석 연휴","2027-09-15":"추석","2027-09-16":"추석 연휴","2027-10-03":"개천절","2027-10-04":"대체공휴일",
+    "2027-10-09":"한글날","2027-10-11":"대체공휴일","2027-12-25":"성탄절","2027-12-27":"대체공휴일"
+  };
+  function holidayOf(d){return (state.calOpt&&state.calOpt.holi===false)?null:(HOLI[d]||null);}
+  var EV_COLORS=["#ff6f91","#ff9f1a","#8b5cf6","#1a96ff","#00a37a"];
+  var EV_KINDS=[{id:"year",name:"매년 (생일·기념일)"},{id:"day",name:"하루"},{id:"range",name:"기간 (방학 등)"}];
+  function liveEvents(){return (state.events||[]).filter(function(x){return !x.del;});}
+  function eventsOn(d){
+    return liveEvents().filter(function(x){
+      if(x.kind==="year") return x.date&&x.date.slice(5)===d.slice(5);
+      if(x.kind==="range") return x.date<=d&&d<=(x.end||x.date);
+      return x.date===d;
+    });
+  }
+  function evWhen(x){
+    var a=+x.date.slice(5,7)+"/"+(+x.date.slice(8,10));
+    if(x.kind==="year") return "매년 "+a;
+    if(x.kind==="range"){var e=x.end||x.date;return a+" ~ "+(+e.slice(5,7))+"/"+(+e.slice(8,10));}
+    return x.date.slice(0,4)+". "+a;
+  }
+  function dayTags(d){
+    var h=holidayOf(d),ev=eventsOn(d);
+    if(!h&&!ev.length) return "";
+    return '<div class="dtags">'+(h?'<span class="dtag holi">'+esc(h)+'</span>':'')+
+      ev.map(function(x){return '<span class="dtag"><i style="background:'+x.color+'"></i>'+esc(x.name)+'</span>';}).join("")+'</div>';
   }
   function mmdd(d){return d.slice(5,7)+"/"+d.slice(8,10);}
 
@@ -2111,7 +2184,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var html='<div class="today-head"><div>'+
       '<div class="eyebrow">오늘의 학습'+
         (when?'<span class="when">'+when+'</span>':"")+'</div>'+
-      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div></div>'+badge+'</div>'+modeTabs();
+      '<div class="today-date">'+label(d)+' '+dowOf(d)+'요일</div>'+dayTags(d)+'</div>'+badge+'</div>'+modeTabs();
     html+='<div class="todos">'+todoList(d)+addArea(d,"today")+'</div>';
     if(complete){
       html+='<div class="cheer">'+sticker("crown")+'<span>'+dayCheer(d)+'</span></div>';
@@ -2211,6 +2284,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     for(var day=1;day<=dim;day++){
       var key=fmt(new Date(view.y,view.m,day));
       var cls="day"+(new Date(view.y,view.m,day).getDay()===0?" sun":"");
+      var hol=holidayOf(key),evs=eventsOn(key);
+      if(hol) cls+=" holi";
       if(!inRange(key)){
         cells+='<div class="'+cls+' out"><span class="n">'+day+'</span><span class="mk"></span></div>';
         continue;
@@ -2228,8 +2303,17 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       if(st.complete) mark='<span class="dst">'+sticker(daySticker(key),pop==="day:"+key)+'</span>';
       else if(st.total>0) mark='<span class="prog"><i style="width:'+
         Math.round(st.done/st.total*100)+'%"></i></span>';
+      var evb="";
+      if(evs.length){
+        /* 개인 일정 — 칸 맨 위 얇은 띠. 기간 일정은 칸 끝까지 이어진다 */
+        evb='<span class="evbar">'+evs.slice(0,2).map(function(x){
+          var cont=x.kind==="range",l=cont&&x.date<key,r=cont&&key<(x.end||x.date);
+          return '<i class="'+(cont?"rg":"pt")+(l?" l":"")+(r?" r":"")+'" style="background:'+x.color+'"></i>';
+        }).join("")+'</span>';
+      }
+      var tip=[hol].concat(evs.map(function(x){return x.name;})).filter(Boolean).join(", ");
       cells+='<button class="'+cls+'" data-open="'+key+'"'+
-        (key===SEL?' aria-current="date"':"")+'>'+
+        (key===SEL?' aria-current="date"':"")+(tip?' title="'+esc(tip)+'"':'')+'>'+evb+
         '<span class="n">'+day+'</span><span class="mk">'+mark+'</span></button>';
     }
     /* 마지막 주의 남은 칸도 앞쪽 빈칸과 같은 모양으로 채운다 */
@@ -2596,8 +2680,31 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       '</div>'+
       subjBox()+
       rewardBox()+
+      calBox()+
       syncBox()+
       roleBox();
+  }
+  function calBox(){
+    var evs=liveEvents().slice().sort(function(a,b){return a.date.slice(a.kind==="year"?5:0)<b.date.slice(b.kind==="year"?5:0)?-1:1;});
+    var holiOn=!(state.calOpt&&state.calOpt.holi===false);
+    var body='<div class="cal-opt"><span class="lb">대한민국 공휴일</span><div class="chips">'+
+        '<button class="chip'+(holiOn?" on":"")+'" data-holi="1">표시</button><button class="chip'+(holiOn?"":" on")+'" data-holi="0">숨김</button></div></div>'+
+      '<div class="ev-hint" style="margin:2px 0 8px">국경일·명절·대체공휴일을 달력 숫자 빨간색과 날짜 옆 이름으로 보여 줘요.</div>'+
+      '<div class="ev-list">'+(evs.length?evs.map(function(x){
+        return '<div class="ev-row"><i style="background:'+x.color+'"></i><span class="ev-n">'+esc(x.name)+'</span><span class="ev-w">'+esc(evWhen(x))+'</span>'+
+          '<button class="ev-del" data-ev-del="'+x.id+'" aria-label="'+esc(x.name)+' 지우기">'+icon("close")+'</button></div>';
+      }).join(""):'<div class="ev-hint">아직 넣은 일정이 없어요. 가족 생일, 방학 같은 날을 넣어 보세요.</div>')+'</div>'+
+      '<div class="ev-form">'+
+        '<input type="text" id="evName" data-ev="name" value="'+esc(evForm.name)+'" maxlength="16" placeholder="예: 엄마 생일, 여름방학" '+INPUT_ATTRS+'>'+
+        '<div class="chips">'+EV_KINDS.map(function(k){return '<button class="chip'+(evForm.kind===k.id?" on":"")+'" data-ev-kind="'+k.id+'">'+k.name+'</button>';}).join("")+'</div>'+
+        '<div class="dates"><input type="date" data-ev="date" value="'+esc(evForm.date)+'" aria-label="날짜">'+
+          (evForm.kind==="range"?'<span class="tilde">~</span><input type="date" data-ev="end" value="'+esc(evForm.end)+'" aria-label="끝나는 날">':'')+'</div>'+
+        '<div class="ev-colors">'+EV_COLORS.map(function(c){return '<button class="evc'+(evForm.color===c?" on":"")+'" data-ev-color="'+c+'" style="background:'+c+'" aria-label="색 고르기"></button>';}).join("")+
+          '<button class="btn primary" data-ev-add>일정 추가</button></div>'+
+        (evForm.err?'<div class="cerr">'+esc(evForm.err)+'</div>':'')+
+      '</div>';
+    return '<div class="syncbox'+(holiOn||evs.length?" on":"")+'">'+secHead("cal","캘린더",(holiOn?"공휴일 표시":"공휴일 숨김")+" · 내 일정 "+evs.length+"개",false)+
+      '<div class="sec-body"'+(secOpen.cal?"":" hidden")+'>'+body+'</div></div>';
   }
   function roleBox(){
     var me=roleOf(getMe());
@@ -2718,7 +2825,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
   /* 접었다 펴는 칸 — 평소에는 접혀 있고, 눌렀을 때만 열린다.
      앱을 다시 열면 다시 접힌 상태로 돌아온다. */
-  var secOpen={keep:false,sync:false,sk:false,role:false,subj:false,grow:false};
+  var evForm={name:"",kind:"year",date:"",end:"",color:"#ff6f91",err:""};
+  var secOpen={cal:false,keep:false,sync:false,sk:false,role:false,subj:false,grow:false};
 
   function secHead(id,title,summary,warn){
     return '<button class="sec-head'+(secOpen[id]?" open":"")+'" data-sec="'+id+'" '+
@@ -2882,13 +2990,22 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
         changed=true;
       }
     });
+    /* 개인 일정 — 지운 것은 지운 채로, 새것이 이기면 통째로 바꾼다 */
+    (rem.events||[]).forEach(function(x){
+      if(!x||!x.id) return;
+      var mine=null; state.events.forEach(function(y){if(y.id===x.id) mine=y;});
+      if(!mine){state.events.push(x);changed=true;}
+      else if(mine.del&&!x.del){}
+      else if((x.del&&!mine.del)||(x.u||0)>(mine.u||0)){for(var k0 in mine) if(!(k0 in x)) delete mine[k0]; for(var k in x) mine[k]=x[k]; changed=true;}
+    });
+    if(rem.calOpt&&(rem.calAt||0)>(state.calAt||0)){state.calOpt={holi:rem.calOpt.holi!==false};state.calAt=rem.calAt;changed=true;}
     return changed;
   }
 
   function payload(){
     return {done:state.done,dmeta:state.dmeta,todos:state.todos,mcut:state.mcut,
             subjects:state.subjects,subjAt:state.subjAt||0,subjV:state.subjV||0,
-            sk:state.sk,skAt:state.skAt,at:Date.now()};
+            sk:state.sk,skAt:state.skAt,events:state.events,calOpt:state.calOpt,calAt:state.calAt||0,at:Date.now()};
   }
 
   /* 합친 결과를 저장하되, 그 저장이 또 보내기를 부르지 않게 한다 */
@@ -2903,6 +3020,9 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     for(var d in dm){ if((dm[d]||0)>(rm[d]||0)) return true; }
     if((+state.ruleAt||0)>(+rem.ruleAt||0)) return true;
     if((+state.skAt||0)>(+rem.skAt||0)) return true;
+    var re={},rde={}; (rem.events||[]).forEach(function(v){if(v&&v.id){re[v.id]=v.u||0; if(v.del) rde[v.id]=1;}});
+    for(var q=0;q<state.events.length;q++){var v=state.events[q]; if(!(v.id in re)||(v.u||0)>re[v.id]||(v.del&&!rde[v.id])) return true;}
+    if((+state.calAt||0)>(+rem.calAt||0)) return true;
     return false;
   }
   function afterMerge(changed){
@@ -3245,6 +3365,32 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       return;
     }
 
+    if((el=up(e.target,"[data-holi]"))){
+      state.calOpt={holi:el.getAttribute("data-holi")==="1"};state.calAt=Date.now();save();renderAll();
+      toast(state.calOpt.holi?"달력에 공휴일을 보여 줘요.":"달력에서 공휴일 표시를 껐어요.");return;
+    }
+    if((el=up(e.target,"[data-ev-kind]"))){evForm.kind=el.getAttribute("data-ev-kind");evForm.err="";renderKeep();return;}
+    if((el=up(e.target,"[data-ev-color]"))){evForm.color=el.getAttribute("data-ev-color");renderKeep();return;}
+    if(up(e.target,"[data-ev-add]")){
+      var en=(evForm.name||"").trim(),ed=evForm.date,ee=evForm.end;
+      if(!en){evForm.err="일정 이름을 적어 주세요.";renderKeep();return;}
+      if(!ed){evForm.err="날짜를 골라 주세요.";renderKeep();return;}
+      if(evForm.kind==="range"){
+        if(!ee){evForm.err="끝나는 날을 골라 주세요.";renderKeep();return;}
+        if(ee<ed){var sw2=ed;ed=ee;ee=sw2;}
+      }
+      var ev={id:"e"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:en,kind:evForm.kind,date:ed,color:evForm.color,u:Date.now()};
+      if(evForm.kind==="range") ev.end=ee;
+      if(getMe()) ev.by=getMe();
+      state.events.push(ev);
+      evForm={name:"",kind:evForm.kind,date:"",end:"",color:EV_COLORS[(EV_COLORS.indexOf(evForm.color)+1)%EV_COLORS.length],err:""};
+      save();renderAll();toast("'"+en+"' 일정을 달력에 넣었어요.");return;
+    }
+    if((el=up(e.target,"[data-ev-del]"))){
+      var xe=null; state.events.forEach(function(y){if(y.id===el.getAttribute("data-ev-del")) xe=y;});
+      if(xe){var nm=xe.name;for(var ke in xe) if(ke!=="id"&&ke!=="del"&&ke!=="u") delete xe[ke]; xe.del=true;xe.u=Date.now();save();renderAll();toast("'"+nm+"' 일정을 지웠어요.");}
+      return;
+    }
     if(up(e.target,"#doExport")){exportData();return;}
     if(up(e.target,"#doImport")||up(e.target,"#doImport2")){pickFile();return;}
     if(up(e.target,"#doInstall")){
@@ -3368,6 +3514,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   /* 작성 폼의 글자·숫자·날짜는 입력할 때마다 상태에만 담는다.
      화면을 다시 그리지 않으므로 키보드가 닫히거나 커서가 튀지 않는다. */
   function bindField(e){
+    var evf=up(e.target,"[data-ev]");
+    if(evf){evForm[evf.getAttribute("data-ev")]=evf.value;evForm.err="";return true;}
     var kx=up(e.target,"[data-ke]");
     if(kx&&kidEdit){kidEdit.text=kx.value;kidEdit.err="";return true;}
     var kf=up(e.target,"[data-k]");
