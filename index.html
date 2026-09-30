@@ -1216,7 +1216,17 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   function writeKey(k,v){
     if(k===KEY) mem=v;
     if(!canStore) return false;
-    try{localStorage.setItem(k,v);return true;}catch(e){canStore=false;return false;}
+    try{localStorage.setItem(k,v);return true;}
+    catch(e){
+      /* 한 번 실패했다고 저장을 통째로 포기하지 않는다 —
+         용량이 잠깐 찼을 수도 있으므로 쓸 수 있는지 다시 확인한다.
+         예전에는 여기서 canStore 를 꺼 버려서 그 뒤의 내 역할 같은
+         작은 값까지 조용히 저장되지 않았다. */
+      try{
+        localStorage.setItem("__t","1"); localStorage.removeItem("__t");
+        return false;              /* 저장소는 살아 있다 — 이번 값만 실패 */
+      }catch(e2){ canStore=false; return false; }
+    }
   }
 
   /* 어떤 모양으로 들어와도(저장본이든 내보낸 백업 파일이든) 같은 형태로 정리 */
@@ -1240,6 +1250,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       subjV:(typeof p.subjV==="number")?p.subjV:0,
       sk:(p.sk&&typeof p.sk==="object")?p.sk:null,
       skAt:(typeof p.skAt==="number")?p.skAt:0,
+      me:(typeof p.me==="string")?p.me:null,
       seed:!!p.seed,
       events:Array.isArray(p.events)?p.events:[],
       calOpt:(p.calOpt&&typeof p.calOpt==="object")?{holi:p.calOpt.holi!==false}:{holi:true},
@@ -1727,7 +1738,24 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       esc(sj.name+(tr?" · "+tr.name:""))+'">'+esc(sj.short||sj.name.charAt(0))+'</span>';
   }
   function newSubjId(){return "s"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
-  function getMe(){var v=readKey(ME_KEY);return ROLES.some(function(r){return r.id===v;})?v:null;}
+  /* 내 역할은 기록(state.me)에 함께 담는다 —
+     그래야 앱을 다시 열어도, 코드를 갈아 끼워도, 백업을 되살려도 남는다.
+     예전 판이 따로 저장해 둔 값이 있으면 한 번만 옮겨 온다. */
+  function okRole(v){return ROLES.some(function(r){return r.id===v;})?v:null;}
+  function getMe(){
+    var v=okRole(state.me);
+    if(v) return v;
+    v=okRole(readKey(ME_KEY));
+    if(v){ state.me=v; save(); }
+    return v;
+  }
+  function setMe(id){
+    var v=okRole(id);
+    if(!v) return;
+    state.me=v;
+    save();
+    writeKey(ME_KEY,v);   /* 예전 자리에도 남겨 둔다 */
+  }
   function roleOf(id){for(var i=0;i<ROLES.length;i++) if(ROLES[i].id===id) return ROLES[i];return null;}
   function byTag(id){
     var r=roleOf(id);
@@ -2511,7 +2539,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
      어느 앱에서 내보내도, 어느 앱에서 불러와도 둘 다 복구된다. */
   function exportData(){
     var apps={};
-    apps[KEY]={done:state.done,todos:state.todos,seed:true};
+    apps[KEY]={done:state.done,todos:state.todos,me:state.me||null,seed:true};
     try{
       var raw=localStorage.getItem(OTHER_KEY);
       if(raw){
@@ -2591,6 +2619,8 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
     var inc=normalize(apps[KEY]);
     var addedDays=0,addedTodos=0;
     if(inc){
+      /* 아직 역할을 안 골랐다면 백업에 담긴 역할을 되살린다 */
+      if(inc.me&&!okRole(state.me)) setMe(inc.me);
       Object.keys(inc.done).forEach(function(d){
         var src=inc.done[d];
         if(!src||typeof src!=="object") return;
@@ -3131,7 +3161,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
 
     /* 역할 · 하위 항목 · 옮기기 · 목록 보기 */
     if((el=up(e.target,"[data-role]"))){
-      writeKey(ME_KEY,el.getAttribute("data-role"));
+      setMe(el.getAttribute("data-role"));
       renderAll(); toast("이 폰은 '"+roleOf(el.getAttribute("data-role")).name+"'(으)로 기록돼요."); return;
     }
     if((el=up(e.target,"[data-lmode]"))){
