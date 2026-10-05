@@ -292,13 +292,18 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo .box::after{content:"";position:absolute;top:50%;left:50%;
   width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
 .todo .box svg{width:100%;height:100%;display:block}
-.todo.on .box{color:var(--pulse)}
+/* 해낸 학습 — 기호 동그라미가 앱 색으로 꽉 찬다.
+   테두리만 물들던 때보다 한눈에 구분된다. */
+.todo.on .box{color:#fff;background:var(--pulse);border-radius:50%}
+.todo.on .box svg circle:first-of-type{stroke:var(--pulse)}
 
 /* 학습명 — 누르면 그 줄을 고치는 칸이 열린다 */
 .todo .txt{flex:1;min-width:0;font-size:13px;word-break:break-word;line-height:1.35;
   text-align:left;background:none;border:0;padding:0;font-family:inherit;color:inherit}
 /* 해낸 학습은 지우는 게 아니라 해냈다는 표시다 — 공과 같은 핑크로 물든다 */
 .todo.on .txt{color:#f2a9cd}   /* 해낸 학습은 옅은 핑크로 */
+/* 해낸 줄은 연분홍 바탕을 깔아 한 덩어리로 묶는다 */
+.todo.on{background:var(--pulse-wash);border-radius:999px;padding-left:4px;padding-right:4px;margin:0 -4px}
 /* 스티커는 해낸 줄에만 자리를 차지한다 */
 .todo .tst{flex:none;width:22px;height:22px}
 .todo .tst .st{width:22px;height:22px}
@@ -984,7 +989,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-09-30a</span>
+    <span class="ver">v2026-10-05a</span>
   </footer>
 </div>
 
