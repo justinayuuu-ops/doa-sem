@@ -292,10 +292,10 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo .box::after{content:"";position:absolute;top:50%;left:50%;
   width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
 .todo .box svg{width:100%;height:100%;display:block}
-/* 해낸 학습 — 기호 동그라미가 회색으로 꽉 찬다.
-   다 끝나서 더 할 일이 없다는 뜻으로 색을 빼고 잠근다. */
-.todo.on .box{color:#fff;background:#c2c2c2;border-radius:50%}
-.todo.on .box svg circle:first-of-type{stroke:#c2c2c2}
+/* 해낸 학습 — 기호 동그라미가 앱 색으로 꽉 찬다.
+   글자는 회색으로 가라앉고 동그라미만 또렷하게 남는다. */
+.todo.on .box{color:#fff;background:var(--pulse);border-radius:50%}
+.todo.on .box svg circle:first-of-type{stroke:var(--pulse)}
 
 /* 학습명 — 누르면 그 줄을 고치는 칸이 열린다 */
 .todo .txt{flex:1;min-width:0;font-size:13px;word-break:break-word;line-height:1.35;
@@ -374,7 +374,8 @@ button.carry.mv{font-family:inherit;font-size:10px;line-height:1;border:0;cursor
   display:grid;place-items:center;color:var(--pulse);padding:0}   /* 네모 칸 안에 V */
 .kbox::after{content:"";position:absolute;top:50%;left:50%;width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
 .kbox svg{width:10px;height:10px;stroke-width:3}
-.kid.on .kbox{background:#fff;border-color:#c2c2c2;color:#c2c2c2}
+/* 서브 학습도 같게 — 체크 네모가 앱 색으로 차고 ✓ 는 흰색 */
+.kid.on .kbox{background:var(--pulse);border-color:var(--pulse);color:#fff}
 .kid .kt{flex:1;min-width:0;word-break:break-word;text-align:left;padding:2px 0;margin-left:2px}
 .kid.on .kt{color:#a9a9a9}
 .kid.note .kt{color:var(--ink-2)}
@@ -1002,7 +1003,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-10-05h</span>
+    <span class="ver">v2026-10-05i</span>
   </footer>
 </div>
 
