@@ -314,8 +314,11 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo.on .t-count{color:#f2a9cd}
 /* 고치는 중인 줄은 학습량이 앱 색으로 물든다 */
 .t-count.open{color:var(--pulse)}
+/* 꼬리표 — 글자를 알약 한가운데에 세운다.
+   inline-block 에 줄간격을 그대로 두면 상자만 커지고 글자가 아래로 처진다. */
 .carry{
-  display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;
+  display:inline-flex;align-items:center;line-height:1;
+  margin-left:4px;padding:3px 6px;border-radius:999px;
   font-size:10px;white-space:nowrap;
   color:var(--amber);background:var(--amber-wash);
 }
@@ -332,7 +335,7 @@ header .mark svg{width:100%;height:100%;display:block}
   -webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 2px}
 /* ── 옮긴 학습 ── */
 .carry.mv{color:var(--violet);background:#efe9fb}
-button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
+button.carry.mv{font-family:inherit;font-size:10px;line-height:1;border:0;cursor:pointer}
 /* 옮긴 자국 — 글자만 연한 회색, 체크 칸은 해야 할 일처럼 그대로. 체크는 옮긴 날에서만 */
 .todo.ghost.gdone .box{color:var(--pulse)}
 .kid.ghost.gdone .kbox{background:#fff;border-color:var(--pulse)}
@@ -561,21 +564,22 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
   background:var(--surface-1);
   color:var(--pulse-strong);border:1.5px solid var(--pulse);white-space:nowrap}
 .bl .go.on{background:var(--pulse);border-color:var(--pulse);color:var(--pulse-ink)}
-/* 옮길 날 고르기 */
-.mv{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+/* 옮길 날 고르기 — 이름이 '이동' 꼬리표(.carry.mv)와 겹치지 않게 .mvrow 로 둔다 */
+.mvrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
   padding:8px 0 3px;border-top:1px dashed var(--pulse-dim)}
-.mv input{
+.mvrow input{
   flex:1 1 130px;min-width:0;font-family:inherit;font-size:16px;
   min-height:var(--tap);padding:6px 10px;line-height:1.2;color:var(--ink);
   background:var(--field);border:2px solid var(--line);border-radius:var(--r-sm);
   -webkit-appearance:none;appearance:none;
 }
-.mv input:focus{border-color:var(--pulse-dim);outline:0}
-.mv .btn{flex:0 0 auto;min-height:38px;padding:0 13px}
-.mv .err{flex:1 1 100%;font-size:var(--fs-xs);color:var(--coral);line-height:1.5}
+.mvrow input:focus{border-color:var(--pulse-dim);outline:0}
+.mvrow .btn{flex:0 0 auto;min-height:38px;padding:0 13px}
+.mvrow .err{flex:1 1 100%;font-size:var(--fs-xs);color:var(--coral);line-height:1.5}
 /* 건너뛴 학습 — 해내지 못한 그대로 두되 밀린 목록에서는 빠진다 */
 .skipchip{
-  display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;
+  display:inline-flex;align-items:center;line-height:1;
+  margin-left:4px;padding:3px 6px;border-radius:999px;
   font-size:10px;white-space:nowrap;
   color:var(--ink-3);background:var(--bg1);
 }
@@ -992,7 +996,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-10-05b</span>
+    <span class="ver">v2026-10-05c</span>
   </footer>
 </div>
 
@@ -2283,7 +2287,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
           '<button class="go" data-blskip="'+t.id+'">건너뛰기</button>'+
         '</div>';
         if(mover&&mover.id===t.id){
-          one+='<div class="mv">'+
+          one+='<div class="mvrow">'+
             '<input type="date" data-mv="to" value="'+esc(mover.to)+'" min="'+CUR+'" max="'+END+'" aria-label="옮길 날">'+
             '<button class="btn" data-mv-cancel>취소</button>'+
             '<button class="btn primary" data-mv-save>옮기기</button>'+
