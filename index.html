@@ -292,18 +292,18 @@ header .mark svg{width:100%;height:100%;display:block}
 .todo .box::after{content:"";position:absolute;top:50%;left:50%;
   width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
 .todo .box svg{width:100%;height:100%;display:block}
-/* 해낸 학습 — 기호 동그라미가 앱 색으로 꽉 찬다.
-   테두리만 물들던 때보다 한눈에 구분된다. */
-.todo.on .box{color:#fff;background:var(--pulse);border-radius:50%}
-.todo.on .box svg circle:first-of-type{stroke:var(--pulse)}
+/* 해낸 학습 — 기호 동그라미가 회색으로 꽉 찬다.
+   다 끝나서 더 할 일이 없다는 뜻으로 색을 빼고 잠근다. */
+.todo.on .box{color:#fff;background:#c2c2c2;border-radius:50%}
+.todo.on .box svg circle:first-of-type{stroke:#c2c2c2}
 
 /* 학습명 — 누르면 그 줄을 고치는 칸이 열린다 */
 .todo .txt{flex:1;min-width:0;font-size:13px;word-break:break-word;line-height:1.35;
   text-align:left;background:none;border:0;padding:0;font-family:inherit;color:inherit}
 /* 해낸 학습은 지우는 게 아니라 해냈다는 표시다 — 공과 같은 핑크로 물든다 */
-.todo.on .txt{color:#f2a9cd}   /* 해낸 학습은 옅은 핑크로 */
-/* 해낸 줄은 연분홍 바탕을 깔아 한 덩어리로 묶는다 */
-.todo.on{background:var(--pulse-wash);border-radius:999px;padding-left:4px;padding-right:4px;margin:0 -4px}
+.todo.on .txt{color:#a9a9a9}   /* 해낸 학습은 회색으로 */
+/* 해낸 줄은 회색 바탕을 깔아 한 덩어리로 묶는다 */
+.todo.on{background:#f1f1f1;border-radius:999px;padding-left:4px;padding-right:4px;margin:0 -4px}
 /* 스티커는 해낸 줄에만 자리를 차지한다 */
 .todo .tst{flex:none;width:22px;height:22px}
 .todo .tst .st{width:22px;height:22px}
@@ -311,7 +311,7 @@ header .mark svg{width:100%;height:100%;display:block}
 .t-count{flex:none;font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;
   padding:2px 0;line-height:1.3;white-space:nowrap;background:none;border:0}
 .t-count u{text-decoration:none;font-size:10px;margin-left:1px}
-.todo.on .t-count{color:#f2a9cd}
+.todo.on .t-count{color:#a9a9a9}
 /* 고치는 중인 줄은 학습량이 앱 색으로 물든다 */
 .t-count.open{color:var(--pulse)}
 /* 꼬리표 — 글자를 알약 한가운데에 세운다.
@@ -364,18 +364,25 @@ button.carry.mv{font-family:inherit;font-size:10px;line-height:1;border:0;cursor
 .addkid{flex:none;width:23px;height:23px;border-radius:8px;display:grid;place-items:center;color:var(--pulse-strong);
   background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);position:relative}
 .addkid svg{width:13px;height:13px}
-.kid{display:flex;align-items:center;gap:4px;padding:2px 0;font-size:12px;line-height:1.35}
-.kid-l{flex:none;width:12px;color:var(--ink-3);font-size:var(--fs-2xs)}
-.kbox{flex:none;position:relative;width:18px;height:18px;border-radius:4px;border:2px solid var(--line);background:#fff;
+/* 서브 학습 — 글자가 메인 학습명과 같은 세로줄에서 시작한다.
+   메인 학습명은 동그라미 22 + 사이 6 + 과목 배지 15 + 사이 5 = 48px 에서 시작하고,
+   여기서는 ㄴ 10 + 2 + 네모 14 + 2 + 2 = 30px 이므로 왼쪽에 18px 을 더해 맞춘다.
+   들여쓰기를 margin 으로 둔 건, 다 한 줄에 깔리는 바탕이 글자 쪽에서 시작하도록 하기 위해서다. */
+.kid{display:flex;align-items:center;gap:2px;padding:2px 4px;margin-left:14px;
+  font-size:12px;line-height:1.35}
+/* 해낸 서브 학습도 메인과 같은 회색 바탕으로 잠근다 */
+.kid.on{background:#f1f1f1;border-radius:999px}
+.kid-l{flex:none;width:10px;color:var(--ink-3);font-size:var(--fs-2xs);line-height:1}
+.kbox{flex:none;position:relative;width:14px;height:14px;border-radius:4px;border:2px solid var(--line);background:#fff;
   display:grid;place-items:center;color:var(--pulse);padding:0}   /* 네모 칸 안에 V */
 .kbox::after{content:"";position:absolute;top:50%;left:50%;width:var(--tap);height:var(--tap);transform:translate(-50%,-50%)}
-.kbox svg{width:13px;height:13px;stroke-width:2.6}
-.kid.on .kbox{background:#fff;border-color:var(--pulse)}
-.kid .kt{flex:1;min-width:0;word-break:break-word;text-align:left;padding:2px 0}
-.kid.on .kt{color:#f2a9cd}
+.kbox svg{width:10px;height:10px;stroke-width:3}
+.kid.on .kbox{background:#fff;border-color:#c2c2c2;color:#c2c2c2}
+.kid .kt{flex:1;min-width:0;word-break:break-word;text-align:left;padding:2px 0;margin-left:2px}
+.kid.on .kt{color:#a9a9a9}
 .kid.note .kt{color:var(--ink-2)}
-.kic{flex:none;width:18px;height:18px;display:grid;place-items:center;color:var(--violet)}
-.kic svg{width:16px;height:16px}
+.kic{flex:none;width:14px;height:14px;display:grid;place-items:center;color:var(--violet)}
+.kic svg{width:13px;height:13px}
 .kid.ghost .kt{color:#b5b5b5}
 .kid .del{width:32px;height:32px}
 /* 서브 학습 칸 — 학습 추가·고치기 칸과 같은 저울로 맞춘다 */
@@ -755,7 +762,8 @@ button.carry.mv{font-family:inherit;font-size:10px;line-height:1;border:0;cursor
    다 해낸 날이든 아니든 숫자는 여전히 같은 높이에 있다. */
 .day .dst{margin-top:-6px}
 
-.note{font-size:var(--fs-sm);color:var(--ink-2);background:var(--bg1);
+/* 하루 패널 아래 안내 상자 — 이름이 코멘트 줄(.kid.note)과 겹치지 않게 .daynote 로 둔다 */
+.daynote{font-size:var(--fs-sm);color:var(--ink-2);background:var(--bg1);
   border-radius:var(--r-sm);padding:8px 10px;margin-top:9px;line-height:1.5}
 .cheer{
   display:flex;align-items:center;gap:8px;margin-top:9px;padding:8px 10px;
@@ -996,7 +1004,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-10-05c</span>
+    <span class="ver">v2026-10-05d</span>
   </footer>
 </div>
 
@@ -2234,7 +2242,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
       var willMove=todosFor(d).some(function(t){
         return !t.done&&!t.series&&!t.back;
       });
-      html+='<div class="note">'+
+      html+='<div class="daynote">'+
         (willMove?'지난 날의 못 한 학습은 다음에 열 때 오늘로 옮겨져요. ':'')+
         '여기서 바로 체크해도 그날 스티커가 붙어요.</div>';
     }
