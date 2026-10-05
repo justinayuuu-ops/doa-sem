@@ -342,10 +342,13 @@ button.carry.mv{font:inherit;font-size:10px;border:0;cursor:pointer}
 /* 학습명 칸은 배지와 이름을 한 줄에 세운다 */
 .todo .txt{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .todo .txt .by{margin-left:0}
-/* 역할 배지는 글자보다 한 눈금 아래로 앉는다 —
-   알약 상자가 글줄 한가운데에 맞춰지는데 글자의 잉크는 그보다 위에 있기 때문이다.
-   배치에 영향을 주지 않는 방식으로 0.75px 끌어올려 글자와 같은 선에 맞춘다. */
-.todo .txt .by:not(.subj),.kid .kt .by:not(.subj){position:relative;top:-0.75px}
+/* 줄 안의 모든 칸을 같은 중심선에 세운다.
+   렌더링을 재 보니 기호·과목 배지·학습량·＋ 는 줄 중심과 정확히 같고,
+   역할 배지만 손으로 올려 둔 값 때문에 0.8px 높았다 — 그 값을 거둔다.
+   학습명은 글자 범위가 글줄 상자보다 0.3px 위에 있어 그만큼만 내린다.
+   형광펜 밑줄은 글자 상자 안에 그려지므로 이 정렬에 끼어들지 않는다. */
+.todo .txt .by:not(.subj),.kid .kt .by:not(.subj){position:relative;top:0}
+.todo .txt .tt{position:relative;top:0.3px}
 .bi .bt .by{margin-left:0;margin-right:4px}
 /* 역할은 이름이 다 보이는 알약, 과목은 한 글자 동그라미 */
 .by{display:inline-flex;align-items:center;justify-content:center;flex:none;
@@ -989,7 +992,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-10-05a</span>
+    <span class="ver">v2026-10-05b</span>
   </footer>
 </div>
 
