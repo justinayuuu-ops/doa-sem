@@ -302,8 +302,7 @@ header .mark svg{width:100%;height:100%;display:block}
   text-align:left;background:none;border:0;padding:0;font-family:inherit;color:inherit}
 /* 해낸 학습은 지우는 게 아니라 해냈다는 표시다 — 공과 같은 핑크로 물든다 */
 .todo.on .txt{color:#a9a9a9}   /* 해낸 학습은 회색으로 */
-/* 해낸 줄은 회색 바탕을 깔아 한 덩어리로 묶는다 */
-.todo.on{background:#f1f1f1;border-radius:999px;padding-left:4px;padding-right:4px;margin:0 -4px}
+/* 해낸 줄은 바탕을 깔지 않는다 — 기호와 글자 색만으로 구분한다 */
 /* 스티커는 해낸 줄에만 자리를 차지한다 */
 .todo .tst{flex:none;width:22px;height:22px}
 .todo .tst .st{width:22px;height:22px}
@@ -368,10 +367,8 @@ button.carry.mv{font-family:inherit;font-size:10px;line-height:1;border:0;cursor
    메인 학습명은 동그라미 22 + 사이 6 + 과목 배지 15 + 사이 5 = 48px 에서 시작하고,
    여기서는 ㄴ 10 + 2 + 네모 14 + 2 + 2 = 30px 이므로 왼쪽에 18px 을 더해 맞춘다.
    들여쓰기를 margin 으로 둔 건, 다 한 줄에 깔리는 바탕이 글자 쪽에서 시작하도록 하기 위해서다. */
-.kid{display:flex;align-items:center;gap:2px;padding:2px 4px;margin-left:14px;
+.kid{display:flex;align-items:center;gap:2px;padding:2px 0;margin-left:18px;
   font-size:12px;line-height:1.35}
-/* 해낸 서브 학습도 메인과 같은 회색 바탕으로 잠근다 */
-.kid.on{background:#f1f1f1;border-radius:999px}
 .kid-l{flex:none;width:10px;color:var(--ink-3);font-size:var(--fs-2xs);line-height:1}
 .kbox{flex:none;position:relative;width:14px;height:14px;border-radius:4px;border:2px solid var(--line);background:#fff;
   display:grid;place-items:center;color:var(--pulse);padding:0}   /* 네모 칸 안에 V */
@@ -384,7 +381,8 @@ button.carry.mv{font-family:inherit;font-size:10px;line-height:1;border:0;cursor
 .kic{flex:none;width:14px;height:14px;display:grid;place-items:center;color:var(--violet)}
 .kic svg{width:13px;height:13px}
 .kid.ghost .kt{color:#b5b5b5}
-.kid .del{width:32px;height:32px}
+/* × 는 메인 줄과 같은 크기·같은 세로줄에 선다 */
+.kid .del{width:26px;height:26px;margin:-2px -6px -2px 0}
 /* 서브 학습 칸 — 학습 추가·고치기 칸과 같은 저울로 맞춘다 */
 .kidform{margin:3px 0 7px 32px;padding:8px 9px;border-radius:var(--r-sm);background:var(--pulse-wash);border:1.5px solid var(--pulse-dim);
   display:flex;flex-direction:column;gap:6px}
@@ -1004,7 +1002,7 @@ header .title,.today-date,.cal-title,.board .v,.keep h2,.install h2,
   <footer>
     달력에서 날짜를 누르면 그날 학습을 보고 고칠 수 있어요.<br>
     기록은 이 기기에 저장돼요. 가끔 백업 파일로 내보내 두세요.<br>
-    <span class="ver">v2026-10-05d</span>
+    <span class="ver">v2026-10-05e</span>
   </footer>
 </div>
 
